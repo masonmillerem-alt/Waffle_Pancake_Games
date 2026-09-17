@@ -4,7 +4,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Waffle_Pancake_Games</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,823 +11,555 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-
-    font-family: "Fredoka", sans-serif;
-
-    color: white;
-
-    background:
-        radial-gradient(
-            circle at 50% 20%,
-            rgba(255, 190, 70, 0.45),
-            transparent 45%
-        ),
-        linear-gradient(
-            135deg,
-            #f7a52b,
-            #e98216
-        );
-
-    min-height: 100vh;
-
-    position: relative;
-}
-
-
-/* =========================
-   3D WAFFLE BACKGROUND
-========================= */
-
-/*
-   The waffle pattern is made from
-   raised diamonds with highlights
-   and shadows to give it depth.
-*/
-
-body::before {
-    content: "";
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: -1;
-
-    opacity: 0.42;
-
-    background-image:
-
-        linear-gradient(
-            135deg,
-            transparent 43%,
-            rgba(255, 210, 100, 0.45) 44%,
-            rgba(255, 210, 100, 0.45) 48%,
-            transparent 49%
-        ),
-
-        linear-gradient(
-            45deg,
-            transparent 43%,
-            rgba(180, 85, 5, 0.35) 44%,
-            rgba(180, 85, 5, 0.35) 48%,
-            transparent 49%
-        ),
-
-        linear-gradient(
-            135deg,
-            transparent 43%,
-            rgba(170, 75, 0, 0.30) 44%,
-            rgba(170, 75, 0, 0.30) 48%,
-            transparent 49%
-        ),
-
-        linear-gradient(
-            45deg,
-            transparent 43%,
-            rgba(255, 195, 70, 0.40) 44%,
-            rgba(255, 195, 70, 0.40) 48%,
-            transparent 49%
-        );
-
-    background-size:
-        70px 70px,
-        70px 70px,
-        70px 70px,
-        70px 70px;
-
-    background-position:
-        0 0,
-        0 0,
-        35px 35px,
-        35px 35px;
-
-    pointer-events: none;
-}
-
-
-/* =========================
-   TOP BAR
-========================= */
-
-.top-bar {
-    position: sticky;
-
-    top: 0;
-
-    z-index: 1000;
-
-    width: 100%;
-
-    padding: 22px 25px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #ffbd3c,
-            #ff991c
-        );
-
-    box-shadow:
-        0 6px 18px rgba(110, 50, 0, 0.35);
-
-    border-bottom:
-        2px solid rgba(255,255,255,0.18);
-}
-
-
-/* =========================
-   LOGO
-========================= */
-
-.logo {
-    margin: 0;
-
-    text-align: center;
-
-    font-size: 42px;
-
-    line-height: 1.1;
-
-    font-weight: 700;
-
-    color: white;
-
-    letter-spacing: 0.5px;
-
-    text-shadow:
-        0 3px 0 #d8750d,
-        0 5px 8px rgba(100, 45, 0, 0.35);
-}
-
-
-/* =========================
-   MAIN CONTENT
-========================= */
-
-.container {
-    width: min(1400px, 94%);
-
-    margin: auto;
-
-    padding: 35px 0 70px;
-}
-
-.category {
-    margin-bottom: 45px;
-}
-
-.category-title {
-    font-size: 30px;
-
-    margin-bottom: 18px;
-
-    text-shadow:
-        2px 3px 0 rgba(120, 60, 0, 0.25);
-}
-
-
-/* =========================
-   GAME GRID
-========================= */
-
-.game-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fill, minmax(210px, 1fr));
-
-    gap: 20px;
-}
-
-
-/* =========================
-   GAME CARD
-========================= */
-
-.game-card {
-    border: none;
-
-    cursor: pointer;
-
-    min-height: 190px;
-
-    border-radius: 20px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,0.98),
-            rgba(246,236,222,0.96)
-        );
-
-    color: #4d2b12;
-
-    padding: 20px;
-
-    font-family: "Fredoka", sans-serif;
-
-    box-shadow:
-        0 8px 0 rgba(126, 63, 5, 0.25),
-        0 12px 22px rgba(120, 60, 0, 0.25);
-
-    transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease;
-}
-
-.game-card:hover {
-    transform:
-        translateY(-7px)
-        scale(1.02);
-
-    box-shadow:
-        0 12px 0 rgba(126, 63, 5, 0.25),
-        0 18px 28px rgba(100, 50, 0, 0.30);
-}
-
-.game-card:active {
-    transform:
-        translateY(2px)
-        scale(0.99);
-
-    box-shadow:
-        0 4px 0 rgba(126, 63, 5, 0.25),
-        0 7px 14px rgba(100, 50, 0, 0.25);
-}
-
-.game-icon {
-    font-size: 60px;
-
-    margin-bottom: 10px;
-}
-
-.game-name {
-    font-size: 23px;
-
-    font-weight: 600;
-}
-
-.game-description {
-    margin-top: 7px;
-
-    font-size: 14px;
-
-    color: #8a5b35;
-}
-
-
-/* =========================
-   GAME SCREEN
-========================= */
-
-.game-screen {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 2000;
-
-    display: none;
-
-    flex-direction: column;
-
-    background: #111;
-}
-
-.game-screen.active {
-    display: flex;
-}
-
-
-/* =========================
-   GAME HEADER
-========================= */
-
-.game-header {
-    height: 65px;
-
-    flex-shrink: 0;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 0 20px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #ffbd3c,
-            #ff991c
-        );
-
-    box-shadow:
-        0 4px 12px rgba(0,0,0,0.35);
-}
-
-.game-title {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    font-size: 22px;
-
-    font-weight: 600;
-}
-
-.game-controls {
-    margin-left: auto;
-
-    display: flex;
-
-    gap: 10px;
-}
-
-.game-button {
-    border: none;
-
-    padding: 10px 17px;
-
-    border-radius: 10px;
-
-    background: white;
-
-    color: #7a4218;
-
-    font-family: "Fredoka", sans-serif;
-
-    font-size: 15px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.15s ease;
-}
-
-.game-button:hover {
-    transform: scale(1.05);
-}
-
-
-/* =========================
-   GAME AREA
-========================= */
-
-.game-container {
-    flex: 1;
-
-    position: relative;
-
-    overflow: hidden;
-
-    background: #111;
-}
-
-.game-frame {
-    width: 100%;
-
-    height: 100%;
-
-    border: none;
-
-    display: none;
-}
-
-.game-frame.loaded {
-    display: block;
-}
-
-
-/* =========================
-   PLACEHOLDER
-========================= */
-
-.game-placeholder {
-    position: absolute;
-
-    inset: 0;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    flex-direction: column;
-
-    text-align: center;
-}
-
-.game-placeholder h2 {
-    font-size: 35px;
-
-    margin-bottom: 5px;
-}
-
-.game-placeholder p {
-    color: #bbb;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 600px) {
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Fredoka", sans-serif;
+        color: white;
+        background:
+            radial-gradient(circle at 50% 20%, rgba(255, 190, 70, 0.45), transparent 45%),
+            linear-gradient(135deg, #f7a52b, #e98216);
+        min-height: 100vh;
+        position: relative;
+    }
+
+    /* 3D waffle-style background */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.42;
+        background:
+            linear-gradient(135deg, rgba(255,255,255,0.12) 10%, transparent 10%) 0 0 / 70px 70px,
+            linear-gradient(315deg, rgba(150,70,0,0.16) 10%, transparent 10%) 0 0 / 70px 70px,
+            linear-gradient(135deg, transparent 45%, rgba(255,200,90,0.22) 45%, rgba(255,200,90,0.22) 55%, transparent 55%) 0 0 / 70px 70px;
+        z-index: 0;
+    }
+
+    /* Header */
+    .top-bar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        width: 100%;
+        padding: 22px 25px;
+        background: linear-gradient(180deg, #ffbd3c, #ff991c);
+        box-shadow: 0 6px 18px rgba(110, 50, 0, 0.35);
+        border-bottom: 2px solid rgba(255,255,255,0.18);
+    }
 
     .logo {
-        font-size: 30px;
+        margin: 0;
+        text-align: center;
+        font-size: 42px;
+        line-height: 1.1;
+        font-weight: 700;
+        color: white;
+        letter-spacing: 0.5px;
+        text-shadow:
+            0 3px 0 #d8750d,
+            0 5px 8px rgba(100, 45, 0, 0.35);
+    }
+
+    /* Main content */
+    .content {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: auto;
+        padding: 35px 25px 60px;
+    }
+
+    .category {
+        margin-bottom: 45px;
     }
 
     .category-title {
-        font-size: 25px;
+        font-size: 30px;
+        margin: 0 0 18px;
+        text-shadow: 0 3px 4px rgba(100, 45, 0, 0.4);
     }
 
-    .game-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 20px;
     }
 
     .game-card {
-        min-height: 160px;
+        border: none;
+        border-radius: 20px;
+        padding: 0;
+        overflow: hidden;
+        cursor: pointer;
+        text-align: left;
+        color: white;
+        background: linear-gradient(145deg, #ffb52e, #e97d0c);
+        box-shadow:
+            0 8px 0 #bd5d08,
+            0 12px 18px rgba(90, 40, 0, 0.3);
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
 
-        padding: 15px;
+    .game-card:hover {
+        transform: translateY(-4px);
+        box-shadow:
+            0 12px 0 #bd5d08,
+            0 17px 22px rgba(90, 40, 0, 0.3);
+    }
+
+    .game-card:active {
+        transform: translateY(4px);
+        box-shadow:
+            0 4px 0 #bd5d08,
+            0 7px 12px rgba(90, 40, 0, 0.25);
     }
 
     .game-icon {
-        font-size: 45px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 75px;
+        background:
+            radial-gradient(circle at 50% 35%, rgba(255,255,255,0.2), transparent 55%),
+            linear-gradient(145deg, #ffca54, #f28c18);
+    }
+
+    .game-info {
+        padding: 16px 18px 18px;
     }
 
     .game-name {
-        font-size: 19px;
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 5px;
     }
 
-}
+    .game-description {
+        font-size: 15px;
+        opacity: 0.9;
+    }
 
+    /* Game screen */
+    .game-screen {
+        position: fixed;
+        inset: 0;
+        background: rgba(25, 12, 3, 0.96);
+        z-index: 2000;
+        display: none;
+        flex-direction: column;
+    }
+
+    .game-screen.active {
+        display: flex;
+    }
+
+    .game-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 15px 20px;
+        background: linear-gradient(180deg, #ffbd3c, #ff991c);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .game-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .game-title-icon {
+        font-size: 30px;
+    }
+
+    .game-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .game-button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 15px;
+        font-family: "Fredoka", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        color: white;
+        background: #d8750d;
+        box-shadow: 0 3px 0 #a95205;
+        transition: 0.15s;
+    }
+
+    .game-button:hover {
+        background: #c76708;
+    }
+
+    .game-button:active {
+        transform: translateY(2px);
+        box-shadow: 0 1px 0 #a95205;
+    }
+
+    .game-container {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        min-height: 0;
+    }
+
+    .game-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 12px;
+        background: black;
+        display: none;
+    }
+
+    .game-frame.loaded {
+        display: block;
+    }
+
+    .game-placeholder {
+        width: 100%;
+        height: 100%;
+        border: 3px dashed rgba(255,255,255,0.3);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 30px;
+    }
+
+    .placeholder-content {
+        max-width: 500px;
+    }
+
+    .placeholder-icon {
+        font-size: 80px;
+        margin-bottom: 15px;
+    }
+
+    .placeholder-title {
+        font-size: 32px;
+        margin: 0 0 10px;
+    }
+
+    .placeholder-text {
+        margin: 0;
+        font-size: 17px;
+        opacity: 0.8;
+    }
+
+    @media (max-width: 600px) {
+        .logo {
+            font-size: 30px;
+        }
+
+        .content {
+            padding: 25px 15px 45px;
+        }
+
+        .category-title {
+            font-size: 25px;
+        }
+
+        .game-icon {
+            height: 125px;
+        }
+
+        .game-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .game-controls {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .game-button {
+            flex: 1;
+        }
+    }
 </style>
 </head>
 
-
 <body>
 
-
-<!-- =========================
-     TOP BAR
-========================= -->
-
 <header class="top-bar">
-
-    <h1 class="logo">
-        Waffle_Pancake_Games
-    </h1>
-
+    <h1 class="logo">Waffle_Pancake_Games</h1>
 </header>
 
+<main class="content">
 
-<!-- =========================
-     MAIN GAME MENU
-========================= -->
-
-<main class="container">
-
-
-    <!-- ARCADE -->
-
+    <!-- Arcade -->
     <section class="category">
+        <h2 class="category-title">🕹️ Arcade</h2>
 
-        <h2 class="category-title">
-            🕹️ Arcade
-        </h2>
+        <div class="games-grid">
 
-        <div class="game-grid">
-
-
-            <!-- PONG -->
-
-            <button
-                class="game-card"
+            <button class="game-card"
                 onclick="openGame('Pong', '🏓', 'games/pong.html')">
 
-                <div class="game-icon">
-                    🏓
-                </div>
+                <div class="game-icon">🏓</div>
 
-                <div class="game-name">
-                    Pong
-                </div>
-
-                <div class="game-description">
-                    Classic paddle action.
+                <div class="game-info">
+                    <div class="game-name">Pong</div>
+                    <div class="game-description">
+                        Classic paddle battle
+                    </div>
                 </div>
 
             </button>
 
-
-            <!-- SNAKE -->
-
-            <button
-                class="game-card"
+            <button class="game-card"
                 onclick="openGame('Snake', '🐍', '')">
 
-                <div class="game-icon">
-                    🐍
-                </div>
+                <div class="game-icon">🐍</div>
 
-                <div class="game-name">
-                    Snake
-                </div>
-
-                <div class="game-description">
-                    Eat, grow, and don't hit yourself.
+                <div class="game-info">
+                    <div class="game-name">Snake</div>
+                    <div class="game-description">
+                        Grow your snake
+                    </div>
                 </div>
 
             </button>
 
-
-            <!-- TETRIS -->
-
-            <button
-                class="game-card"
+            <button class="game-card"
                 onclick="openGame('Tetris', '🧱', '')">
 
-                <div class="game-icon">
-                    🧱
-                </div>
+                <div class="game-icon">🧱</div>
 
-                <div class="game-name">
-                    Tetris
-                </div>
-
-                <div class="game-description">
-                    Stack blocks and clear lines.
+                <div class="game-info">
+                    <div class="game-name">Tetris</div>
+                    <div class="game-description">
+                        Stack the blocks
+                    </div>
                 </div>
 
             </button>
 
-
-            <!-- BREAKOUT -->
-
-            <button
-                class="game-card"
+            <button class="game-card"
                 onclick="openGame('Breakout', '🎾', '')">
 
-                <div class="game-icon">
-                    🎾
-                </div>
+                <div class="game-icon">🎾</div>
 
-                <div class="game-name">
-                    Breakout
-                </div>
-
-                <div class="game-description">
-                    Break bricks with a bouncing ball.
+                <div class="game-info">
+                    <div class="game-name">Breakout</div>
+                    <div class="game-description">
+                        Break all the blocks
+                    </div>
                 </div>
 
             </button>
 
-
         </div>
-
     </section>
 
-
-    <!-- PUZZLE -->
-
+    <!-- Puzzle -->
     <section class="category">
+        <h2 class="category-title">🧩 Puzzle</h2>
 
-        <h2 class="category-title">
-            🧩 Puzzle
-        </h2>
+        <div class="games-grid">
 
-        <div class="game-grid">
-
-
-            <!-- 2048 -->
-
-            <button
-                class="game-card"
+            <button class="game-card"
                 onclick="openGame('2048', '🔢', '')">
 
-                <div class="game-icon">
-                    🔢
-                </div>
+                <div class="game-icon">🔢</div>
 
-                <div class="game-name">
-                    2048
-                </div>
-
-                <div class="game-description">
-                    Combine numbers to reach 2048.
+                <div class="game-info">
+                    <div class="game-name">2048</div>
+                    <div class="game-description">
+                        Combine numbers
+                    </div>
                 </div>
 
             </button>
 
-
         </div>
-
     </section>
-
 
 </main>
 
-
-<!-- =========================
-     GAME UI
-========================= -->
-
-<div id="gameScreen" class="game-screen">
-
+<!-- Game Screen -->
+<div class="game-screen" id="gameScreen">
 
     <div class="game-header">
 
         <div class="game-title">
-
-            <span id="gameIcon">
-                🎮
-            </span>
-
-            <span id="gameTitle">
-                Game
-            </span>
-
+            <span class="game-title-icon" id="gameIcon">🎮</span>
+            <span id="gameTitle">Game</span>
         </div>
-
 
         <div class="game-controls">
 
-            <button
-                class="game-button"
-                onclick="toggleFullscreen()">
-
-                ⛶ Fullscreen
-
+            <!-- NEW RESET BUTTON -->
+            <button class="game-button" onclick="resetGame()">
+                🔄 Reset Game
             </button>
 
+            <button class="game-button" onclick="toggleFullscreen()">
+                ⛶ Fullscreen
+            </button>
 
-            <button
-                class="game-button"
-                onclick="exitGame()">
-
+            <button class="game-button" onclick="exitGame()">
                 ✕ Exit
-
             </button>
 
         </div>
 
     </div>
 
+    <div class="game-container" id="gameContainer">
 
-    <div
-        id="gameContainer"
-        class="game-container">
+        <div class="game-placeholder" id="gamePlaceholder">
 
+            <div class="placeholder-content">
 
-        <div
-            id="gamePlaceholder"
-            class="game-placeholder">
+                <div class="placeholder-icon" id="placeholderIcon">
+                    🎮
+                </div>
 
-            <h2 id="placeholderTitle">
-                Game
-            </h2>
+                <h2 class="placeholder-title" id="placeholderTitle">
+                    Game
+                </h2>
 
-            <p>
-                This game hasn't been added yet!
-            </p>
+                <p class="placeholder-text">
+                    This game is not connected yet.
+                </p>
+
+            </div>
 
         </div>
-
 
         <iframe
             id="gameFrame"
             class="game-frame"
-            src=""
-            allowfullscreen>
+            title="Game">
         </iframe>
-
 
     </div>
 
 </div>
 
-
 <script>
 
+    const gameScreen = document.getElementById("gameScreen");
+    const gameFrame = document.getElementById("gameFrame");
+    const gameContainer = document.getElementById("gameContainer");
 
-/* =========================
-   ELEMENTS
-========================= */
-
-const gameScreen =
-    document.getElementById("gameScreen");
-
-const gameContainer =
-    document.getElementById("gameContainer");
-
-const gameFrame =
-    document.getElementById("gameFrame");
-
-const gameTitle =
-    document.getElementById("gameTitle");
-
-const gameIcon =
-    document.getElementById("gameIcon");
-
-const gamePlaceholder =
-    document.getElementById("gamePlaceholder");
-
-const placeholderTitle =
-    document.getElementById("placeholderTitle");
+    const gameTitle = document.getElementById("gameTitle");
+    const gameIcon = document.getElementById("gameIcon");
+    const placeholderTitle = document.getElementById("placeholderTitle");
+    const placeholderIcon = document.getElementById("placeholderIcon");
+    const gamePlaceholder = document.getElementById("gamePlaceholder");
 
 
-/* =========================
-   OPEN GAME
-========================= */
+    function openGame(name, icon, gameURL) {
 
-function openGame(name, icon, gameURL) {
+        gameTitle.textContent = name;
+        gameIcon.textContent = icon;
 
-    gameTitle.textContent = name;
+        placeholderTitle.textContent = name;
+        placeholderIcon.textContent = icon;
 
-    gameIcon.textContent = icon;
+        gameScreen.classList.add("active");
 
-    placeholderTitle.textContent = name;
-
-    gameScreen.classList.add("active");
-
-    document.body.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
 
 
-    if (gameURL && gameURL.trim() !== "") {
+        if (gameURL && gameURL.trim() !== "") {
 
-        gamePlaceholder.style.display = "none";
+            gamePlaceholder.style.display = "none";
 
-        gameFrame.src = gameURL;
+            gameFrame.src = gameURL;
 
-        gameFrame.classList.add("loaded");
+            gameFrame.classList.add("loaded");
+
+        } else {
+
+            gamePlaceholder.style.display = "flex";
+
+            gameFrame.classList.remove("loaded");
+
+            gameFrame.src = "";
+
+        }
 
     }
 
-    else {
 
-        gamePlaceholder.style.display = "flex";
+    /* 🔄 RESET CURRENT GAME */
+    function resetGame() {
 
-        gameFrame.classList.remove("loaded");
+        if (gameFrame.classList.contains("loaded") && gameFrame.src) {
+
+            /*
+             * Reload the game inside the iframe.
+             * This completely resets the current game.
+             */
+
+            gameFrame.src = gameFrame.src;
+
+        }
+
+    }
+
+
+    function toggleFullscreen() {
+
+        if (!document.fullscreenElement) {
+
+            gameContainer.requestFullscreen();
+
+        } else {
+
+            document.exitFullscreen();
+
+        }
+
+    }
+
+
+    function exitGame() {
+
+        gameScreen.classList.remove("active");
+
+        document.body.style.overflow = "";
 
         gameFrame.src = "";
 
-    }
-
-}
-
-
-/* =========================
-   EXIT GAME
-========================= */
-
-function exitGame() {
-
-    gameScreen.classList.remove("active");
-
-    document.body.style.overflow = "";
-
-    gameFrame.src = "";
-
-}
-
-
-/* =========================
-   FULLSCREEN
-========================= */
-
-function toggleFullscreen() {
-
-    if (!document.fullscreenElement) {
-
-        gameContainer.requestFullscreen();
+        gameFrame.classList.remove("loaded");
 
     }
-
-    else {
-
-        document.exitFullscreen();
-
-    }
-
-}
 
 </script>
-
 
 </body>
 </html>
 ```
+
+Now your game screen will have:
+
+**🔄 Reset Game | ⛶ Fullscreen | ✕ Exit**
+
+The reset button reloads the current game without closing the game screen. 🎮✨
+
+When we add **Snake**, **Tetris**, **Breakout**, and **2048**, the reset button will work for those too.
