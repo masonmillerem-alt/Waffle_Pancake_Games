@@ -1,0 +1,565 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pong</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    background: #111;
+
+    font-family: Arial, sans-serif;
+
+    color: white;
+}
+
+
+/* GAME CANVAS */
+
+canvas {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    background: #111;
+}
+
+
+/* SCORE */
+
+.score {
+    position: absolute;
+
+    top: 20px;
+    left: 0;
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 100px;
+
+    pointer-events: none;
+
+    font-size: 50px;
+
+    font-weight: bold;
+}
+
+
+/* INSTRUCTIONS */
+
+.instructions {
+    position: absolute;
+
+    bottom: 15px;
+    left: 0;
+
+    width: 100%;
+
+    text-align: center;
+
+    font-size: 16px;
+
+    opacity: 0.65;
+
+    pointer-events: none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<canvas id="gameCanvas"></canvas>
+
+
+<div class="score">
+
+    <span id="playerScore">0</span>
+
+    <span id="computerScore">0</span>
+
+</div>
+
+
+<div class="instructions">
+
+    Player 1: W / S &nbsp;&nbsp; | &nbsp;&nbsp;
+    Player 2: ↑ / ↓
+
+</div>
+
+
+<script>
+
+/* =========================================
+   CANVAS
+========================================= */
+
+const canvas =
+    document.getElementById("gameCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+
+/* =========================================
+   RESIZE
+========================================= */
+
+function resizeCanvas() {
+
+    canvas.width = window.innerWidth;
+
+    canvas.height = window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+/* =========================================
+   PADDLES
+========================================= */
+
+const paddleWidth = 15;
+
+const paddleHeight = 110;
+
+const paddleSpeed = 8;
+
+
+let leftPaddle = {
+
+    x: 30,
+
+    y: canvas.height / 2 - paddleHeight / 2,
+
+    width: paddleWidth,
+
+    height: paddleHeight
+
+};
+
+
+let rightPaddle = {
+
+    x: canvas.width - 45,
+
+    y: canvas.height / 2 - paddleHeight / 2,
+
+    width: paddleWidth,
+
+    height: paddleHeight
+
+};
+
+
+/* =========================================
+   BALL
+========================================= */
+
+const ballSize = 15;
+
+let ball = {
+
+    x: canvas.width / 2,
+
+    y: canvas.height / 2,
+
+    size: ballSize,
+
+    speedX: 7,
+
+    speedY: 5
+
+};
+
+
+/* =========================================
+   SCORE
+========================================= */
+
+let playerScore = 0;
+
+let computerScore = 0;
+
+
+const playerScoreText =
+    document.getElementById("playerScore");
+
+const computerScoreText =
+    document.getElementById("computerScore");
+
+
+/* =========================================
+   KEYBOARD
+========================================= */
+
+const keys = {};
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        keys[event.key] = true;
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    event => {
+
+        keys[event.key] = false;
+
+    }
+);
+
+
+/* =========================================
+   RESET BALL
+========================================= */
+
+function resetBall(direction) {
+
+    ball.x =
+        canvas.width / 2;
+
+    ball.y =
+        canvas.height / 2;
+
+
+    ball.speedX =
+        7 * direction;
+
+
+    ball.speedY =
+        (Math.random() * 6) - 3;
+
+}
+
+
+/* =========================================
+   UPDATE
+========================================= */
+
+function update() {
+
+
+    /* -------------------------
+       PLAYER 1
+    ------------------------- */
+
+    if (keys["w"] || keys["W"]) {
+
+        leftPaddle.y -= paddleSpeed;
+
+    }
+
+    if (keys["s"] || keys["S"]) {
+
+        leftPaddle.y += paddleSpeed;
+
+    }
+
+
+    /* -------------------------
+       PLAYER 2
+    ------------------------- */
+
+    if (keys["ArrowUp"]) {
+
+        rightPaddle.y -= paddleSpeed;
+
+    }
+
+    if (keys["ArrowDown"]) {
+
+        rightPaddle.y += paddleSpeed;
+
+    }
+
+
+    /* -------------------------
+       KEEP PADDLES ON SCREEN
+    ------------------------- */
+
+    leftPaddle.y =
+        Math.max(
+            0,
+            Math.min(
+                canvas.height - paddleHeight,
+                leftPaddle.y
+            )
+        );
+
+
+    rightPaddle.y =
+        Math.max(
+            0,
+            Math.min(
+                canvas.height - paddleHeight,
+                rightPaddle.y
+            )
+        );
+
+
+    /* -------------------------
+       MOVE BALL
+    ------------------------- */
+
+    ball.x += ball.speedX;
+
+    ball.y += ball.speedY;
+
+
+    /* -------------------------
+       TOP / BOTTOM
+    ------------------------- */
+
+    if (
+        ball.y <= 0 ||
+        ball.y + ball.size >= canvas.height
+    ) {
+
+        ball.speedY *= -1;
+
+    }
+
+
+    /* -------------------------
+       LEFT PADDLE
+    ------------------------- */
+
+    if (
+
+        ball.x <=
+        leftPaddle.x + leftPaddle.width &&
+
+        ball.x + ball.size >=
+        leftPaddle.x &&
+
+        ball.y + ball.size >=
+        leftPaddle.y &&
+
+        ball.y <=
+        leftPaddle.y + leftPaddle.height
+
+    ) {
+
+        ball.speedX =
+            Math.abs(ball.speedX);
+
+    }
+
+
+    /* -------------------------
+       RIGHT PADDLE
+    ------------------------- */
+
+    if (
+
+        ball.x + ball.size >=
+        rightPaddle.x &&
+
+        ball.x <=
+        rightPaddle.x + rightPaddle.width &&
+
+        ball.y + ball.size >=
+        rightPaddle.y &&
+
+        ball.y <=
+        rightPaddle.y + rightPaddle.height
+
+    ) {
+
+        ball.speedX =
+            -Math.abs(ball.speedX);
+
+    }
+
+
+    /* -------------------------
+       LEFT PLAYER SCORES
+    ------------------------- */
+
+    if (ball.x < -ball.size) {
+
+        computerScore++;
+
+        computerScoreText.textContent =
+            computerScore;
+
+        resetBall(1);
+
+    }
+
+
+    /* -------------------------
+       RIGHT PLAYER SCORES
+    ------------------------- */
+
+    if (ball.x > canvas.width) {
+
+        playerScore++;
+
+        playerScoreText.textContent =
+            playerScore;
+
+        resetBall(-1);
+
+    }
+
+}
+
+
+/* =========================================
+   DRAW
+========================================= */
+
+function draw() {
+
+
+    /* BACKGROUND */
+
+    ctx.fillStyle = "#111";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /* CENTER LINE */
+
+    ctx.strokeStyle =
+        "rgba(255,255,255,0.25)";
+
+    ctx.lineWidth = 4;
+
+    ctx.setLineDash([15, 20]);
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        canvas.width / 2,
+        0
+    );
+
+    ctx.lineTo(
+        canvas.width / 2,
+        canvas.height
+    );
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+
+    /* LEFT PADDLE */
+
+    ctx.fillStyle = "white";
+
+    ctx.fillRect(
+
+        leftPaddle.x,
+
+        leftPaddle.y,
+
+        leftPaddle.width,
+
+        leftPaddle.height
+
+    );
+
+
+    /* RIGHT PADDLE */
+
+    ctx.fillRect(
+
+        rightPaddle.x,
+
+        rightPaddle.y,
+
+        rightPaddle.width,
+
+        rightPaddle.height
+
+    );
+
+
+    /* BALL */
+
+    ctx.fillRect(
+
+        ball.x,
+
+        ball.y,
+
+        ball.size,
+
+        ball.size
+
+    );
+
+}
+
+
+/* =========================================
+   GAME LOOP
+========================================= */
+
+function gameLoop() {
+
+    update();
+
+    draw();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+gameLoop();
+
+</script>
+
+</body>
+</html>
+```
