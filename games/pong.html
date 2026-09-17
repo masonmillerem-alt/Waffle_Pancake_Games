@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,109 +13,340 @@
     box-sizing: border-box;
 }
 
-body {
+html, body {
     margin: 0;
-
-    width: 100vw;
-    height: 100vh;
-
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-
     background: #111;
-
     font-family: Arial, sans-serif;
-
-    color: white;
 }
 
-
-/* GAME CANVAS */
+/* =========================
+   CANVAS
+========================= */
 
 canvas {
     display: block;
-
     width: 100%;
     height: 100%;
-
     background: #111;
 }
 
 
-/* SCORE */
+/* =========================
+   SCORE
+========================= */
 
 .score {
-    position: absolute;
+    position: fixed;
 
-    top: 20px;
-    left: 0;
+    top: 25px;
+    left: 50%;
 
-    width: 100%;
+    transform: translateX(-50%);
+
+    color: white;
+
+    font-size: 45px;
+    font-weight: bold;
 
     display: flex;
-
-    justify-content: center;
-
-    gap: 100px;
+    gap: 80px;
 
     pointer-events: none;
-
-    font-size: 50px;
-
-    font-weight: bold;
 }
 
 
-/* INSTRUCTIONS */
+/* =========================
+   MENU
+========================= */
 
-.instructions {
-    position: absolute;
+.menu {
+    position: fixed;
 
-    bottom: 15px;
-    left: 0;
+    inset: 0;
 
-    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.78);
+
+    z-index: 10;
+}
+
+.menu-box {
+    width: min(420px, 90%);
+
+    padding: 30px;
+
+    border-radius: 20px;
+
+    background: #222;
+
+    color: white;
 
     text-align: center;
 
-    font-size: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
 
-    opacity: 0.65;
+.menu-box h1 {
+    margin-top: 0;
+    margin-bottom: 25px;
+
+    font-size: 38px;
+}
+
+.menu-box h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+
+/* =========================
+   MODE BUTTONS
+========================= */
+
+.mode-buttons {
+    display: flex;
+    gap: 12px;
+
+    margin-bottom: 25px;
+}
+
+.mode-button {
+    flex: 1;
+
+    padding: 14px 10px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #444;
+
+    color: white;
+
+    font-size: 17px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.mode-button:hover {
+    background: #555;
+}
+
+.mode-button.selected {
+    background: #ff9d1c;
+}
+
+
+/* =========================
+   DIFFICULTY
+========================= */
+
+.difficulty {
+    margin-bottom: 25px;
+}
+
+.difficulty-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.difficulty-button {
+    flex: 1;
+
+    padding: 12px 8px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #444;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.difficulty-button:hover {
+    background: #555;
+}
+
+.difficulty-button.selected {
+    background: #ff9d1c;
+}
+
+
+/* =========================
+   START BUTTON
+========================= */
+
+.start-button {
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #ff9d1c;
+
+    color: white;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.start-button:hover {
+    background: #ffad32;
+}
+
+
+/* =========================
+   INSTRUCTIONS
+========================= */
+
+.instructions {
+    position: fixed;
+
+    bottom: 20px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    color: #aaa;
+
+    font-size: 15px;
+
+    text-align: center;
 
     pointer-events: none;
 }
 
 </style>
-
 </head>
 
 <body>
 
-
 <canvas id="gameCanvas"></canvas>
 
 
+<!-- SCORE -->
+
 <div class="score">
-
     <span id="playerScore">0</span>
+    <span id="opponentScore">0</span>
+</div>
 
-    <span id="computerScore">0</span>
+
+<!-- MENU -->
+
+<div class="menu" id="menu">
+
+    <div class="menu-box">
+
+        <h1>Pong</h1>
+
+        <h2>Game Mode</h2>
+
+        <div class="mode-buttons">
+
+            <button
+                class="mode-button selected"
+                id="singleplayerButton"
+                type="button">
+
+                Singleplayer
+
+            </button>
+
+            <button
+                class="mode-button"
+                id="multiplayerButton"
+                type="button">
+
+                Multiplayer
+
+            </button>
+
+        </div>
+
+
+        <!-- DIFFICULTY -->
+
+        <div
+            class="difficulty"
+            id="difficultySection">
+
+            <h2>Bot Difficulty</h2>
+
+            <div class="difficulty-buttons">
+
+                <button
+                    class="difficulty-button selected"
+                    data-difficulty="easy"
+                    type="button">
+
+                    Easy
+
+                </button>
+
+                <button
+                    class="difficulty-button"
+                    data-difficulty="normal"
+                    type="button">
+
+                    Normal
+
+                </button>
+
+                <button
+                    class="difficulty-button"
+                    data-difficulty="hard"
+                    type="button">
+
+                    Hard
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="start-button"
+            id="startButton"
+            type="button">
+
+            Start Game
+
+        </button>
+
+    </div>
 
 </div>
 
 
-<div class="instructions">
+<!-- INSTRUCTIONS -->
 
-    Player 1: W / S &nbsp;&nbsp; | &nbsp;&nbsp;
-    Player 2: ↑ / ↓
-
+<div class="instructions" id="instructions">
+    W / S to move
 </div>
 
 
 <script>
 
-/* =========================================
+/* =========================
    CANVAS
-========================================= */
+========================= */
 
 const canvas =
     document.getElementById("gameCanvas");
@@ -125,309 +355,460 @@ const ctx =
     canvas.getContext("2d");
 
 
-/* =========================================
-   RESIZE
-========================================= */
-
 function resizeCanvas() {
 
     canvas.width = window.innerWidth;
-
     canvas.height = window.innerHeight;
 
 }
 
 resizeCanvas();
 
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
+window.addEventListener("resize", resizeCanvas);
 
 
-/* =========================================
-   PADDLES
-========================================= */
+/* =========================
+   UI
+========================= */
 
-const paddleWidth = 15;
+const menu =
+    document.getElementById("menu");
 
-const paddleHeight = 110;
+const singleplayerButton =
+    document.getElementById("singleplayerButton");
 
-const paddleSpeed = 8;
+const multiplayerButton =
+    document.getElementById("multiplayerButton");
 
+const difficultySection =
+    document.getElementById("difficultySection");
 
-let leftPaddle = {
+const startButton =
+    document.getElementById("startButton");
 
-    x: 30,
-
-    y: canvas.height / 2 - paddleHeight / 2,
-
-    width: paddleWidth,
-
-    height: paddleHeight
-
-};
-
-
-let rightPaddle = {
-
-    x: canvas.width - 45,
-
-    y: canvas.height / 2 - paddleHeight / 2,
-
-    width: paddleWidth,
-
-    height: paddleHeight
-
-};
-
-
-/* =========================================
-   BALL
-========================================= */
-
-const ballSize = 15;
-
-let ball = {
-
-    x: canvas.width / 2,
-
-    y: canvas.height / 2,
-
-    size: ballSize,
-
-    speedX: 7,
-
-    speedY: 5
-
-};
-
-
-/* =========================================
-   SCORE
-========================================= */
-
-let playerScore = 0;
-
-let computerScore = 0;
-
+const instructions =
+    document.getElementById("instructions");
 
 const playerScoreText =
     document.getElementById("playerScore");
 
-const computerScoreText =
-    document.getElementById("computerScore");
+const opponentScoreText =
+    document.getElementById("opponentScore");
 
 
-/* =========================================
-   KEYBOARD
-========================================= */
+/* =========================
+   GAME SETTINGS
+========================= */
+
+let gameMode = "singleplayer";
+
+let difficulty = "easy";
+
+let gameRunning = false;
+
+
+/* =========================
+   PADDLES
+========================= */
+
+const paddleWidth = 15;
+const paddleHeight = 110;
+
+const paddleMargin = 35;
+
+let player = {
+    x: paddleMargin,
+    y: 0,
+    speed: 7
+};
+
+let opponent = {
+    x: 0,
+    y: 0,
+    speed: 5
+};
+
+
+/* =========================
+   BALL
+========================= */
+
+const ballSize = 14;
+
+/*
+    Slower ball speed.
+    The old version was faster.
+*/
+
+const ballSpeed = 4;
+
+let ball = {
+    x: 0,
+    y: 0,
+    dx: ballSpeed,
+    dy: ballSpeed
+};
+
+
+/* =========================
+   SCORE
+========================= */
+
+let playerScore = 0;
+let opponentScore = 0;
+
+
+/* =========================
+   KEYS
+========================= */
 
 const keys = {};
 
+window.addEventListener("keydown", function(event) {
 
-document.addEventListener(
-    "keydown",
-    event => {
+    keys[event.key] = true;
 
-        keys[event.key] = true;
+});
 
-    }
-);
+window.addEventListener("keyup", function(event) {
 
+    keys[event.key] = false;
 
-document.addEventListener(
-    "keyup",
-    event => {
-
-        keys[event.key] = false;
-
-    }
-);
+});
 
 
-/* =========================================
-   RESET BALL
-========================================= */
+/* =========================
+   MODE SELECTION
+========================= */
 
-function resetBall(direction) {
+singleplayerButton.addEventListener("click", function() {
 
-    ball.x =
-        canvas.width / 2;
+    gameMode = "singleplayer";
 
-    ball.y =
-        canvas.height / 2;
+    singleplayerButton.classList.add("selected");
+    multiplayerButton.classList.remove("selected");
+
+    difficultySection.style.display = "block";
+
+    instructions.textContent =
+        "W / S to move";
+
+});
 
 
-    ball.speedX =
-        7 * direction;
+multiplayerButton.addEventListener("click", function() {
+
+    gameMode = "multiplayer";
+
+    multiplayerButton.classList.add("selected");
+    singleplayerButton.classList.remove("selected");
+
+    difficultySection.style.display = "none";
+
+    instructions.textContent =
+        "Player 1: W / S     |     Player 2: ↑ / ↓";
+
+});
 
 
-    ball.speedY =
-        (Math.random() * 6) - 3;
+/* =========================
+   DIFFICULTY SELECTION
+========================= */
+
+const difficultyButtons =
+    document.querySelectorAll(".difficulty-button");
+
+
+difficultyButtons.forEach(function(button) {
+
+    button.addEventListener("click", function() {
+
+        difficulty =
+            button.dataset.difficulty;
+
+        difficultyButtons.forEach(function(otherButton) {
+
+            otherButton.classList.remove("selected");
+
+        });
+
+        button.classList.add("selected");
+
+    });
+
+});
+
+
+/* =========================
+   START GAME
+========================= */
+
+startButton.addEventListener("click", function() {
+
+    startGame();
+
+});
+
+
+function startGame() {
+
+    playerScore = 0;
+    opponentScore = 0;
+
+    playerScoreText.textContent = "0";
+    opponentScoreText.textContent = "0";
+
+    player.y =
+        canvas.height / 2 - paddleHeight / 2;
+
+    opponent.y =
+        canvas.height / 2 - paddleHeight / 2;
+
+    opponent.x =
+        canvas.width - paddleMargin - paddleWidth;
+
+    resetBall();
+
+    setDifficulty();
+
+    menu.style.display = "none";
+
+    gameRunning = true;
 
 }
 
 
-/* =========================================
+/* =========================
+   DIFFICULTY SETTINGS
+========================= */
+
+function setDifficulty() {
+
+    if (difficulty === "easy") {
+
+        opponent.speed = 3.5;
+
+    }
+
+    else if (difficulty === "normal") {
+
+        opponent.speed = 5;
+
+    }
+
+    else if (difficulty === "hard") {
+
+        opponent.speed = 6.5;
+
+    }
+
+}
+
+
+/* =========================
+   RESET BALL
+========================= */
+
+function resetBall() {
+
+    ball.x =
+        canvas.width / 2 - ballSize / 2;
+
+    ball.y =
+        canvas.height / 2 - ballSize / 2;
+
+    /*
+        Random direction.
+        Speed stays slow.
+    */
+
+    const horizontalDirection =
+        Math.random() < 0.5 ? -1 : 1;
+
+    const verticalDirection =
+        Math.random() < 0.5 ? -1 : 1;
+
+    ball.dx =
+        ballSpeed * horizontalDirection;
+
+    ball.dy =
+        ballSpeed * verticalDirection;
+
+}
+
+
+/* =========================
    UPDATE
-========================================= */
+========================= */
 
 function update() {
 
+    if (!gameRunning) {
+        return;
+    }
 
-    /* -------------------------
-       PLAYER 1
-    ------------------------- */
+
+    /* PLAYER 1 */
 
     if (keys["w"] || keys["W"]) {
 
-        leftPaddle.y -= paddleSpeed;
+        player.y -= player.speed;
 
     }
 
     if (keys["s"] || keys["S"]) {
 
-        leftPaddle.y += paddleSpeed;
+        player.y += player.speed;
 
     }
 
 
-    /* -------------------------
-       PLAYER 2
-    ------------------------- */
+    /* PLAYER 2 / BOT */
 
-    if (keys["ArrowUp"]) {
+    if (gameMode === "multiplayer") {
 
-        rightPaddle.y -= paddleSpeed;
+        if (keys["ArrowUp"]) {
+
+            opponent.y -= opponent.speed;
+
+        }
+
+        if (keys["ArrowDown"]) {
+
+            opponent.y += opponent.speed;
+
+        }
 
     }
 
-    if (keys["ArrowDown"]) {
+    else {
 
-        rightPaddle.y += paddleSpeed;
+        updateBot();
 
     }
 
 
-    /* -------------------------
-       KEEP PADDLES ON SCREEN
-    ------------------------- */
+    /* Keep paddles inside screen */
 
-    leftPaddle.y =
+    player.y =
         Math.max(
             0,
             Math.min(
                 canvas.height - paddleHeight,
-                leftPaddle.y
+                player.y
             )
         );
 
-
-    rightPaddle.y =
+    opponent.y =
         Math.max(
             0,
             Math.min(
                 canvas.height - paddleHeight,
-                rightPaddle.y
+                opponent.y
             )
         );
 
 
-    /* -------------------------
-       MOVE BALL
-    ------------------------- */
+    /* BALL */
 
-    ball.x += ball.speedX;
-
-    ball.y += ball.speedY;
+    ball.x += ball.dx;
+    ball.y += ball.dy;
 
 
-    /* -------------------------
-       TOP / BOTTOM
-    ------------------------- */
+    /* TOP / BOTTOM */
 
-    if (
-        ball.y <= 0 ||
-        ball.y + ball.size >= canvas.height
-    ) {
+    if (ball.y <= 0) {
 
-        ball.speedY *= -1;
+        ball.y = 0;
+        ball.dy *= -1;
+
+    }
+
+    if (ball.y + ballSize >= canvas.height) {
+
+        ball.y =
+            canvas.height - ballSize;
+
+        ball.dy *= -1;
 
     }
 
 
-    /* -------------------------
-       LEFT PADDLE
-    ------------------------- */
+    /* PLAYER PADDLE */
 
     if (
 
         ball.x <=
-        leftPaddle.x + leftPaddle.width &&
+            player.x + paddleWidth &&
 
-        ball.x + ball.size >=
-        leftPaddle.x &&
+        ball.x + ballSize >=
+            player.x &&
 
-        ball.y + ball.size >=
-        leftPaddle.y &&
+        ball.y + ballSize >=
+            player.y &&
 
         ball.y <=
-        leftPaddle.y + leftPaddle.height
+            player.y + paddleHeight &&
+
+        ball.dx < 0
 
     ) {
 
-        ball.speedX =
-            Math.abs(ball.speedX);
+        ball.x =
+            player.x + paddleWidth;
+
+        ball.dx *= -1;
+
+        addPaddleAngle(player);
 
     }
 
 
-    /* -------------------------
-       RIGHT PADDLE
-    ------------------------- */
+    /* OPPONENT PADDLE */
 
     if (
 
-        ball.x + ball.size >=
-        rightPaddle.x &&
+        ball.x + ballSize >=
+            opponent.x &&
 
         ball.x <=
-        rightPaddle.x + rightPaddle.width &&
+            opponent.x + paddleWidth &&
 
-        ball.y + ball.size >=
-        rightPaddle.y &&
+        ball.y + ballSize >=
+            opponent.y &&
 
         ball.y <=
-        rightPaddle.y + rightPaddle.height
+            opponent.y + paddleHeight &&
+
+        ball.dx > 0
 
     ) {
 
-        ball.speedX =
-            -Math.abs(ball.speedX);
+        ball.x =
+            opponent.x - ballSize;
+
+        ball.dx *= -1;
+
+        addPaddleAngle(opponent);
 
     }
 
 
-    /* -------------------------
-       LEFT PLAYER SCORES
-    ------------------------- */
+    /* PLAYER MISSES */
 
-    if (ball.x < -ball.size) {
+    if (ball.x < -ballSize) {
 
-        computerScore++;
+        opponentScore++;
 
-        computerScoreText.textContent =
-            computerScore;
+        opponentScoreText.textContent =
+            opponentScore;
 
-        resetBall(1);
+        resetBall();
 
     }
 
 
-    /* -------------------------
-       RIGHT PLAYER SCORES
-    ------------------------- */
+    /* OPPONENT MISSES */
 
     if (ball.x > canvas.width) {
 
@@ -436,21 +817,119 @@ function update() {
         playerScoreText.textContent =
             playerScore;
 
-        resetBall(-1);
+        resetBall();
 
     }
 
 }
 
 
-/* =========================================
+/* =========================
+   BALL ANGLE
+========================= */
+
+function addPaddleAngle(paddle) {
+
+    const paddleCenter =
+        paddle.y + paddleHeight / 2;
+
+    const ballCenter =
+        ball.y + ballSize / 2;
+
+    const difference =
+        ballCenter - paddleCenter;
+
+    const normalized =
+        difference / (paddleHeight / 2);
+
+    /*
+        Keep the ball slow while
+        changing its direction.
+    */
+
+    ball.dy =
+        normalized * ballSpeed;
+
+    /*
+        Prevent completely horizontal
+        movement.
+    */
+
+    if (Math.abs(ball.dy) < 1) {
+
+        ball.dy =
+            ball.dy < 0 ? -1 : 1;
+
+    }
+
+}
+
+
+/* =========================
+   BOT
+========================= */
+
+function updateBot() {
+
+    /*
+        The bot follows the ball,
+        but its reaction depends
+        on the difficulty.
+    */
+
+    let target =
+        ball.y - paddleHeight / 2;
+
+    let reactionSpeed =
+        opponent.speed;
+
+
+    if (difficulty === "easy") {
+
+        /*
+            Easy bot reacts slowly
+            and has a little delay.
+        */
+
+        target += 45;
+
+    }
+
+    else if (difficulty === "normal") {
+
+        target += 10;
+
+    }
+
+    else if (difficulty === "hard") {
+
+        target -= 5;
+
+    }
+
+
+    if (opponent.y < target) {
+
+        opponent.y += reactionSpeed;
+
+    }
+
+    else if (opponent.y > target) {
+
+        opponent.y -= reactionSpeed;
+
+    }
+
+}
+
+
+/* =========================
    DRAW
-========================================= */
+========================= */
 
 function draw() {
 
-
-    /* BACKGROUND */
+    /* Background */
 
     ctx.fillStyle = "#111";
 
@@ -462,14 +941,13 @@ function draw() {
     );
 
 
-    /* CENTER LINE */
+    /* Center line */
 
-    ctx.strokeStyle =
-        "rgba(255,255,255,0.25)";
+    ctx.strokeStyle = "#444";
 
     ctx.lineWidth = 4;
 
-    ctx.setLineDash([15, 20]);
+    ctx.setLineDash([15, 15]);
 
     ctx.beginPath();
 
@@ -488,58 +966,43 @@ function draw() {
     ctx.setLineDash([]);
 
 
-    /* LEFT PADDLE */
+    /* Player paddle */
 
     ctx.fillStyle = "white";
 
     ctx.fillRect(
-
-        leftPaddle.x,
-
-        leftPaddle.y,
-
-        leftPaddle.width,
-
-        leftPaddle.height
-
+        player.x,
+        player.y,
+        paddleWidth,
+        paddleHeight
     );
 
 
-    /* RIGHT PADDLE */
+    /* Opponent paddle */
 
     ctx.fillRect(
-
-        rightPaddle.x,
-
-        rightPaddle.y,
-
-        rightPaddle.width,
-
-        rightPaddle.height
-
+        opponent.x,
+        opponent.y,
+        paddleWidth,
+        paddleHeight
     );
 
 
-    /* BALL */
+    /* Ball */
 
     ctx.fillRect(
-
         ball.x,
-
         ball.y,
-
-        ball.size,
-
-        ball.size
-
+        ballSize,
+        ballSize
     );
 
 }
 
 
-/* =========================================
+/* =========================
    GAME LOOP
-========================================= */
+========================= */
 
 function gameLoop() {
 
@@ -551,10 +1014,6 @@ function gameLoop() {
 
 }
 
-
-/* =========================================
-   START
-========================================= */
 
 gameLoop();
 
