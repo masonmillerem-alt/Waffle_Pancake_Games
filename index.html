@@ -7,7 +7,6 @@
 
 <title>Waffle_Pancake_Games</title>
 
-<!-- Fredoka Font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +22,6 @@ body {
     font-family: "Fredoka", sans-serif;
     color: white;
 
-    /* Orange waffle-style background */
     background-color: #f59b23;
 
     background-image:
@@ -33,8 +31,13 @@ body {
         linear-gradient(-45deg, transparent 75%, rgba(180, 90, 10, 0.15) 75%);
 
     background-size: 50px 50px;
-    background-position: 0 0, 0 25px, 25px -25px, -25px 0px;
+    background-position:
+        0 0,
+        0 25px,
+        25px -25px,
+        -25px 0px;
 }
+
 
 /* =========================
    TOP BAR
@@ -46,6 +49,7 @@ body {
     z-index: 1000;
 
     width: 100%;
+
     padding: 18px 25px;
 
     background: linear-gradient(
@@ -54,19 +58,23 @@ body {
         #ff9d1c
     );
 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    box-shadow:
+        0 5px 15px rgba(0,0,0,0.25);
 }
 
 .logo {
     margin: 0;
 
     font-size: 30px;
+
     font-weight: 700;
 
     color: white;
 
-    text-shadow: 2px 3px 0 rgba(150, 70, 0, 0.25);
+    text-shadow:
+        2px 3px 0 rgba(150, 70, 0, 0.25);
 }
+
 
 /* =========================
    MAIN CONTENT
@@ -74,7 +82,9 @@ body {
 
 .container {
     width: min(1400px, 94%);
+
     margin: auto;
+
     padding: 35px 0 70px;
 }
 
@@ -84,10 +94,13 @@ body {
 
 .category-title {
     font-size: 30px;
+
     margin-bottom: 18px;
 
-    text-shadow: 2px 3px 0 rgba(120, 60, 0, 0.25);
+    text-shadow:
+        2px 3px 0 rgba(120, 60, 0, 0.25);
 }
+
 
 /* =========================
    GAME GRID
@@ -102,12 +115,14 @@ body {
     gap: 20px;
 }
 
+
 /* =========================
    GAME CARD
 ========================= */
 
 .game-card {
     border: none;
+
     cursor: pointer;
 
     min-height: 190px;
@@ -139,11 +154,13 @@ body {
 
 .game-icon {
     font-size: 60px;
+
     margin-bottom: 10px;
 }
 
 .game-name {
     font-size: 23px;
+
     font-weight: 600;
 }
 
@@ -154,6 +171,7 @@ body {
 
     color: #8a5b35;
 }
+
 
 /* =========================
    GAME SCREEN
@@ -177,6 +195,7 @@ body {
     display: flex;
 }
 
+
 /* =========================
    GAME HEADER
 ========================= */
@@ -187,6 +206,7 @@ body {
     flex-shrink: 0;
 
     display: flex;
+
     align-items: center;
 
     padding: 0 20px;
@@ -197,16 +217,19 @@ body {
         #ff9d1c
     );
 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.35);
 }
 
 .game-title {
     display: flex;
+
     align-items: center;
 
     gap: 10px;
 
     font-size: 22px;
+
     font-weight: 600;
 }
 
@@ -214,6 +237,7 @@ body {
     margin-left: auto;
 
     display: flex;
+
     gap: 10px;
 }
 
@@ -231,16 +255,19 @@ body {
     font-family: "Fredoka", sans-serif;
 
     font-size: 15px;
+
     font-weight: 600;
 
     cursor: pointer;
 
-    transition: transform 0.15s ease;
+    transition:
+        transform 0.15s ease;
 }
 
 .game-button:hover {
     transform: scale(1.05);
 }
+
 
 /* =========================
    GAME AREA
@@ -258,6 +285,7 @@ body {
 
 .game-frame {
     width: 100%;
+
     height: 100%;
 
     border: none;
@@ -269,7 +297,10 @@ body {
     display: block;
 }
 
-/* Placeholder */
+
+/* =========================
+   PLACEHOLDER
+========================= */
 
 .game-placeholder {
     position: absolute;
@@ -279,6 +310,7 @@ body {
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     flex-direction: column;
@@ -288,12 +320,14 @@ body {
 
 .game-placeholder h2 {
     font-size: 35px;
+
     margin-bottom: 5px;
 }
 
 .game-placeholder p {
     color: #bbb;
 }
+
 
 /* =========================
    MOBILE
@@ -316,6 +350,7 @@ body {
 
     .game-card {
         min-height: 160px;
+
         padding: 15px;
     }
 
@@ -332,14 +367,20 @@ body {
 </style>
 </head>
 
+
 <body>
 
+
 <!-- =========================
-     WEBSITE TOP BAR
+     TOP BAR
 ========================= -->
 
 <header class="top-bar">
-    <h1 class="logo">Waffle_Pancake_Games</h1>
+
+    <h1 class="logo">
+        Waffle_Pancake_Games
+    </h1>
+
 </header>
 
 
@@ -349,36 +390,48 @@ body {
 
 <main class="container">
 
+
     <!-- ARCADE -->
 
     <section class="category">
 
-        <h2 class="category-title">🕹️ Arcade</h2>
+        <h2 class="category-title">
+            🕹️ Arcade
+        </h2>
 
         <div class="game-grid">
+
+
+            <!-- PONG -->
 
             <button
                 class="game-card"
                 onclick="openGame('Pong', '🏓', 'games/pong.html')">
 
-                <div class="game-icon">🏓</div>
+                <div class="game-icon">
+                    🏓
+                </div>
 
                 <div class="game-name">
                     Pong
                 </div>
 
                 <div class="game-description">
-                    Classic 2-player paddle action.
+                    Classic paddle action.
                 </div>
 
             </button>
 
 
+            <!-- SNAKE -->
+
             <button
                 class="game-card"
                 onclick="openGame('Snake', '🐍', '')">
 
-                <div class="game-icon">🐍</div>
+                <div class="game-icon">
+                    🐍
+                </div>
 
                 <div class="game-name">
                     Snake
@@ -391,28 +444,36 @@ body {
             </button>
 
 
+            <!-- TETRIS -->
+
             <button
                 class="game-card"
                 onclick="openGame('Tetris', '🧱', '')">
 
-                <div class="game-icon">🧱</div>
+                <div class="game-icon">
+                    🧱
+                </div>
 
                 <div class="game-name">
                     Tetris
                 </div>
 
                 <div class="game-description">
-                    Stack falling blocks and clear lines.
+                    Stack blocks and clear lines.
                 </div>
 
             </button>
 
 
+            <!-- BREAKOUT -->
+
             <button
                 class="game-card"
-                onclick="openGame('Breakout', '🧱', '')">
+                onclick="openGame('Breakout', '🎾', '')">
 
-                <div class="game-icon">🎾</div>
+                <div class="game-icon">
+                    🎾
+                </div>
 
                 <div class="game-name">
                     Breakout
@@ -424,6 +485,7 @@ body {
 
             </button>
 
+
         </div>
 
     </section>
@@ -433,15 +495,22 @@ body {
 
     <section class="category">
 
-        <h2 class="category-title">🧩 Puzzle</h2>
+        <h2 class="category-title">
+            🧩 Puzzle
+        </h2>
 
         <div class="game-grid">
+
+
+            <!-- 2048 -->
 
             <button
                 class="game-card"
                 onclick="openGame('2048', '🔢', '')">
 
-                <div class="game-icon">🔢</div>
+                <div class="game-icon">
+                    🔢
+                </div>
 
                 <div class="game-name">
                     2048
@@ -453,38 +522,11 @@ body {
 
             </button>
 
-        </div>
-
-    </section>
-
-
-    <!-- MULTIPLAYER -->
-
-    <section class="category">
-
-        <h2 class="category-title">👥 Multiplayer</h2>
-
-        <div class="game-grid">
-
-            <button
-                class="game-card"
-                onclick="openGame('2 Player Pong', '🏓', 'games/pong.html')">
-
-                <div class="game-icon">🏓</div>
-
-                <div class="game-name">
-                    2 Player Pong
-                </div>
-
-                <div class="game-description">
-                    Battle another player in classic Pong.
-                </div>
-
-            </button>
 
         </div>
 
     </section>
+
 
 </main>
 
@@ -495,11 +537,14 @@ body {
 
 <div id="gameScreen" class="game-screen">
 
+
     <div class="game-header">
 
         <div class="game-title">
 
-            <span id="gameIcon">🎮</span>
+            <span id="gameIcon">
+                🎮
+            </span>
 
             <span id="gameTitle">
                 Game
@@ -532,7 +577,10 @@ body {
     </div>
 
 
-    <div id="gameContainer" class="game-container">
+    <div
+        id="gameContainer"
+        class="game-container">
+
 
         <div
             id="gamePlaceholder"
@@ -556,12 +604,18 @@ body {
             allowfullscreen>
         </iframe>
 
+
     </div>
 
 </div>
 
 
 <script>
+
+
+/* =========================
+   ELEMENTS
+========================= */
 
 const gameScreen =
     document.getElementById("gameScreen");
@@ -610,7 +664,9 @@ function openGame(name, icon, gameURL) {
 
         gameFrame.classList.add("loaded");
 
-    } else {
+    }
+
+    else {
 
         gamePlaceholder.style.display = "flex";
 
@@ -648,7 +704,9 @@ function toggleFullscreen() {
 
         gameContainer.requestFullscreen();
 
-    } else {
+    }
+
+    else {
 
         document.exitFullscreen();
 
@@ -657,6 +715,7 @@ function toggleFullscreen() {
 }
 
 </script>
+
 
 </body>
 </html>
