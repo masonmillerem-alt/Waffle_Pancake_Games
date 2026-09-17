@@ -7,56 +7,38 @@
 
 <title>Waffle_Pancake_Games</title>
 
+<!-- Fredoka Font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
 }
 
 body {
+    margin: 0;
     font-family: "Fredoka", sans-serif;
     color: white;
-    min-height: 100vh;
 
     /* Orange waffle-style background */
-    background-color: #e88928;
+    background-color: #f59b23;
 
     background-image:
-        linear-gradient(30deg, #d9791f 12%, transparent 12.5%, transparent 87%, #d9791f 87.5%, #d9791f),
-        linear-gradient(150deg, #d9791f 12%, transparent 12.5%, transparent 87%, #d9791f 87.5%, #d9791f),
-        linear-gradient(30deg, #d9791f 12%, transparent 12.5%, transparent 87%, #d9791f 87.5%, #d9791f),
-        linear-gradient(150deg, #d9791f 12%, transparent 12.5%, transparent 87%, #d9791f 87.5%, #d9791f),
-        linear-gradient(60deg, #c96d1c 25%, transparent 25.5%, transparent 75%, #c96d1c 75%);
+        linear-gradient(45deg, rgba(180, 90, 10, 0.15) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(180, 90, 10, 0.15) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(180, 90, 10, 0.15) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(180, 90, 10, 0.15) 75%);
 
-    background-size: 80px 140px;
-
-    background-position:
-        0 0,
-        0 0,
-        40px 70px,
-        40px 70px,
-        0 0;
-
-    background-attachment: fixed;
+    background-size: 50px 50px;
+    background-position: 0 0, 0 25px, 25px -25px, -25px 0px;
 }
 
-button {
-    font-family: inherit;
-}
-
-
-/* =========================================
+/* =========================
    TOP BAR
-========================================= */
+========================= */
 
 .top-bar {
     position: sticky;
@@ -64,143 +46,84 @@ button {
     z-index: 1000;
 
     width: 100%;
-    min-height: 75px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 18px 25px;
 
     background: linear-gradient(
-        180deg,
-        #ffbf32,
-        #f59b20
+        90deg,
+        #ffb52e,
+        #ff9d1c
     );
 
-    border-bottom: 5px solid #d97918;
-
-    box-shadow:
-        0 5px 15px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
 }
 
 .logo {
-    font-size: clamp(25px, 4vw, 42px);
+    margin: 0;
+
+    font-size: 30px;
     font-weight: 700;
 
     color: white;
 
-    text-shadow:
-        0 3px 0 #d47b18,
-        0 5px 8px rgba(0,0,0,0.2);
-
-    letter-spacing: 1px;
-
-    user-select: none;
+    text-shadow: 2px 3px 0 rgba(150, 70, 0, 0.25);
 }
 
+/* =========================
+   MAIN CONTENT
+========================= */
 
-/* =========================================
-   MAIN MENU
-========================================= */
-
-#mainMenu {
-    width: 100%;
-    max-width: 1500px;
-
+.container {
+    width: min(1400px, 94%);
     margin: auto;
-
-    padding: 45px 30px 80px;
+    padding: 35px 0 70px;
 }
-
-.welcome {
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-.welcome h1 {
-    font-size: clamp(38px, 6vw, 68px);
-
-    text-shadow:
-        0 4px 0 #b95d12,
-        0 7px 12px rgba(0,0,0,0.2);
-}
-
-.welcome p {
-    margin-top: 12px;
-
-    font-size: 21px;
-
-    opacity: 0.92;
-}
-
-
-/* =========================================
-   CATEGORY
-========================================= */
 
 .category {
-    margin-bottom: 60px;
+    margin-bottom: 45px;
 }
 
 .category-title {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    font-size: 30px;
+    margin-bottom: 18px;
 
-    margin-bottom: 22px;
-
-    font-size: 34px;
-
-    text-shadow:
-        0 3px 0 #b95d12;
+    text-shadow: 2px 3px 0 rgba(120, 60, 0, 0.25);
 }
 
-.category-title::after {
-    content: "";
-
-    height: 4px;
-
-    flex: 1;
-
-    background: rgba(255,255,255,0.35);
-
-    border-radius: 10px;
-}
-
-
-/* =========================================
+/* =========================
    GAME GRID
-========================================= */
+========================= */
 
 .game-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(auto-fill, minmax(220px, 1fr));
+        repeat(auto-fill, minmax(210px, 1fr));
 
-    gap: 22px;
+    gap: 20px;
 }
 
-
-/* =========================================
+/* =========================
    GAME CARD
-========================================= */
+========================= */
 
 .game-card {
-    position: relative;
-
     border: none;
-
-    border-radius: 18px;
-
-    overflow: hidden;
-
-    background: #fff3d0;
-
     cursor: pointer;
 
+    min-height: 190px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.95);
+
+    color: #4d2b12;
+
+    padding: 20px;
+
+    font-family: "Fredoka", sans-serif;
+
     box-shadow:
-        0 8px 0 #b95f18,
-        0 12px 20px rgba(0,0,0,0.25);
+        0 8px 18px rgba(120, 60, 0, 0.25);
 
     transition:
         transform 0.18s ease,
@@ -211,234 +134,142 @@ button {
     transform: translateY(-7px) scale(1.02);
 
     box-shadow:
-        0 14px 0 #b95f18,
-        0 20px 25px rgba(0,0,0,0.3);
+        0 14px 25px rgba(100, 50, 0, 0.3);
 }
 
-.game-card:active {
-    transform: translateY(2px);
-
-    box-shadow:
-        0 4px 0 #b95f18,
-        0 8px 12px rgba(0,0,0,0.25);
-}
-
-
-/* =========================================
-   GAME IMAGE
-========================================= */
-
-.game-image {
-    height: 150px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-
-    font-size: 65px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ffd76a,
-            #f29b25
-        );
-
-    border-bottom: 5px solid #e2851e;
-}
-
-.game-image img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    display: block;
-}
-
-
-/* =========================================
-   GAME INFO
-========================================= */
-
-.game-info {
-    padding: 15px;
-
-    color: #7c4014;
-
-    text-align: left;
+.game-icon {
+    font-size: 60px;
+    margin-bottom: 10px;
 }
 
 .game-name {
-    font-size: 22px;
-    font-weight: 700;
-}
-
-.game-description {
-    font-size: 15px;
-
-    margin-top: 5px;
-
-    color: #9a5a24;
-
-    line-height: 1.3;
-
-    min-height: 39px;
-}
-
-.play-label {
-    display: inline-block;
-
-    margin-top: 12px;
-
-    padding: 6px 13px;
-
-    border-radius: 20px;
-
-    background: #f39a20;
-
-    color: white;
-
-    font-size: 14px;
-
+    font-size: 23px;
     font-weight: 600;
 }
 
+.game-description {
+    margin-top: 7px;
 
-/* =========================================
+    font-size: 14px;
+
+    color: #8a5b35;
+}
+
+/* =========================
    GAME SCREEN
-========================================= */
+========================= */
 
-#gameScreen {
-    display: none;
-
+.game-screen {
     position: fixed;
+
     inset: 0;
 
     z-index: 2000;
 
-    background: #16100b;
-}
-
-#gameScreen.active {
-    display: flex;
+    display: none;
 
     flex-direction: column;
+
+    background: #111;
 }
 
+.game-screen.active {
+    display: flex;
+}
 
-/* =========================================
-   GAME TOP BAR
-========================================= */
+/* =========================
+   GAME HEADER
+========================= */
 
-.game-topbar {
+.game-header {
     height: 65px;
 
     flex-shrink: 0;
 
     display: flex;
-
     align-items: center;
 
-    justify-content: space-between;
+    padding: 0 20px;
 
-    gap: 15px;
+    background: linear-gradient(
+        90deg,
+        #ffb52e,
+        #ff9d1c
+    );
 
-    padding: 0 15px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #ffb72d,
-            #ed8e1d
-        );
-
-    border-bottom: 4px solid #c96d18;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
 }
 
 .game-title {
-    font-size: 25px;
+    display: flex;
+    align-items: center;
 
-    font-weight: 700;
+    gap: 10px;
 
-    text-shadow:
-        0 2px 0 #b45d15;
+    font-size: 22px;
+    font-weight: 600;
 }
 
 .game-controls {
-    display: flex;
+    margin-left: auto;
 
+    display: flex;
     gap: 10px;
 }
 
-.control-button {
+.game-button {
     border: none;
 
-    padding: 10px 16px;
+    padding: 10px 17px;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
-    color: white;
+    background: white;
 
-    background: #c96c17;
+    color: #7a4218;
 
-    font-size: 16px;
+    font-family: "Fredoka", sans-serif;
 
+    font-size: 15px;
     font-weight: 600;
 
     cursor: pointer;
 
-    box-shadow:
-        0 4px 0 #914b12;
-
-    transition: 0.15s;
+    transition: transform 0.15s ease;
 }
 
-.control-button:hover {
-    background: #b75e12;
-
-    transform: translateY(-2px);
+.game-button:hover {
+    transform: scale(1.05);
 }
 
-.control-button:active {
-    transform: translateY(2px);
-
-    box-shadow:
-        0 2px 0 #914b12;
-}
-
-.exit-button {
-    background: #d94c35;
-
-    box-shadow:
-        0 4px 0 #963323;
-}
-
-.exit-button:hover {
-    background: #c83e29;
-}
-
-
-/* =========================================
+/* =========================
    GAME AREA
-========================================= */
+========================= */
 
-#gameContainer {
-    position: relative;
-
+.game-container {
     flex: 1;
 
-    min-height: 0;
+    position: relative;
 
-    background:
-        radial-gradient(
-            circle at center,
-            #3b281a,
-            #120d09
-        );
+    overflow: hidden;
+
+    background: #111;
 }
+
+.game-frame {
+    width: 100%;
+    height: 100%;
+
+    border: none;
+
+    display: none;
+}
+
+.game-frame.loaded {
+    display: block;
+}
+
+/* Placeholder */
 
 .game-placeholder {
     position: absolute;
@@ -447,373 +278,148 @@ button {
 
     display: flex;
 
-    flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
 
+    flex-direction: column;
+
     text-align: center;
-
-    padding: 30px;
-}
-
-.game-placeholder .big-icon {
-    font-size: 100px;
-
-    margin-bottom: 20px;
 }
 
 .game-placeholder h2 {
-    font-size: 40px;
-
-    margin-bottom: 10px;
+    font-size: 35px;
+    margin-bottom: 5px;
 }
 
 .game-placeholder p {
-    max-width: 600px;
-
-    font-size: 18px;
-
-    line-height: 1.5;
-
-    opacity: 0.75;
+    color: #bbb;
 }
 
-.coming-soon {
-    margin-top: 20px;
-
-    padding: 10px 20px;
-
-    border-radius: 30px;
-
-    background: #f5a126;
-
-    font-weight: 600;
-}
-
-
-/* =========================================
-   ACTUAL GAME IFRAME
-========================================= */
-
-#gameFrame {
-    display: none;
-
-    width: 100%;
-    height: 100%;
-
-    border: none;
-}
-
-#gameFrame.loaded {
-    display: block;
-}
-
-
-/* =========================================
-   FOOTER
-========================================= */
-
-footer {
-    text-align: center;
-
-    padding: 35px;
-
-    background:
-        rgba(110, 48, 10, 0.45);
-
-    font-size: 16px;
-}
-
-
-/* =========================================
+/* =========================
    MOBILE
-========================================= */
+========================= */
 
 @media (max-width: 600px) {
 
-    .top-bar {
-        min-height: 65px;
+    .logo {
+        font-size: 23px;
     }
 
-    #mainMenu {
-        padding: 30px 15px 60px;
+    .category-title {
+        font-size: 25px;
     }
 
     .game-grid {
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 14px;
+            repeat(2, 1fr);
     }
 
-    .game-image {
-        height: 105px;
-
-        font-size: 50px;
+    .game-card {
+        min-height: 160px;
+        padding: 15px;
     }
 
-    .game-info {
-        padding: 10px;
+    .game-icon {
+        font-size: 45px;
     }
 
     .game-name {
-        font-size: 18px;
+        font-size: 19px;
     }
 
-    .game-description {
-        font-size: 13px;
-
-        min-height: 34px;
-    }
-
-    .category-title {
-        font-size: 27px;
-    }
-
-    .game-topbar {
-        height: 60px;
-    }
-
-    .game-title {
-        font-size: 18px;
-    }
-
-    .control-button {
-        padding: 8px 10px;
-
-        font-size: 13px;
-    }
 }
+
 </style>
 </head>
 
-
 <body>
 
-
-<!-- =========================================
-     WEBSITE HEADER
-========================================= -->
+<!-- =========================
+     WEBSITE TOP BAR
+========================= -->
 
 <header class="top-bar">
-
-    <div class="logo">
-        Waffle_Pancake_Games
-    </div>
-
+    <h1 class="logo">Waffle_Pancake_Games</h1>
 </header>
 
 
+<!-- =========================
+     MAIN GAME MENU
+========================= -->
 
-<!-- =========================================
-     MAIN MENU
-========================================= -->
+<main class="container">
 
-<main id="mainMenu">
-
-    <section class="welcome">
-
-        <h1>
-            🎮 Waffle_Pancake_Games 🎮
-        </h1>
-
-        <p>
-            A bunch of games. One place. Have fun!
-        </p>
-
-    </section>
-
-
-
-    <!-- =====================================
-         ARCADE
-    ====================================== -->
+    <!-- ARCADE -->
 
     <section class="category">
 
-        <h2 class="category-title">
-            🕹️ Arcade
-        </h2>
+        <h2 class="category-title">🕹️ Arcade</h2>
 
         <div class="game-grid">
 
-            <button class="game-card"
-                onclick="openGame('Pong', '🏓', '')">
+            <button
+                class="game-card"
+                onclick="openGame('Pong', '🏓', 'games/pong.html')">
 
-                <div class="game-image">🏓</div>
+                <div class="game-icon">🏓</div>
 
-                <div class="game-info">
-                    <div class="game-name">Pong</div>
+                <div class="game-name">
+                    Pong
+                </div>
 
-                    <div class="game-description">
-                        The classic paddle battle.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
+                <div class="game-description">
+                    Classic 2-player paddle action.
                 </div>
 
             </button>
 
 
-            <button class="game-card"
+            <button
+                class="game-card"
                 onclick="openGame('Snake', '🐍', '')">
 
-                <div class="game-image">🐍</div>
+                <div class="game-icon">🐍</div>
 
-                <div class="game-info">
-                    <div class="game-name">Snake</div>
+                <div class="game-name">
+                    Snake
+                </div>
 
-                    <div class="game-description">
-                        Eat, grow, and don't hit yourself.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
+                <div class="game-description">
+                    Eat, grow, and don't hit yourself.
                 </div>
 
             </button>
 
 
-            <button class="game-card"
+            <button
+                class="game-card"
                 onclick="openGame('Tetris', '🧱', '')">
 
-                <div class="game-image">🧱</div>
+                <div class="game-icon">🧱</div>
 
-                <div class="game-info">
-                    <div class="game-name">Tetris</div>
+                <div class="game-name">
+                    Tetris
+                </div>
 
-                    <div class="game-description">
-                        Stack blocks and clear lines.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
+                <div class="game-description">
+                    Stack falling blocks and clear lines.
                 </div>
 
             </button>
 
 
-            <button class="game-card"
+            <button
+                class="game-card"
                 onclick="openGame('Breakout', '🧱', '')">
 
-                <div class="game-image">💥</div>
+                <div class="game-icon">🎾</div>
 
-                <div class="game-info">
-                    <div class="game-name">Breakout</div>
-
-                    <div class="game-description">
-                        Destroy every brick.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
+                <div class="game-name">
+                    Breakout
                 </div>
 
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Space Invaders', '👾', '')">
-
-                <div class="game-image">👾</div>
-
-                <div class="game-info">
-                    <div class="game-name">Space Invaders</div>
-
-                    <div class="game-description">
-                        Defend Earth from the invasion.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
-                </div>
-
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Asteroids', '☄️', '')">
-
-                <div class="game-image">☄️</div>
-
-                <div class="game-info">
-                    <div class="game-name">Asteroids</div>
-
-                    <div class="game-description">
-                        Blast asteroids in deep space.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
-                </div>
-
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Flappy', '🐦', '')">
-
-                <div class="game-image">🐦</div>
-
-                <div class="game-info">
-                    <div class="game-name">Flappy</div>
-
-                    <div class="game-description">
-                        Fly through the obstacles.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
-                </div>
-
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Doodle Jump', '⬆️', '')">
-
-                <div class="game-image">⬆️</div>
-
-                <div class="game-info">
-                    <div class="game-name">Doodle Jump</div>
-
-                    <div class="game-description">
-                        Keep jumping higher and higher.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
-                </div>
-
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Frogger', '🐸', '')">
-
-                <div class="game-image">🐸</div>
-
-                <div class="game-info">
-                    <div class="game-name">Frogger</div>
-
-                    <div class="game-description">
-                        Cross the road without getting hit.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
-                </div>
-
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Pac Maze', '👻', '')">
-
-                <div class="game-image">👻</div>
-
-                <div class="game-info">
-                    <div class="game-name">Pac Maze</div>
-
-                    <div class="game-description">
-                        Navigate the maze and collect points.
-                    </div>
-
-                    <span class="play-label">PLAY</span>
+                <div class="game-description">
+                    Break bricks with a bouncing ball.
                 </div>
 
             </button>
@@ -823,126 +429,28 @@ footer {
     </section>
 
 
-
-    <!-- =====================================
-         PUZZLE
-    ====================================== -->
+    <!-- PUZZLE -->
 
     <section class="category">
 
-        <h2 class="category-title">
-            🧠 Puzzle
-        </h2>
+        <h2 class="category-title">🧩 Puzzle</h2>
 
         <div class="game-grid">
 
-            <button class="game-card"
+            <button
+                class="game-card"
                 onclick="openGame('2048', '🔢', '')">
-                <div class="game-image">🔢</div>
-                <div class="game-info">
-                    <div class="game-name">2048</div>
-                    <div class="game-description">Combine numbers to reach 2048.</div>
-                    <span class="play-label">PLAY</span>
+
+                <div class="game-icon">🔢</div>
+
+                <div class="game-name">
+                    2048
                 </div>
-            </button>
 
-
-            <button class="game-card"
-                onclick="openGame('Sudoku', '🔢', '')">
-                <div class="game-image">🔢</div>
-                <div class="game-info">
-                    <div class="game-name">Sudoku</div>
-                    <div class="game-description">Fill the grid without repeating numbers.</div>
-                    <span class="play-label">PLAY</span>
+                <div class="game-description">
+                    Combine numbers to reach 2048.
                 </div>
-            </button>
 
-
-            <button class="game-card"
-                onclick="openGame('Mines', '💣', '')">
-                <div class="game-image">💣</div>
-                <div class="game-info">
-                    <div class="game-name">Mines</div>
-                    <div class="game-description">Find the safe squares.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Memory Match', '🧠', '')">
-                <div class="game-image">🧠</div>
-                <div class="game-info">
-                    <div class="game-name">Memory Match</div>
-                    <div class="game-description">Match all the hidden pairs.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Connect Four', '🔴', '')">
-                <div class="game-image">🔴</div>
-                <div class="game-info">
-                    <div class="game-name">Connect Four</div>
-                    <div class="game-description">Connect four pieces in a row.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Tic Tac Toe', '❌', '')">
-                <div class="game-image">❌</div>
-                <div class="game-info">
-                    <div class="game-name">Tic Tac Toe</div>
-                    <div class="game-description">Classic X's and O's.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Sliding Puzzle', '🧩', '')">
-                <div class="game-image">🧩</div>
-                <div class="game-info">
-                    <div class="game-name">Sliding Puzzle</div>
-                    <div class="game-description">Put the scrambled tiles back together.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Lights Out', '💡', '')">
-                <div class="game-image">💡</div>
-                <div class="game-info">
-                    <div class="game-name">Lights Out</div>
-                    <div class="game-description">Turn every light off.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Color Match', '🎨', '')">
-                <div class="game-image">🎨</div>
-                <div class="game-info">
-                    <div class="game-name">Color Match</div>
-                    <div class="game-description">Match colors as quickly as possible.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Word Scramble', '🔤', '')">
-                <div class="game-image">🔤</div>
-                <div class="game-info">
-                    <div class="game-name">Word Scramble</div>
-                    <div class="game-description">Unscramble the mystery words.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
             </button>
 
         </div>
@@ -950,480 +458,28 @@ footer {
     </section>
 
 
-
-    <!-- =====================================
-         ACTION
-    ====================================== -->
+    <!-- MULTIPLAYER -->
 
     <section class="category">
 
-        <h2 class="category-title">
-            ⚔️ Action
-        </h2>
+        <h2 class="category-title">👥 Multiplayer</h2>
 
         <div class="game-grid">
 
-            <button class="game-card"
-                onclick="openGame('Arena Survival', '⚔️', '')">
-                <div class="game-image">⚔️</div>
-                <div class="game-info">
-                    <div class="game-name">Arena Survival</div>
-                    <div class="game-description">Survive wave after wave.</div>
-                    <span class="play-label">PLAY</span>
+            <button
+                class="game-card"
+                onclick="openGame('2 Player Pong', '🏓', 'games/pong.html')">
+
+                <div class="game-icon">🏓</div>
+
+                <div class="game-name">
+                    2 Player Pong
                 </div>
-            </button>
 
-
-            <button class="game-card"
-                onclick="openGame('Space Battle', '🚀', '')">
-                <div class="game-image">🚀</div>
-                <div class="game-info">
-                    <div class="game-name">Space Battle</div>
-                    <div class="game-description">Fight enemies in space.</div>
-                    <span class="play-label">PLAY</span>
+                <div class="game-description">
+                    Battle another player in classic Pong.
                 </div>
-            </button>
 
-
-            <button class="game-card"
-                onclick="openGame('Target Shooter', '🎯', '')">
-                <div class="game-image">🎯</div>
-                <div class="game-info">
-                    <div class="game-name">Target Shooter</div>
-                    <div class="game-description">Hit as many targets as possible.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Dungeon Escape', '🏰', '')">
-                <div class="game-image">🏰</div>
-                <div class="game-info">
-                    <div class="game-name">Dungeon Escape</div>
-                    <div class="game-description">Escape the dangerous dungeon.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Boss Rush', '👹', '')">
-                <div class="game-image">👹</div>
-                <div class="game-info">
-                    <div class="game-name">Boss Rush</div>
-                    <div class="game-description">Take on a series of bosses.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Dodge Zone', '💨', '')">
-                <div class="game-image">💨</div>
-                <div class="game-info">
-                    <div class="game-name">Dodge Zone</div>
-                    <div class="game-description">Dodge everything coming at you.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Ninja Dash', '🥷', '')">
-                <div class="game-image">🥷</div>
-                <div class="game-info">
-                    <div class="game-name">Ninja Dash</div>
-                    <div class="game-description">Run through a dangerous world.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Tower Defense', '🏯', '')">
-                <div class="game-image">🏯</div>
-                <div class="game-info">
-                    <div class="game-name">Tower Defense</div>
-                    <div class="game-description">Build defenses and stop enemies.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Robot Fight', '🤖', '')">
-                <div class="game-image">🤖</div>
-                <div class="game-info">
-                    <div class="game-name">Robot Fight</div>
-                    <div class="game-description">Battle against robot enemies.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Alien Attack', '👽', '')">
-                <div class="game-image">👽</div>
-                <div class="game-info">
-                    <div class="game-name">Alien Attack</div>
-                    <div class="game-description">Defend your base from aliens.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================
-         RACING
-    ====================================== -->
-
-    <section class="category">
-
-        <h2 class="category-title">
-            🏎️ Racing
-        </h2>
-
-        <div class="game-grid">
-
-            <button class="game-card"
-                onclick="openGame('Speed Racer', '🏎️', '')">
-                <div class="game-image">🏎️</div>
-                <div class="game-info">
-                    <div class="game-name">Speed Racer</div>
-                    <div class="game-description">Race around the track.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Drift Challenge', '💨', '')">
-                <div class="game-image">🏁</div>
-                <div class="game-info">
-                    <div class="game-name">Drift Challenge</div>
-                    <div class="game-description">Master the perfect drift.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Top Down Racer', '🚗', '')">
-                <div class="game-image">🚗</div>
-                <div class="game-info">
-                    <div class="game-name">Top Down Racer</div>
-                    <div class="game-description">Race from above.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Traffic Rush', '🚦', '')">
-                <div class="game-image">🚦</div>
-                <div class="game-info">
-                    <div class="game-name">Traffic Rush</div>
-                    <div class="game-description">Avoid traffic at high speed.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Time Trial', '⏱️', '')">
-                <div class="game-image">⏱️</div>
-                <div class="game-info">
-                    <div class="game-name">Time Trial</div>
-                    <div class="game-description">Beat your fastest time.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Obstacle Race', '🏁', '')">
-                <div class="game-image">🏁</div>
-                <div class="game-info">
-                    <div class="game-name">Obstacle Race</div>
-                    <div class="game-description">Race through crazy obstacles.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Rocket Race', '🚀', '')">
-                <div class="game-image">🚀</div>
-                <div class="game-info">
-                    <div class="game-name">Rocket Race</div>
-                    <div class="game-description">Race through outer space.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Boat Race', '🚤', '')">
-                <div class="game-image">🚤</div>
-                <div class="game-info">
-                    <div class="game-name">Boat Race</div>
-                    <div class="game-description">Race across the water.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================
-         SPORTS
-    ====================================== -->
-
-    <section class="category">
-
-        <h2 class="category-title">
-            🏆 Sports
-        </h2>
-
-        <div class="game-grid">
-
-            <button class="game-card"
-                onclick="openGame('Basketball', '🏀', '')">
-                <div class="game-image">🏀</div>
-                <div class="game-info">
-                    <div class="game-name">Basketball</div>
-                    <div class="game-description">Make as many shots as possible.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Soccer', '⚽', '')">
-                <div class="game-image">⚽</div>
-                <div class="game-info">
-                    <div class="game-name">Soccer</div>
-                    <div class="game-description">Score goals and win.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Mini Golf', '⛳', '')">
-                <div class="game-image">⛳</div>
-                <div class="game-info">
-                    <div class="game-name">Mini Golf</div>
-                    <div class="game-description">Get the ball into the hole.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Bowling', '🎳', '')">
-                <div class="game-image">🎳</div>
-                <div class="game-info">
-                    <div class="game-name">Bowling</div>
-                    <div class="game-description">Knock down every pin.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Tennis', '🎾', '')">
-                <div class="game-image">🎾</div>
-                <div class="game-info">
-                    <div class="game-name">Tennis</div>
-                    <div class="game-description">Return every shot.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Baseball', '⚾', '')">
-                <div class="game-image">⚾</div>
-                <div class="game-info">
-                    <div class="game-name">Baseball</div>
-                    <div class="game-description">Hit the ball out of the park.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================
-         MULTIPLAYER
-    ====================================== -->
-
-    <section class="category">
-
-        <h2 class="category-title">
-            👥 Multiplayer
-        </h2>
-
-        <div class="game-grid">
-
-            <button class="game-card"
-                onclick="openGame('2 Player Pong', '🏓', '')">
-                <div class="game-image">🏓</div>
-                <div class="game-info">
-                    <div class="game-name">2 Player Pong</div>
-                    <div class="game-description">Battle a friend on the same keyboard.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('2 Player Tic Tac Toe', '❌', '')">
-                <div class="game-image">❌⭕</div>
-                <div class="game-info">
-                    <div class="game-name">2 Player Tic Tac Toe</div>
-                    <div class="game-description">Challenge a friend.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('2 Player Connect Four', '🔴', '')">
-                <div class="game-image">🔴🟡</div>
-                <div class="game-info">
-                    <div class="game-name">2 Player Connect Four</div>
-                    <div class="game-description">Four in a row wins.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Battle Tanks', '💥', '')">
-                <div class="game-image">💥</div>
-                <div class="game-info">
-                    <div class="game-name">Battle Tanks</div>
-                    <div class="game-description">Battle another player in an arena.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Racing Rivals', '🏎️', '')">
-                <div class="game-image">🏎️</div>
-                <div class="game-info">
-                    <div class="game-name">Racing Rivals</div>
-                    <div class="game-description">Race your friends.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Four Square', '🔲', '')">
-                <div class="game-image">🔲</div>
-                <div class="game-info">
-                    <div class="game-name">Four Square</div>
-                    <div class="game-description">Keep control of the square.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =====================================
-         CASUAL
-    ====================================== -->
-
-    <section class="category">
-
-        <h2 class="category-title">
-            🌟 Casual
-        </h2>
-
-        <div class="game-grid">
-
-            <button class="game-card"
-                onclick="openGame('Cookie Clicker', '🍪', '')">
-                <div class="game-image">🍪</div>
-                <div class="game-info">
-                    <div class="game-name">Cookie Clicker</div>
-                    <div class="game-description">Click your way to a huge score.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Idle Factory', '🏭', '')">
-                <div class="game-image">🏭</div>
-                <div class="game-info">
-                    <div class="game-name">Idle Factory</div>
-                    <div class="game-description">Build an automated factory.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Fishing', '🎣', '')">
-                <div class="game-image">🎣</div>
-                <div class="game-info">
-                    <div class="game-name">Fishing</div>
-                    <div class="game-description">Catch different fish.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Pet Collector', '🐶', '')">
-                <div class="game-image">🐶</div>
-                <div class="game-info">
-                    <div class="game-name">Pet Collector</div>
-                    <div class="game-description">Collect and discover pets.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Treasure Hunt', '💎', '')">
-                <div class="game-image">💎</div>
-                <div class="game-info">
-                    <div class="game-name">Treasure Hunt</div>
-                    <div class="game-description">Search for hidden treasure.</div>
-                    <span class="play-label">PLAY</span>
-                </div>
-            </button>
-
-
-            <button class="game-card"
-                onclick="openGame('Click Challenge', '👆', '')">
-                <div class="game-image">👆</div>
-                <div class="game-info">
-                    <div class="game-name">Click Challenge</div>
-                    <div class="game-description">How fast can you click?</div>
-                    <span class="play-label">PLAY</span>
-                </div>
             </button>
 
         </div>
@@ -1433,47 +489,38 @@ footer {
 </main>
 
 
+<!-- =========================
+     GAME UI
+========================= -->
 
-<!-- =========================================
-     FOOTER
-========================================= -->
+<div id="gameScreen" class="game-screen">
 
-<footer>
+    <div class="game-header">
 
-    🎮 Waffle_Pancake_Games
+        <div class="game-title">
 
-    <br><br>
+            <span id="gameIcon">🎮</span>
 
-    More games coming soon!
+            <span id="gameTitle">
+                Game
+            </span>
 
-</footer>
-
-
-
-<!-- =========================================
-     GAME SCREEN
-========================================= -->
-
-<div id="gameScreen">
-
-    <div class="game-topbar">
-
-        <div class="game-title" id="gameTitle">
-            Game
         </div>
+
 
         <div class="game-controls">
 
             <button
-                class="control-button"
+                class="game-button"
                 onclick="toggleFullscreen()">
 
                 ⛶ Fullscreen
 
             </button>
 
+
             <button
-                class="control-button exit-button"
+                class="game-button"
                 onclick="exitGame()">
 
                 ✕ Exit
@@ -1485,43 +532,28 @@ footer {
     </div>
 
 
-    <div id="gameContainer">
+    <div id="gameContainer" class="game-container">
 
         <div
-            class="game-placeholder"
-            id="gamePlaceholder">
-
-            <div
-                class="big-icon"
-                id="gameIcon">
-
-                🎮
-
-            </div>
+            id="gamePlaceholder"
+            class="game-placeholder">
 
             <h2 id="placeholderTitle">
                 Game
             </h2>
 
             <p>
-                This game has not been connected yet.
-                <br><br>
-                When you create the actual game,
-                you can put its HTML file inside the
-                <strong>games</strong> folder and connect it here.
+                This game hasn't been added yet!
             </p>
-
-            <div class="coming-soon">
-                🚧 GAME COMING SOON 🚧
-            </div>
 
         </div>
 
 
         <iframe
             id="gameFrame"
-            title="Game"
-            allow="fullscreen">
+            class="game-frame"
+            src=""
+            allowfullscreen>
         </iframe>
 
     </div>
@@ -1529,15 +561,16 @@ footer {
 </div>
 
 
-
 <script>
-
-/* =========================================
-   ELEMENTS
-========================================= */
 
 const gameScreen =
     document.getElementById("gameScreen");
+
+const gameContainer =
+    document.getElementById("gameContainer");
+
+const gameFrame =
+    document.getElementById("gameFrame");
 
 const gameTitle =
     document.getElementById("gameTitle");
@@ -1545,19 +578,16 @@ const gameTitle =
 const gameIcon =
     document.getElementById("gameIcon");
 
-const placeholderTitle =
-    document.getElementById("placeholderTitle");
-
 const gamePlaceholder =
     document.getElementById("gamePlaceholder");
 
-const gameFrame =
-    document.getElementById("gameFrame");
+const placeholderTitle =
+    document.getElementById("placeholderTitle");
 
 
-/* =========================================
+/* =========================
    OPEN GAME
-========================================= */
+========================= */
 
 function openGame(name, icon, gameURL) {
 
@@ -1571,11 +601,6 @@ function openGame(name, icon, gameURL) {
 
     document.body.style.overflow = "hidden";
 
-
-    /*
-        If gameURL exists,
-        load the actual game.
-    */
 
     if (gameURL && gameURL.trim() !== "") {
 
@@ -1598,9 +623,9 @@ function openGame(name, icon, gameURL) {
 }
 
 
-/* =========================================
+/* =========================
    EXIT GAME
-========================================= */
+========================= */
 
 function exitGame() {
 
@@ -1610,32 +635,18 @@ function exitGame() {
 
     gameFrame.src = "";
 
-    gameFrame.classList.remove("loaded");
-
 }
 
 
-/* =========================================
+/* =========================
    FULLSCREEN
-========================================= */
+========================= */
 
 function toggleFullscreen() {
 
-    const container =
-        document.getElementById("gameContainer");
-
-
     if (!document.fullscreenElement) {
 
-        container.requestFullscreen()
-            .catch(error => {
-
-                console.log(
-                    "Fullscreen error:",
-                    error
-                );
-
-            });
+        gameContainer.requestFullscreen();
 
     } else {
 
@@ -1644,31 +655,6 @@ function toggleFullscreen() {
     }
 
 }
-
-
-/* =========================================
-   ESCAPE KEY
-========================================= */
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.key === "Escape" &&
-            gameScreen.classList.contains("active")
-        ) {
-
-            if (!document.fullscreenElement) {
-
-                exitGame();
-
-            }
-
-        }
-
-    }
-);
 
 </script>
 
