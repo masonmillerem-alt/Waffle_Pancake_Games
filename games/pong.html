@@ -871,52 +871,59 @@ function addPaddleAngle(paddle) {
 
 function updateBot() {
 
-    /*
-        The bot follows the ball,
-        but its reaction depends
-        on the difficulty.
-    */
-
     let target =
         ball.y - paddleHeight / 2;
 
-    let reactionSpeed =
-        opponent.speed;
-
+    /*
+        The bot does NOT perfectly follow
+        the ball anymore.
+    */
 
     if (difficulty === "easy") {
 
-        /*
-            Easy bot reacts slowly
-            and has a little delay.
-        */
+        // Slow reaction + lots of error
+        if (Math.random() < 0.08) {
+            target += Math.random() * 180 - 90;
+        }
 
-        target += 45;
+        if (opponent.y < target) {
+            opponent.y += 2.2;
+        }
+        else if (opponent.y > target) {
+            opponent.y -= 2.2;
+        }
 
     }
 
     else if (difficulty === "normal") {
 
-        target += 10;
+        // Reasonable reaction, but still makes mistakes
+        if (Math.random() < 0.035) {
+            target += Math.random() * 120 - 60;
+        }
+
+        if (opponent.y < target) {
+            opponent.y += 3.5;
+        }
+        else if (opponent.y > target) {
+            opponent.y -= 3.5;
+        }
 
     }
 
     else if (difficulty === "hard") {
 
-        target -= 5;
+        // Fast, but still not perfect
+        if (Math.random() < 0.015) {
+            target += Math.random() * 80 - 40;
+        }
 
-    }
-
-
-    if (opponent.y < target) {
-
-        opponent.y += reactionSpeed;
-
-    }
-
-    else if (opponent.y > target) {
-
-        opponent.y -= reactionSpeed;
+        if (opponent.y < target) {
+            opponent.y += 4.8;
+        }
+        else if (opponent.y > target) {
+            opponent.y -= 4.8;
+        }
 
     }
 
