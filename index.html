@@ -11,433 +11,836 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
 
-    body {
-        margin: 0;
-        font-family: "Fredoka", sans-serif;
-        color: white;
-        background:
-            radial-gradient(circle at 50% 20%, rgba(255, 190, 70, 0.45), transparent 45%),
-            linear-gradient(135deg, #f7a52b, #e98216);
-        min-height: 100vh;
-        position: relative;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    /* 3D waffle-style background */
-    body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        opacity: 0.42;
-        background:
-            linear-gradient(135deg, rgba(255,255,255,0.12) 10%, transparent 10%) 0 0 / 70px 70px,
-            linear-gradient(315deg, rgba(150,70,0,0.16) 10%, transparent 10%) 0 0 / 70px 70px,
-            linear-gradient(135deg, transparent 45%, rgba(255,200,90,0.22) 45%, rgba(255,200,90,0.22) 55%, transparent 55%) 0 0 / 70px 70px;
-        z-index: 0;
-    }
+body {
+    margin: 0;
+    font-family: "Fredoka", sans-serif;
+    color: white;
 
-    /* Header */
-    .top-bar {
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        width: 100%;
-        padding: 22px 25px;
-        background: linear-gradient(180deg, #ffbd3c, #ff991c);
-        box-shadow: 0 6px 18px rgba(110, 50, 0, 0.35);
-        border-bottom: 2px solid rgba(255,255,255,0.18);
-    }
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(255, 190, 70, 0.45),
+            transparent 45%
+        ),
+        linear-gradient(
+            135deg,
+            #f7a52b,
+            #e98216
+        );
+
+    min-height: 100vh;
+    position: relative;
+}
+
+
+/* =========================
+   WAFFLE BACKGROUND
+========================= */
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.42;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.12) 10%,
+            transparent 10%
+        ) 0 0 / 70px 70px,
+
+        linear-gradient(
+            315deg,
+            rgba(150,70,0,0.16) 10%,
+            transparent 10%
+        ) 0 0 / 70px 70px,
+
+        linear-gradient(
+            135deg,
+            transparent 45%,
+            rgba(255,200,90,0.22) 45%,
+            rgba(255,200,90,0.22) 55%,
+            transparent 55%
+        ) 0 0 / 70px 70px;
+
+    z-index: 0;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.top-bar {
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+
+    width: 100%;
+
+    padding: 22px 25px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffbd3c,
+            #ff991c
+        );
+
+    box-shadow:
+        0 6px 18px rgba(110, 50, 0, 0.35);
+
+    border-bottom:
+        2px solid rgba(255,255,255,0.18);
+}
+
+.logo {
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 42px;
+
+    line-height: 1.1;
+
+    font-weight: 700;
+
+    color: white;
+
+    letter-spacing: 0.5px;
+
+    text-shadow:
+        0 3px 0 #d8750d,
+        0 5px 8px rgba(100, 45, 0, 0.35);
+}
+
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.content {
+    position: relative;
+
+    z-index: 1;
+
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding:
+        35px 25px 60px;
+}
+
+.category {
+    margin-bottom: 45px;
+}
+
+.category-title {
+    font-size: 30px;
+
+    margin:
+        0 0 18px;
+
+    text-shadow:
+        0 3px 4px rgba(100, 45, 0, 0.4);
+}
+
+.games-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(210px, 1fr)
+        );
+
+    gap: 20px;
+}
+
+
+/* =========================
+   GAME CARDS
+========================= */
+
+.game-card {
+    border: none;
+
+    border-radius: 20px;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffb52e,
+            #e97d0c
+        );
+
+    box-shadow:
+        0 8px 0 #bd5d08,
+        0 12px 18px rgba(90, 40, 0, 0.3);
+
+    transition:
+        transform 0.15s,
+        box-shadow 0.15s;
+}
+
+.game-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 12px 0 #bd5d08,
+        0 17px 22px rgba(90, 40, 0, 0.3);
+}
+
+.game-card:active {
+    transform: translateY(4px);
+
+    box-shadow:
+        0 4px 0 #bd5d08,
+        0 7px 12px rgba(90, 40, 0, 0.25);
+}
+
+
+/* Game icon */
+
+.game-icon {
+    height: 150px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 75px;
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(255,255,255,0.2),
+            transparent 55%
+        ),
+        linear-gradient(
+            145deg,
+            #ffca54,
+            #f28c18
+        );
+}
+
+
+/* Game information */
+
+.game-info {
+    padding:
+        16px 18px 18px;
+}
+
+.game-name {
+    font-size: 22px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+.game-description {
+    font-size: 15px;
+
+    opacity: 0.9;
+}
+
+
+/* =========================
+   GAME SCREEN
+========================= */
+
+.game-screen {
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(25, 12, 3, 0.96);
+
+    z-index: 2000;
+
+    display: none;
+
+    flex-direction: column;
+}
+
+.game-screen.active {
+    display: flex;
+}
+
+
+/* Game header */
+
+.game-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding:
+        15px 20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffbd3c,
+            #ff991c
+        );
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,0.3);
+}
+
+
+/* Game title */
+
+.game-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 25px;
+
+    font-weight: 700;
+}
+
+.game-title-icon {
+    font-size: 30px;
+}
+
+
+/* Game buttons */
+
+.game-controls {
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+    justify-content: flex-end;
+}
+
+.game-button {
+    border: none;
+
+    border-radius: 10px;
+
+    padding:
+        10px 15px;
+
+    font-family:
+        "Fredoka",
+        sans-serif;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    color: white;
+
+    background:
+        #d8750d;
+
+    box-shadow:
+        0 3px 0 #a95205;
+
+    transition:
+        0.15s;
+}
+
+.game-button:hover {
+    background:
+        #c76708;
+}
+
+.game-button:active {
+    transform:
+        translateY(2px);
+
+    box-shadow:
+        0 1px 0 #a95205;
+}
+
+
+/* =========================
+   GAME CONTAINER
+========================= */
+
+.game-container {
+    flex: 1;
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    min-height: 0;
+}
+
+
+/* Iframe */
+
+.game-frame {
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: black;
+
+    display: none;
+}
+
+.game-frame.loaded {
+    display: block;
+}
+
+
+/* =========================
+   PLACEHOLDER
+========================= */
+
+.game-placeholder {
+    width: 100%;
+
+    height: 100%;
+
+    border:
+        3px dashed rgba(255,255,255,0.3);
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 30px;
+}
+
+.placeholder-content {
+    max-width: 500px;
+}
+
+.placeholder-icon {
+    font-size: 80px;
+
+    margin-bottom: 15px;
+}
+
+.placeholder-title {
+    font-size: 32px;
+
+    margin:
+        0 0 10px;
+}
+
+.placeholder-text {
+    margin: 0;
+
+    font-size: 17px;
+
+    opacity: 0.8;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
 
     .logo {
-        margin: 0;
-        text-align: center;
-        font-size: 42px;
-        line-height: 1.1;
-        font-weight: 700;
-        color: white;
-        letter-spacing: 0.5px;
-        text-shadow:
-            0 3px 0 #d8750d,
-            0 5px 8px rgba(100, 45, 0, 0.35);
+        font-size: 30px;
     }
 
-    /* Main content */
     .content {
-        position: relative;
-        z-index: 1;
-        max-width: 1200px;
-        margin: auto;
-        padding: 35px 25px 60px;
-    }
-
-    .category {
-        margin-bottom: 45px;
+        padding:
+            25px 15px 45px;
     }
 
     .category-title {
-        font-size: 30px;
-        margin: 0 0 18px;
-        text-shadow: 0 3px 4px rgba(100, 45, 0, 0.4);
-    }
-
-    .games-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-        gap: 20px;
-    }
-
-    .game-card {
-        border: none;
-        border-radius: 20px;
-        padding: 0;
-        overflow: hidden;
-        cursor: pointer;
-        text-align: left;
-        color: white;
-        background: linear-gradient(145deg, #ffb52e, #e97d0c);
-        box-shadow:
-            0 8px 0 #bd5d08,
-            0 12px 18px rgba(90, 40, 0, 0.3);
-        transition: transform 0.15s, box-shadow 0.15s;
-    }
-
-    .game-card:hover {
-        transform: translateY(-4px);
-        box-shadow:
-            0 12px 0 #bd5d08,
-            0 17px 22px rgba(90, 40, 0, 0.3);
-    }
-
-    .game-card:active {
-        transform: translateY(4px);
-        box-shadow:
-            0 4px 0 #bd5d08,
-            0 7px 12px rgba(90, 40, 0, 0.25);
+        font-size: 25px;
     }
 
     .game-icon {
-        height: 150px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 75px;
-        background:
-            radial-gradient(circle at 50% 35%, rgba(255,255,255,0.2), transparent 55%),
-            linear-gradient(145deg, #ffca54, #f28c18);
-    }
-
-    .game-info {
-        padding: 16px 18px 18px;
-    }
-
-    .game-name {
-        font-size: 22px;
-        font-weight: 700;
-        margin-bottom: 5px;
-    }
-
-    .game-description {
-        font-size: 15px;
-        opacity: 0.9;
-    }
-
-    /* Game screen */
-    .game-screen {
-        position: fixed;
-        inset: 0;
-        background: rgba(25, 12, 3, 0.96);
-        z-index: 2000;
-        display: none;
-        flex-direction: column;
-    }
-
-    .game-screen.active {
-        display: flex;
+        height: 125px;
     }
 
     .game-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 15px;
-        padding: 15px 20px;
-        background: linear-gradient(180deg, #ffbd3c, #ff991c);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
+        align-items: flex-start;
 
-    .game-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 25px;
-        font-weight: 700;
-    }
-
-    .game-title-icon {
-        font-size: 30px;
+        flex-direction: column;
     }
 
     .game-controls {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
+        width: 100%;
+
+        justify-content: flex-start;
     }
 
     .game-button {
-        border: none;
-        border-radius: 10px;
-        padding: 10px 15px;
-        font-family: "Fredoka", sans-serif;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        color: white;
-        background: #d8750d;
-        box-shadow: 0 3px 0 #a95205;
-        transition: 0.15s;
-    }
-
-    .game-button:hover {
-        background: #c76708;
-    }
-
-    .game-button:active {
-        transform: translateY(2px);
-        box-shadow: 0 1px 0 #a95205;
-    }
-
-    .game-container {
         flex: 1;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        min-height: 0;
     }
 
-    .game-frame {
-        width: 100%;
-        height: 100%;
-        border: none;
-        border-radius: 12px;
-        background: black;
-        display: none;
-    }
+}
 
-    .game-frame.loaded {
-        display: block;
-    }
-
-    .game-placeholder {
-        width: 100%;
-        height: 100%;
-        border: 3px dashed rgba(255,255,255,0.3);
-        border-radius: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 30px;
-    }
-
-    .placeholder-content {
-        max-width: 500px;
-    }
-
-    .placeholder-icon {
-        font-size: 80px;
-        margin-bottom: 15px;
-    }
-
-    .placeholder-title {
-        font-size: 32px;
-        margin: 0 0 10px;
-    }
-
-    .placeholder-text {
-        margin: 0;
-        font-size: 17px;
-        opacity: 0.8;
-    }
-
-    @media (max-width: 600px) {
-        .logo {
-            font-size: 30px;
-        }
-
-        .content {
-            padding: 25px 15px 45px;
-        }
-
-        .category-title {
-            font-size: 25px;
-        }
-
-        .game-icon {
-            height: 125px;
-        }
-
-        .game-header {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .game-controls {
-            width: 100%;
-            justify-content: flex-start;
-        }
-
-        .game-button {
-            flex: 1;
-        }
-    }
 </style>
 </head>
 
+
 <body>
 
+
+<!-- =========================
+     HEADER
+========================= -->
+
 <header class="top-bar">
-    <h1 class="logo">Waffle_Pancake_Games</h1>
+
+    <h1 class="logo">
+        Waffle_Pancake_Games
+    </h1>
+
 </header>
+
+
+<!-- =========================
+     GAME LIST
+========================= -->
 
 <main class="content">
 
-    <!-- Arcade -->
+
+    <!-- ARCADE -->
+
     <section class="category">
-        <h2 class="category-title">🕹️ Arcade</h2>
+
+        <h2 class="category-title">
+            🕹️ Arcade
+        </h2>
+
 
         <div class="games-grid">
 
-            <button class="game-card"
-                onclick="openGame('Pong', '🏓', 'games/pong.html')">
 
-                <div class="game-icon">🏓</div>
+            <!-- PONG -->
+
+            <button
+                class="game-card"
+                onclick="openGame(
+                    'Pong',
+                    '🏓',
+                    'games/pong.html'
+                )"
+            >
+
+                <div class="game-icon">
+                    🏓
+                </div>
 
                 <div class="game-info">
-                    <div class="game-name">Pong</div>
+
+                    <div class="game-name">
+                        Pong
+                    </div>
+
                     <div class="game-description">
                         Classic paddle battle
                     </div>
+
                 </div>
 
             </button>
 
-            <button class="game-card"
-                onclick="openGame('Snake', '🐍', 'games/snake.html')"
 
-                <div class="game-icon">🐍</div>
+            <!-- SNAKE -->
+
+            <button
+                class="game-card"
+                onclick="openGame(
+                    'Snake',
+                    '🐍',
+                    'games/snake.html'
+                )"
+            >
+
+                <div class="game-icon">
+                    🐍
+                </div>
 
                 <div class="game-info">
-                    <div class="game-name">Snake</div>
+
+                    <div class="game-name">
+                        Snake
+                    </div>
+
                     <div class="game-description">
                         Grow your snake
                     </div>
+
                 </div>
 
             </button>
 
-            <button class="game-card"
-                onclick="openGame('Tetris', '🧱', '')">
 
-                <div class="game-icon">🧱</div>
+            <!-- TETRIS -->
+
+            <button
+                class="game-card"
+                onclick="openGame(
+                    'Tetris',
+                    '🧱',
+                    ''
+                )"
+            >
+
+                <div class="game-icon">
+                    🧱
+                </div>
 
                 <div class="game-info">
-                    <div class="game-name">Tetris</div>
+
+                    <div class="game-name">
+                        Tetris
+                    </div>
+
                     <div class="game-description">
                         Stack the blocks
                     </div>
+
                 </div>
 
             </button>
 
-            <button class="game-card"
-                onclick="openGame('Breakout', '🎾', '')">
 
-                <div class="game-icon">🎾</div>
+            <!-- BREAKOUT -->
+
+            <button
+                class="game-card"
+                onclick="openGame(
+                    'Breakout',
+                    '🎾',
+                    ''
+                )"
+            >
+
+                <div class="game-icon">
+                    🎾
+                </div>
 
                 <div class="game-info">
-                    <div class="game-name">Breakout</div>
+
+                    <div class="game-name">
+                        Breakout
+                    </div>
+
                     <div class="game-description">
                         Break all the blocks
                     </div>
+
                 </div>
 
             </button>
 
+
         </div>
+
     </section>
 
-    <!-- Puzzle -->
+
+    <!-- PUZZLE -->
+
     <section class="category">
-        <h2 class="category-title">🧩 Puzzle</h2>
+
+        <h2 class="category-title">
+            🧩 Puzzle
+        </h2>
+
 
         <div class="games-grid">
 
-            <button class="game-card"
-                onclick="openGame('2048', '🔢', '')">
 
-                <div class="game-icon">🔢</div>
+            <!-- 2048 -->
+
+            <button
+                class="game-card"
+                onclick="openGame(
+                    '2048',
+                    '🔢',
+                    ''
+                )"
+            >
+
+                <div class="game-icon">
+                    🔢
+                </div>
 
                 <div class="game-info">
-                    <div class="game-name">2048</div>
+
+                    <div class="game-name">
+                        2048
+                    </div>
+
                     <div class="game-description">
                         Combine numbers
                     </div>
+
                 </div>
 
             </button>
 
+
         </div>
+
     </section>
+
 
 </main>
 
-<!-- Game Screen -->
-<div class="game-screen" id="gameScreen">
+
+<!-- =========================
+     GAME SCREEN
+========================= -->
+
+<div
+    class="game-screen"
+    id="gameScreen"
+>
+
+
+    <!-- GAME HEADER -->
 
     <div class="game-header">
 
+
         <div class="game-title">
-            <span class="game-title-icon" id="gameIcon">🎮</span>
-            <span id="gameTitle">Game</span>
+
+            <span
+                class="game-title-icon"
+                id="gameIcon"
+            >
+                🎮
+            </span>
+
+            <span id="gameTitle">
+                Game
+            </span>
+
         </div>
+
 
         <div class="game-controls">
 
-            <!-- NEW RESET BUTTON -->
-            <button class="game-button" onclick="resetGame()">
+
+            <!-- RESET -->
+
+            <button
+                class="game-button"
+                onclick="resetGame()"
+            >
                 🔄 Reset Game
             </button>
 
-            <button class="game-button" onclick="toggleFullscreen()">
+
+            <!-- FULLSCREEN -->
+
+            <button
+                class="game-button"
+                onclick="toggleFullscreen()"
+            >
                 ⛶ Fullscreen
             </button>
 
-            <button class="game-button" onclick="exitGame()">
+
+            <!-- EXIT -->
+
+            <button
+                class="game-button"
+                onclick="exitGame()"
+            >
                 ✕ Exit
             </button>
+
 
         </div>
 
     </div>
 
-    <div class="game-container" id="gameContainer">
 
-        <div class="game-placeholder" id="gamePlaceholder">
+    <!-- GAME AREA -->
+
+    <div
+        class="game-container"
+        id="gameContainer"
+    >
+
+
+        <!-- PLACEHOLDER -->
+
+        <div
+            class="game-placeholder"
+            id="gamePlaceholder"
+        >
 
             <div class="placeholder-content">
 
-                <div class="placeholder-icon" id="placeholderIcon">
+                <div
+                    class="placeholder-icon"
+                    id="placeholderIcon"
+                >
                     🎮
                 </div>
 
-                <h2 class="placeholder-title" id="placeholderTitle">
+                <h2
+                    class="placeholder-title"
+                    id="placeholderTitle"
+                >
                     Game
                 </h2>
 
@@ -449,117 +852,163 @@
 
         </div>
 
+
+        <!-- GAME IFRAME -->
+
         <iframe
             id="gameFrame"
             class="game-frame"
-            title="Game">
-        </iframe>
+            title="Game"
+        ></iframe>
+
 
     </div>
 
 </div>
 
+
 <script>
 
-    const gameScreen = document.getElementById("gameScreen");
-    const gameFrame = document.getElementById("gameFrame");
-    const gameContainer = document.getElementById("gameContainer");
 
-    const gameTitle = document.getElementById("gameTitle");
-    const gameIcon = document.getElementById("gameIcon");
-    const placeholderTitle = document.getElementById("placeholderTitle");
-    const placeholderIcon = document.getElementById("placeholderIcon");
-    const gamePlaceholder = document.getElementById("gamePlaceholder");
+/* =========================
+   ELEMENTS
+========================= */
 
+const gameScreen =
+    document.getElementById("gameScreen");
 
-    function openGame(name, icon, gameURL) {
+const gameFrame =
+    document.getElementById("gameFrame");
 
-        gameTitle.textContent = name;
-        gameIcon.textContent = icon;
+const gameContainer =
+    document.getElementById("gameContainer");
 
-        placeholderTitle.textContent = name;
-        placeholderIcon.textContent = icon;
+const gameTitle =
+    document.getElementById("gameTitle");
 
-        gameScreen.classList.add("active");
+const gameIcon =
+    document.getElementById("gameIcon");
 
-        document.body.style.overflow = "hidden";
+const placeholderTitle =
+    document.getElementById("placeholderTitle");
 
+const placeholderIcon =
+    document.getElementById("placeholderIcon");
 
-        if (gameURL && gameURL.trim() !== "") {
-
-            gamePlaceholder.style.display = "none";
-
-            gameFrame.src = gameURL;
-
-            gameFrame.classList.add("loaded");
-
-        } else {
-
-            gamePlaceholder.style.display = "flex";
-
-            gameFrame.classList.remove("loaded");
-
-            gameFrame.src = "";
-
-        }
-
-    }
+const gamePlaceholder =
+    document.getElementById("gamePlaceholder");
 
 
-    /* 🔄 RESET CURRENT GAME */
-    function resetGame() {
+/* =========================
+   OPEN GAME
+========================= */
 
-        if (gameFrame.classList.contains("loaded") && gameFrame.src) {
+function openGame(name, icon, gameURL) {
 
-            /*
-             * Reload the game inside the iframe.
-             * This completely resets the current game.
-             */
+    gameTitle.textContent = name;
 
-            gameFrame.src = gameFrame.src;
+    gameIcon.textContent = icon;
 
-        }
+    placeholderTitle.textContent = name;
 
-    }
+    placeholderIcon.textContent = icon;
 
+    gameScreen.classList.add("active");
 
-    function toggleFullscreen() {
-
-        if (!document.fullscreenElement) {
-
-            gameContainer.requestFullscreen();
-
-        } else {
-
-            document.exitFullscreen();
-
-        }
-
-    }
+    document.body.style.overflow = "hidden";
 
 
-    function exitGame() {
+    if (
+        gameURL &&
+        gameURL.trim() !== ""
+    ) {
 
-        gameScreen.classList.remove("active");
+        gamePlaceholder.style.display =
+            "none";
 
-        document.body.style.overflow = "";
+        gameFrame.src = gameURL;
+
+        gameFrame.classList.add("loaded");
+
+    } else {
+
+        gamePlaceholder.style.display =
+            "flex";
+
+        gameFrame.classList.remove(
+            "loaded"
+        );
 
         gameFrame.src = "";
 
-        gameFrame.classList.remove("loaded");
+    }
+
+}
+
+
+/* =========================
+   RESET GAME
+========================= */
+
+function resetGame() {
+
+    if (
+        gameFrame.classList.contains("loaded") &&
+        gameFrame.src
+    ) {
+
+        /*
+         * Reload the current game.
+         */
+
+        gameFrame.src = gameFrame.src;
 
     }
+
+}
+
+
+/* =========================
+   FULLSCREEN
+========================= */
+
+function toggleFullscreen() {
+
+    if (!document.fullscreenElement) {
+
+        gameContainer.requestFullscreen();
+
+    } else {
+
+        document.exitFullscreen();
+
+    }
+
+}
+
+
+/* =========================
+   EXIT GAME
+========================= */
+
+function exitGame() {
+
+    gameScreen.classList.remove(
+        "active"
+    );
+
+    document.body.style.overflow = "";
+
+    gameFrame.src = "";
+
+    gameFrame.classList.remove(
+        "loaded"
+    );
+
+}
 
 </script>
 
 </body>
 </html>
 ```
-
-Now your game screen will have:
-
-**🔄 Reset Game | ⛶ Fullscreen | ✕ Exit**
-
-The reset button reloads the current game without closing the game screen. 🎮✨
-
-When we add **Snake**, **Tetris**, **Breakout**, and **2048**, the reset button will work for those too.
