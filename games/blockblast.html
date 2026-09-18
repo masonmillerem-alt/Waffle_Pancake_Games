@@ -7,198 +7,246 @@
 <title>Block Blast</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+    * {
+        box-sizing: border-box;
+    }
 
-body {
-    margin: 0;
-    background: #171717;
-    color: white;
-    font-family: Arial, sans-serif;
+    body {
+        margin: 0;
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        overflow: hidden;
+        user-select: none;
+    }
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    #game {
+        width: 520px;
+        max-width: 96vw;
+        text-align: center;
+        padding: 15px;
+    }
 
-    min-height: 100vh;
-    overflow: hidden;
-}
+    h1 {
+        margin: 5px 0;
+        font-size: 32px;
+    }
 
-#game {
-    text-align: center;
-    width: 100%;
-    max-width: 500px;
-}
+    #score {
+        font-size: 22px;
+        margin: 8px 0 12px;
+    }
 
-h1 {
-    margin: 0 0 5px;
-    font-size: 34px;
-}
+    #board {
+        width: 440px;
+        height: 440px;
+        max-width: 90vw;
+        max-height: 90vw;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+        gap: 5px;
+        padding: 5px;
+        background: #222;
+        border-radius: 14px;
+        transition: transform 120ms ease;
+    }
 
-#instructions {
-    margin-bottom: 10px;
-    font-size: 15px;
-}
+    #board.shake {
+        animation: boardShake 260ms ease;
+    }
 
-#score {
-    font-size: 20px;
-    margin-bottom: 15px;
-}
+    @keyframes boardShake {
+        0%   { transform: translate(0, 0); }
+        20%  { transform: translate(-5px, 3px); }
+        40%  { transform: translate(5px, -3px); }
+        60%  { transform: translate(-4px, -2px); }
+        80%  { transform: translate(4px, 2px); }
+        100% { transform: translate(0, 0); }
+    }
 
-#board {
-    width: 440px;
-    height: 440px;
-    max-width: 90vw;
-    max-height: 90vw;
+    .cell {
+        background: #303030;
+        border-radius: 6px;
+        position: relative;
+        overflow: hidden;
+    }
 
-    margin: auto;
+    .cell.filled {
+        background: #ff9f1c;
+        box-shadow:
+            inset 0 3px 0 rgba(255,255,255,.25),
+            inset 0 -3px 0 rgba(0,0,0,.2);
+    }
 
-    display: grid;
+    /* Valid placement outline */
+    .cell.preview {
+        background: rgba(255, 210, 50, 0.45);
+        border: 2px solid #ffd43b;
+        box-shadow:
+            0 0 8px rgba(255, 212, 59, .8),
+            inset 0 0 8px rgba(255, 212, 59, .35);
+    }
 
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+    /* Line-clear flash */
+    .cell.clearing {
+        animation: clearPop 380ms ease forwards;
+    }
 
-    gap: 5px;
-    padding: 5px;
+    @keyframes clearPop {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+            filter: brightness(1);
+        }
 
-    background: #333;
-    border-radius: 12px;
+        35% {
+            transform: scale(1.15);
+            opacity: 1;
+            filter: brightness(2);
+        }
 
-    user-select: none;
-    touch-action: none;
-}
+        70% {
+            transform: scale(.8);
+            opacity: .7;
+            filter: brightness(2.5);
+        }
 
-.cell {
-    background: #555;
-    border-radius: 5px;
-}
-
-.cell.filled {
-    background: #f5a623;
-}
-
-.cell.preview {
-    background: #ffe08a;
-}
-
-#pieces {
-    width: 100%;
-
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-
-    height: 140px;
-
-    margin-top: 10px;
-
-    user-select: none;
-}
-
-.piece-holder {
-    width: 130px;
-    height: 130px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    cursor: grab;
-
-    user-select: none;
-    touch-action: none;
-
-    position: relative;
-}
-
-.piece-holder:active {
-    cursor: grabbing;
-}
-
-.piece-holder.dragging {
-    opacity: 0.2;
-}
-
-.piece {
-    display: grid;
-    gap: 3px;
-
-    pointer-events: none;
-}
-
-.block {
-    width: 25px;
-    height: 25px;
-
-    background: #ffb52e;
-
-    border-radius: 5px;
-
-    pointer-events: none;
-}
-
-/* Dragging copy */
-
-#dragPiece {
-    position: fixed;
-
-    display: none;
-
-    z-index: 999999;
-
-    pointer-events: none;
-
-    transform: translate(-50%, -50%);
-
-    gap: 3px;
-}
-
-#dragPiece .block {
-    width: 30px;
-    height: 30px;
-}
-
-button {
-    margin-top: 10px;
-
-    padding: 11px 22px;
-
-    border: none;
-    border-radius: 8px;
-
-    background: #f5a623;
-
-    color: white;
-
-    font-size: 17px;
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-button:hover {
-    background: #d98d12;
-}
-
-#message {
-    min-height: 24px;
-    margin-top: 8px;
-
-    font-size: 17px;
-}
-
-@media (max-width: 520px) {
+        100% {
+            transform: scale(0);
+            opacity: 0;
+            filter: brightness(3);
+        }
+    }
 
     #pieces {
-        gap: 0;
+        width: 100%;
+        height: 145px;
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
     }
 
     .piece-holder {
-        width: 100px;
-        height: 120px;
+        width: 135px;
+        height: 135px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        cursor: grab;
+        touch-action: none;
+        position: relative;
     }
-}
+
+    .piece-holder:active {
+        cursor: grabbing;
+    }
+
+    .piece {
+        display: grid;
+        gap: 3px;
+        pointer-events: none;
+    }
+
+    .piece-block {
+        width: 25px;
+        height: 25px;
+        background: #ff9f1c;
+        border-radius: 5px;
+        box-shadow:
+            inset 0 3px 0 rgba(255,255,255,.25),
+            inset 0 -3px 0 rgba(0,0,0,.2);
+    }
+
+    #dragPiece {
+        position: fixed;
+        pointer-events: none;
+        z-index: 999999;
+        transform: translate(-50%, -50%);
+        opacity: .92;
+        display: grid;
+        gap: 3px;
+    }
+
+    #message {
+        height: 30px;
+        margin-top: 5px;
+        font-size: 16px;
+        opacity: .8;
+    }
+
+    #gameOver {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.75);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000000;
+    }
+
+    #gameOverBox {
+        background: #222;
+        padding: 30px;
+        border-radius: 18px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,.5);
+    }
+
+    #gameOver h2 {
+        margin-top: 0;
+        font-size: 32px;
+    }
+
+    button {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 22px;
+        font-size: 17px;
+        font-weight: bold;
+        cursor: pointer;
+        background: #ff9f1c;
+        color: white;
+    }
+
+    button:hover {
+        background: #ffb13b;
+    }
+
+    /* Small floating score text */
+    .score-pop {
+        position: fixed;
+        pointer-events: none;
+        z-index: 1000001;
+        font-size: 24px;
+        font-weight: bold;
+        color: #ffd43b;
+        text-shadow: 0 2px 4px #000;
+        animation: scorePop 700ms ease forwards;
+    }
+
+    @keyframes scorePop {
+        0% {
+            transform: translate(-50%, 0) scale(.7);
+            opacity: 0;
+        }
+
+        25% {
+            transform: translate(-50%, -10px) scale(1.15);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translate(-50%, -65px) scale(1);
+            opacity: 0;
+        }
+    }
 </style>
 
 </head>
@@ -210,130 +258,134 @@ button:hover {
 ```
 <h1>💥 Block Blast</h1>
 
-<div id="instructions">
-    CLICK AND HOLD A PIECE, THEN DRAG IT ONTO THE BOARD
-</div>
-
-<div id="score">
-    Score: <span id="scoreValue">0</span>
-</div>
+<div id="score">Score: 0</div>
 
 <div id="board"></div>
 
+<div id="message">
+    Drag a piece onto an open space
+</div>
+
 <div id="pieces"></div>
-
-<div id="message"></div>
-
-<button id="newGame">
-    New Game
-</button>
 ```
 
 </div>
 
-<div id="dragPiece"></div>
+<div id="gameOver">
+    <div id="gameOverBox">
+        <h2>Game Over!</h2>
+        <p id="finalScore"></p>
+        <button onclick="newGame()">Play Again</button>
+    </div>
+</div>
 
 <script>
-
 const SIZE = 8;
 
-const boardElement =
-    document.getElementById("board");
-
-const piecesElement =
-    document.getElementById("pieces");
-
-const dragElement =
-    document.getElementById("dragPiece");
-
-const scoreElement =
-    document.getElementById("scoreValue");
-
-const messageElement =
-    document.getElementById("message");
-
-const newGameButton =
-    document.getElementById("newGame");
-
-
 let board = [];
-
 let pieces = [];
-
 let score = 0;
 
 let draggingPiece = null;
-
 let draggingIndex = -1;
-
 let draggingHolder = null;
-
 let currentDrop = null;
 
+const boardElement = document.getElementById("board");
+const piecesElement = document.getElementById("pieces");
+const scoreElement = document.getElementById("score");
+const messageElement = document.getElementById("message");
 
-/* =========================
-   PIECE SHAPES
-========================= */
+
+// -------------------------
+// PIECES
+// -------------------------
 
 const SHAPES = [
-
     [[0,0]],
 
     [[0,0],[0,1]],
-
     [[0,0],[1,0]],
 
     [[0,0],[0,1],[0,2]],
-
     [[0,0],[1,0],[2,0]],
 
     [[0,0],[0,1],[1,0],[1,1]],
 
-    [[0,0],[0,1],[0,2],[1,1]],
+    [[0,0],[0,1],[0,2],[0,3]],
+    [[0,0],[1,0],[2,0],[3,0]],
 
     [[0,0],[1,0],[1,1]],
-
-    [[0,1],[1,0],[1,1]],
-
     [[0,0],[0,1],[1,1]],
+
+    [[0,0],[0,1],[0,2],[1,1]],
+    [[0,1],[1,0],[1,1],[1,2]],
+
+    [[0,0],[0,1],[1,0],[1,1],[2,0],[2,1]],
+
+    [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]],
 
     [[0,0],[1,0],[2,0],[2,1]],
 
-    [[0,0],[0,1],[0,2],[1,0]],
-
-    [[0,0],[1,0],[2,0],[1,1]],
-
-    [[0,0],[1,0],[2,0],[0,1]],
-
-    [[0,0],[1,0],[1,1],[2,1]],
-
-    [[0,0],[0,1],[1,1],[1,2]]
-
+    [[0,1],[1,1],[2,0],[2,1]]
 ];
 
 
-/* =========================
-   CREATE BOARD
-========================= */
+// -------------------------
+// START / RESET
+// -------------------------
 
-function createBoard() {
+function newGame() {
 
     board = [];
 
+    for (let r = 0; r < SIZE; r++) {
+        board[r] = [];
+
+        for (let c = 0; c < SIZE; c++) {
+            board[r][c] = false;
+        }
+    }
+
+    score = 0;
+    pieces = [];
+
+    document.getElementById("gameOver").style.display = "none";
+
+    updateScore();
+    createPieces();
+    drawBoard();
+    drawPieces();
+}
+
+
+function updateScore() {
+    scoreElement.textContent = "Score: " + score;
+}
+
+
+// -------------------------
+// BOARD
+// -------------------------
+
+function drawBoard() {
+
     boardElement.innerHTML = "";
 
-    for (let row = 0; row < SIZE; row++) {
+    for (let r = 0; r < SIZE; r++) {
 
-        board[row] = [];
+        for (let c = 0; c < SIZE; c++) {
 
-        for (let col = 0; col < SIZE; col++) {
-
-            board[row][col] = false;
-
-            const cell =
-                document.createElement("div");
+            const cell = document.createElement("div");
 
             cell.className = "cell";
+
+            cell.dataset.row = r;
+            cell.dataset.col = c;
+
+            if (board[r][c]) {
+                cell.classList.add("filled");
+            }
 
             boardElement.appendChild(cell);
         }
@@ -341,66 +393,30 @@ function createBoard() {
 }
 
 
-/* =========================
-   DRAW BOARD
-========================= */
+function clearPreview() {
 
-function drawBoard() {
-
-    for (let row = 0; row < SIZE; row++) {
-
-        for (let col = 0; col < SIZE; col++) {
-
-            const index =
-                row * SIZE + col;
-
-            const cell =
-                boardElement.children[index];
-
-            cell.className = "cell";
-
-            if (board[row][col]) {
-
-                cell.classList.add("filled");
-            }
-        }
-    }
+    document.querySelectorAll(".cell.preview")
+        .forEach(cell => cell.classList.remove("preview"));
 }
 
 
-/* =========================
-   CREATE PIECES
-========================= */
+// -------------------------
+// PIECES
+// -------------------------
 
-function makePieces() {
+function createPieces() {
 
     pieces = [];
 
     for (let i = 0; i < 3; i++) {
 
-        const randomShape =
-            SHAPES[
-                Math.floor(
-                    Math.random() * SHAPES.length
-                )
-            ];
+        const shape =
+            SHAPES[Math.floor(Math.random() * SHAPES.length)];
 
-        /*
-         * Copy the array so each piece
-         * is independent.
-         */
-        pieces.push(
-            randomShape.map(block => [...block])
-        );
+        pieces.push(shape);
     }
-
-    drawPieces();
 }
 
-
-/* =========================
-   DRAW PIECES
-========================= */
 
 function drawPieces() {
 
@@ -410,63 +426,38 @@ function drawPieces() {
 
         if (!shape) return;
 
-        const holder =
-            document.createElement("div");
+        const holder = document.createElement("div");
 
-        holder.className =
-            "piece-holder";
+        holder.className = "piece-holder";
+        holder.dataset.index = index;
 
-        holder.dataset.index =
-            index;
+        const piece = document.createElement("div");
 
-        const piece =
-            document.createElement("div");
+        piece.className = "piece";
 
-        piece.className =
-            "piece";
-
-        const rows =
-            Math.max(
-                ...shape.map(block => block[0])
-            ) + 1;
-
-        const cols =
-            Math.max(
-                ...shape.map(block => block[1])
-            ) + 1;
+        const maxRow = Math.max(...shape.map(x => x[0]));
+        const maxCol = Math.max(...shape.map(x => x[1]));
 
         piece.style.gridTemplateRows =
-            `repeat(${rows}, 25px)`;
+            `repeat(${maxRow + 1}, 25px)`;
 
         piece.style.gridTemplateColumns =
-            `repeat(${cols}, 25px)`;
+            `repeat(${maxCol + 1}, 25px)`;
 
-        shape.forEach(([row, col]) => {
+        shape.forEach(([r,c]) => {
 
-            const block =
-                document.createElement("div");
+            const block = document.createElement("div");
 
-            block.className =
-                "block";
+            block.className = "piece-block";
 
-            block.style.gridRow =
-                row + 1;
-
-            block.style.gridColumn =
-                col + 1;
+            block.style.gridRow = r + 1;
+            block.style.gridColumn = c + 1;
 
             piece.appendChild(block);
         });
 
         holder.appendChild(piece);
 
-        /*
-         * Put the pointer listener on the
-         * WHOLE holder, not the visual piece.
-         *
-         * This makes the entire bottom slot
-         * grab-able.
-         */
         holder.addEventListener(
             "pointerdown",
             beginDrag
@@ -477,53 +468,179 @@ function drawPieces() {
 }
 
 
-/* =========================
-   BEGIN DRAG
-========================= */
+// -------------------------
+// VALID POSITION
+// -------------------------
+
+function canPlace(shape, row, col) {
+
+    for (const [r,c] of shape) {
+
+        const nr = row + r;
+        const nc = col + c;
+
+        if (
+            nr < 0 ||
+            nr >= SIZE ||
+            nc < 0 ||
+            nc >= SIZE
+        ) {
+            return false;
+        }
+
+        if (board[nr][nc]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+// Find the closest VALID position.
+// It checks the exact hovered cell first,
+// then tiny distances around it.
+
+function findClosestValidPosition(
+    shape,
+    wantedRow,
+    wantedCol
+) {
+
+    if (
+        canPlace(
+            shape,
+            wantedRow,
+            wantedCol
+        )
+    ) {
+        return {
+            row: wantedRow,
+            col: wantedCol
+        };
+    }
+
+    let best = null;
+    let bestDistance = Infinity;
+
+    // Much more sensitive than before.
+    // Checks every nearby cell instead of
+    // only a few large jumps.
+
+    for (let radius = 1; radius <= 3; radius++) {
+
+        for (
+            let row = wantedRow - radius;
+            row <= wantedRow + radius;
+            row++
+        ) {
+
+            for (
+                let col = wantedCol - radius;
+                col <= wantedCol + radius;
+                col++
+            ) {
+
+                if (
+                    row < 0 ||
+                    row >= SIZE ||
+                    col < 0 ||
+                    col >= SIZE
+                ) {
+                    continue;
+                }
+
+                if (!canPlace(shape, row, col)) {
+                    continue;
+                }
+
+                const distance =
+                    Math.hypot(
+                        row - wantedRow,
+                        col - wantedCol
+                    );
+
+                if (distance < bestDistance) {
+
+                    bestDistance = distance;
+
+                    best = {
+                        row,
+                        col
+                    };
+                }
+            }
+        }
+
+        // If we found something this close,
+        // don't jump farther away.
+        if (best) {
+            return best;
+        }
+    }
+
+    return null;
+}
+
+
+// -------------------------
+// MOUSE / TOUCH DRAGGING
+// -------------------------
 
 function beginDrag(event) {
 
     event.preventDefault();
 
-    const holder =
-        event.currentTarget;
+    const holder = event.currentTarget;
 
     const index =
         Number(holder.dataset.index);
 
     if (!pieces[index]) return;
 
-    draggingPiece =
-        pieces[index];
+    draggingPiece = pieces[index];
+    draggingIndex = index;
+    draggingHolder = holder;
 
-    draggingIndex =
-        index;
+    const drag = document.createElement("div");
 
-    draggingHolder =
-        holder;
+    drag.id = "dragPiece";
 
-    currentDrop = null;
+    const shape = draggingPiece;
 
-    holder.classList.add(
-        "dragging"
-    );
+    const maxRow =
+        Math.max(...shape.map(x => x[0]));
 
-    createDragVisual(
-        draggingPiece
-    );
+    const maxCol =
+        Math.max(...shape.map(x => x[1]));
 
-    moveDrag(
-        event.clientX,
-        event.clientY
-    );
+    drag.style.gridTemplateRows =
+        `repeat(${maxRow + 1}, 25px)`;
 
-    /*
-     * Use pointer events so this works
-     * with mouse and touchscreen.
-     */
+    drag.style.gridTemplateColumns =
+        `repeat(${maxCol + 1}, 25px)`;
+
+    shape.forEach(([r,c]) => {
+
+        const block =
+            document.createElement("div");
+
+        block.className = "piece-block";
+
+        block.style.gridRow = r + 1;
+        block.style.gridColumn = c + 1;
+
+        drag.appendChild(block);
+    });
+
+    document.body.appendChild(drag);
+
+    moveDrag(event);
+
     document.addEventListener(
         "pointermove",
-        dragMove
+        moveDrag,
+        { passive: false }
     );
 
     document.addEventListener(
@@ -534,24 +651,29 @@ function beginDrag(event) {
 
     document.addEventListener(
         "pointercancel",
-        cancelDrag,
+        endDrag,
         { once: true }
     );
 }
 
 
-/* =========================
-   DRAG MOVE
-========================= */
-
-function dragMove(event) {
+function moveDrag(event) {
 
     if (!draggingPiece) return;
 
-    moveDrag(
-        event.clientX,
-        event.clientY
-    );
+    event.preventDefault();
+
+    const drag =
+        document.getElementById("dragPiece");
+
+    if (drag) {
+
+        drag.style.left =
+            event.clientX + "px";
+
+        drag.style.top =
+            event.clientY - 55 + "px";
+    }
 
     updatePreview(
         event.clientX,
@@ -560,83 +682,13 @@ function dragMove(event) {
 }
 
 
-/* =========================
-   MOVE DRAG VISUAL
-========================= */
-
-function moveDrag(x, y) {
-
-    dragElement.style.left =
-        x + "px";
-
-    dragElement.style.top =
-        (y - 45) + "px";
-}
-
-
-/* =========================
-   CREATE DRAG VISUAL
-========================= */
-
-function createDragVisual(shape) {
-
-    dragElement.innerHTML = "";
-
-    dragElement.style.display =
-        "grid";
-
-    const rows =
-        Math.max(
-            ...shape.map(block => block[0])
-        ) + 1;
-
-    const cols =
-        Math.max(
-            ...shape.map(block => block[1])
-        ) + 1;
-
-    dragElement.style.gridTemplateRows =
-        `repeat(${rows}, 30px)`;
-
-    dragElement.style.gridTemplateColumns =
-        `repeat(${cols}, 30px)`;
-
-    shape.forEach(([row, col]) => {
-
-        const block =
-            document.createElement("div");
-
-        block.className =
-            "block";
-
-        block.style.gridRow =
-            row + 1;
-
-        block.style.gridColumn =
-            col + 1;
-
-        dragElement.appendChild(block);
-    });
-}
-
-
-/* =========================
-   FIND BOARD CELL
-========================= */
+// Convert mouse position to board cell.
+// Uses the exact physical board location.
 
 function getBoardCell(x, y) {
 
     const rect =
         boardElement.getBoundingClientRect();
-
-    if (
-        x < rect.left ||
-        x > rect.right ||
-        y < rect.top ||
-        y > rect.bottom
-    ) {
-        return null;
-    }
 
     const cellWidth =
         rect.width / SIZE;
@@ -644,514 +696,379 @@ function getBoardCell(x, y) {
     const cellHeight =
         rect.height / SIZE;
 
-    return {
+    const col =
+        Math.floor(
+            (x - rect.left) / cellWidth
+        );
 
-        row: Math.floor(
-            (y - rect.top) /
-            cellHeight
-        ),
+    const row =
+        Math.floor(
+            (y - rect.top) / cellHeight
+        );
 
-        col: Math.floor(
-            (x - rect.left) /
-            cellWidth
-        )
-    };
+    return { row, col };
 }
 
 
-/* =========================
-   FIND CLOSEST VALID SPOT
-========================= */
-
-function findClosestValidPosition(
-    shape,
-    wantedRow,
-    wantedCol
-) {
-
-    /*
-     * First try the exact position.
-     */
-    if (
-        canPlace(
-            shape,
-            wantedRow,
-            wantedCol
-        )
-    ) {
-
-        return {
-            row: wantedRow,
-            col: wantedCol
-        };
-    }
-
-    /*
-     * Search outward in a circle.
-     *
-     * This creates the auto-correction.
-     */
-    for (
-        let distance = 1;
-        distance <= 4;
-        distance++
-    ) {
-
-        let best = null;
-
-        let bestDistance =
-            Infinity;
-
-        for (
-            let row = wantedRow - distance;
-            row <= wantedRow + distance;
-            row++
-        ) {
-
-            for (
-                let col = wantedCol - distance;
-                col <= wantedCol + distance;
-                col++
-            ) {
-
-                if (
-                    !canPlace(
-                        shape,
-                        row,
-                        col
-                    )
-                ) {
-                    continue;
-                }
-
-                const dRow =
-                    row - wantedRow;
-
-                const dCol =
-                    col - wantedCol;
-
-                const actualDistance =
-                    Math.sqrt(
-                        dRow * dRow +
-                        dCol * dCol
-                    );
-
-                if (
-                    actualDistance < bestDistance
-                ) {
-
-                    bestDistance =
-                        actualDistance;
-
-                    best = {
-                        row: row,
-                        col: col
-                    };
-                }
-            }
-        }
-
-        if (best) {
-            return best;
-        }
-    }
-
-    return null;
-}
-
-
-/* =========================
-   PREVIEW
-========================= */
+// -------------------------
+// PREVIEW
+// -------------------------
 
 function updatePreview(x, y) {
 
     clearPreview();
 
-    const cell =
-        getBoardCell(x, y);
-
-    if (!cell) {
-
+    if (!draggingPiece) {
         currentDrop = null;
-
         return;
     }
 
-    /*
-     * Find the closest legal location.
-     */
+    const wanted =
+        getBoardCell(x, y);
+
+    if (
+        wanted.row < 0 ||
+        wanted.row >= SIZE ||
+        wanted.col < 0 ||
+        wanted.col >= SIZE
+    ) {
+        currentDrop = null;
+        return;
+    }
+
     const corrected =
         findClosestValidPosition(
             draggingPiece,
-            cell.row,
-            cell.col
+            wanted.row,
+            wanted.col
         );
 
     if (!corrected) {
 
-        currentDrop = null;
+        // No red hologram.
+        // Nothing appears if there is
+        // nowhere valid nearby.
 
+        currentDrop = null;
         return;
     }
 
     currentDrop = corrected;
 
-    /*
-     * Show exactly where the piece
-     * will be placed.
-     */
-    draggingPiece.forEach(
-        ([row, col]) => {
+    draggingPiece.forEach(([r,c]) => {
 
-            const targetRow =
-                corrected.row + row;
+        const row =
+            corrected.row + r;
 
-            const targetCol =
-                corrected.col + col;
+        const col =
+            corrected.col + c;
 
-            if (
-                targetRow < 0 ||
-                targetRow >= SIZE ||
-                targetCol < 0 ||
-                targetCol >= SIZE
-            ) {
-                return;
-            }
-
-            const index =
-                targetRow * SIZE +
-                targetCol;
-
-            boardElement
-                .children[index]
-                .classList.add(
-                    "preview"
-                );
-        }
-    );
-}
-
-
-/* =========================
-   CLEAR PREVIEW
-========================= */
-
-function clearPreview() {
-
-    for (
-        let i = 0;
-        i < boardElement.children.length;
-        i++
-    ) {
-
-        boardElement
-            .children[i]
-            .classList.remove(
-                "preview"
+        const cell =
+            document.querySelector(
+                `.cell[data-row="${row}"][data-col="${col}"]`
             );
-    }
+
+        if (cell) {
+            cell.classList.add("preview");
+        }
+    });
 }
 
 
-/* =========================
-   END DRAG
-========================= */
+// -------------------------
+// DROP
+// -------------------------
 
 function endDrag(event) {
 
+    if (!draggingPiece) return;
+
     document.removeEventListener(
         "pointermove",
-        dragMove
+        moveDrag
     );
 
     clearPreview();
 
-    if (!draggingPiece) return;
+    let drop = currentDrop;
 
-    /*
-     * Calculate one final position
-     * using where the mouse was released.
-     */
-    const cell =
-        getBoardCell(
-            event.clientX,
-            event.clientY
-        );
+    // Recalculate at the exact release position.
+    if (!drop) {
 
-    let finalPosition = null;
+        const wanted =
+            getBoardCell(
+                event.clientX,
+                event.clientY
+            );
 
-    if (cell) {
-
-        finalPosition =
+        drop =
             findClosestValidPosition(
                 draggingPiece,
-                cell.row,
-                cell.col
+                wanted.row,
+                wanted.col
             );
     }
 
-    if (finalPosition) {
+    if (drop) {
 
         placePiece(
             draggingPiece,
-            finalPosition.row,
-            finalPosition.col
+            drop.row,
+            drop.col
         );
 
-        score +=
-            draggingPiece.length * 10;
+        pieces[draggingIndex] = null;
 
-        pieces[draggingIndex] =
-            null;
+        score += draggingPiece.length * 2;
 
-        clearLines();
-
-        scoreElement.textContent =
-            score;
+        updateScore();
 
         drawBoard();
 
-        messageElement.textContent = "";
+        const cleared =
+            clearCompletedLines();
 
-        /*
-         * Give three new pieces after
-         * all three have been used.
-         */
+        if (cleared > 0) {
+
+            score += cleared * 20;
+
+            updateScore();
+
+            showScorePop(
+                event.clientX,
+                event.clientY,
+                "+" + (cleared * 20)
+            );
+        }
+
+        drawBoard();
+
         if (
-            pieces.every(
-                piece => piece === null
-            )
+            pieces.every(piece => piece === null)
         ) {
-
-            makePieces();
+            createPieces();
         }
 
-        if (!hasMoves()) {
+        drawPieces();
 
-            messageElement.textContent =
-                "Game Over!";
+        if (!hasAnyMove()) {
+            showGameOver();
         }
-
-    } else {
-
-        messageElement.textContent =
-            "No room for that piece!";
     }
 
     cleanupDrag();
 }
 
 
-/* =========================
-   CANCEL DRAG
-========================= */
-
-function cancelDrag() {
-
-    document.removeEventListener(
-        "pointermove",
-        dragMove
-    );
-
-    clearPreview();
-
-    cleanupDrag();
-}
-
-
-/* =========================
-   CLEAN UP
-========================= */
-
-function cleanupDrag() {
-
-    if (draggingHolder) {
-
-        draggingHolder.classList.remove(
-            "dragging"
-        );
-    }
-
-    dragElement.style.display =
-        "none";
-
-    dragElement.innerHTML = "";
-
-    draggingPiece = null;
-
-    draggingIndex = -1;
-
-    draggingHolder = null;
-
-    currentDrop = null;
-}
-
-
-/* =========================
-   CAN PLACE
-========================= */
-
-function canPlace(
-    shape,
-    startRow,
-    startCol
-) {
-
-    for (const [row, col] of shape) {
-
-        const r =
-            startRow + row;
-
-        const c =
-            startCol + col;
-
-        if (
-            r < 0 ||
-            r >= SIZE ||
-            c < 0 ||
-            c >= SIZE
-        ) {
-
-            return false;
-        }
-
-        if (board[r][c]) {
-
-            return false;
-        }
-    }
-
-    return true;
-}
-
-
-/* =========================
-   PLACE PIECE
-========================= */
+// -------------------------
+// PLACE PIECE
+// -------------------------
 
 function placePiece(
     shape,
-    startRow,
-    startCol
+    row,
+    col
 ) {
 
-    shape.forEach(
-        ([row, col]) => {
+    shape.forEach(([r,c]) => {
 
-            board[
-                startRow + row
-            ][
-                startCol + col
-            ] = true;
-        }
-    );
+        board[row + r][col + c] = true;
+    });
 }
 
 
-/* =========================
-   CLEAR LINES
-========================= */
+// -------------------------
+// CLEAR LINES
+// -------------------------
 
-function clearLines() {
+function clearCompletedLines() {
 
-    let cleared = 0;
+    const rows = [];
+    const cols = [];
 
-    /*
-     * Rows
-     */
-    for (let row = 0; row < SIZE; row++) {
+    // Find complete rows
 
-        if (
-            board[row].every(
-                cell => cell
-            )
-        ) {
+    for (let r = 0; r < SIZE; r++) {
 
-            board[row].fill(false);
+        let complete = true;
 
-            cleared++;
-        }
-    }
+        for (let c = 0; c < SIZE; c++) {
 
-    /*
-     * Columns
-     */
-    for (let col = 0; col < SIZE; col++) {
-
-        let full = true;
-
-        for (
-            let row = 0;
-            row < SIZE;
-            row++
-        ) {
-
-            if (!board[row][col]) {
-
-                full = false;
-
+            if (!board[r][c]) {
+                complete = false;
                 break;
             }
         }
 
-        if (full) {
-
-            for (
-                let row = 0;
-                row < SIZE;
-                row++
-            ) {
-
-                board[row][col] =
-                    false;
-            }
-
-            cleared++;
+        if (complete) {
+            rows.push(r);
         }
     }
 
-    if (cleared > 0) {
+    // Find complete columns
 
-        score +=
-            cleared * 100;
+    for (let c = 0; c < SIZE; c++) {
 
-        scoreElement.textContent =
-            score;
+        let complete = true;
+
+        for (let r = 0; r < SIZE; r++) {
+
+            if (!board[r][c]) {
+                complete = false;
+                break;
+            }
+        }
+
+        if (complete) {
+            cols.push(c);
+        }
     }
+
+    const total =
+        new Set([
+            ...rows.map(r => "r" + r),
+            ...cols.map(c => "c" + c)
+        ]).size;
+
+    if (total === 0) {
+        return 0;
+    }
+
+    // Get every cell that is part of
+    // a completed line.
+
+    const clearingCells = new Set();
+
+    rows.forEach(r => {
+
+        for (let c = 0; c < SIZE; c++) {
+            clearingCells.add(`${r},${c}`);
+        }
+    });
+
+    cols.forEach(c => {
+
+        for (let r = 0; r < SIZE; r++) {
+            clearingCells.add(`${r},${c}`);
+        }
+    });
+
+    // Animate them first.
+
+    clearingCells.forEach(key => {
+
+        const [r,c] =
+            key.split(",").map(Number);
+
+        const cell =
+            document.querySelector(
+                `.cell[data-row="${r}"][data-col="${c}"]`
+            );
+
+        if (cell) {
+            cell.classList.add("clearing");
+        }
+    });
+
+    // Shake the board.
+
+    boardElement.classList.remove("shake");
+
+    void boardElement.offsetWidth;
+
+    boardElement.classList.add("shake");
+
+    // Clear after animation starts.
+
+    setTimeout(() => {
+
+        clearingCells.forEach(key => {
+
+            const [r,c] =
+                key.split(",").map(Number);
+
+            board[r][c] = false;
+        });
+
+        drawBoard();
+
+    }, 360);
+
+    return rows.length + cols.length;
 }
 
 
-/* =========================
-   CHECK FOR MOVES
-========================= */
+// -------------------------
+// SCORE POP
+// -------------------------
 
-function hasMoves() {
+function showScorePop(
+    x,
+    y,
+    text
+) {
 
-    for (const shape of pieces) {
+    const pop =
+        document.createElement("div");
 
-        if (!shape) continue;
+    pop.className = "score-pop";
 
-        for (
-            let row = 0;
-            row < SIZE;
-            row++
-        ) {
+    pop.textContent = text;
 
-            for (
-                let col = 0;
-                col < SIZE;
-                col++
-            ) {
+    pop.style.left = x + "px";
+    pop.style.top = y + "px";
+
+    document.body.appendChild(pop);
+
+    setTimeout(() => {
+        pop.remove();
+    }, 700);
+}
+
+
+// -------------------------
+// CLEANUP
+// -------------------------
+
+function cleanupDrag() {
+
+    clearPreview();
+
+    const drag =
+        document.getElementById("dragPiece");
+
+    if (drag) {
+        drag.remove();
+    }
+
+    draggingPiece = null;
+    draggingIndex = -1;
+    draggingHolder = null;
+    currentDrop = null;
+}
+
+
+// -------------------------
+// GAME OVER
+// -------------------------
+
+function hasAnyMove() {
+
+    for (const piece of pieces) {
+
+        if (!piece) continue;
+
+        for (let r = 0; r < SIZE; r++) {
+
+            for (let c = 0; c < SIZE; c++) {
 
                 if (
                     canPlace(
-                        shape,
-                        row,
-                        col
+                        piece,
+                        r,
+                        c
                     )
                 ) {
-
                     return true;
                 }
             }
@@ -1162,32 +1079,20 @@ function hasMoves() {
 }
 
 
-/* =========================
-   NEW GAME
-========================= */
+function showGameOver() {
 
-function newGame() {
+    document.getElementById("finalScore")
+        .textContent =
+        "Score: " + score;
 
-    score = 0;
-
-    scoreElement.textContent =
-        "0";
-
-    messageElement.textContent =
-        "";
-
-    createBoard();
-
-    makePieces();
-
-    drawBoard();
+    document.getElementById("gameOver")
+        .style.display = "flex";
 }
 
 
-newGameButton.addEventListener(
-    "click",
-    newGame
-);
+// -------------------------
+// START
+// -------------------------
 
 newGame();
 
