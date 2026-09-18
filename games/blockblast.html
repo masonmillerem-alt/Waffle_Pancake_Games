@@ -86,13 +86,43 @@ h1 {
         inset 0 -3px rgba(0,0,0,.2);
 }
 
-/* ONLY valid previews exist */
+/* Valid piece preview */
 .cell.preview {
     background: #ffd43b;
     border: 2px solid #fff1a8;
     box-shadow:
         0 0 10px rgba(255,212,59,.9),
         inset 0 0 8px rgba(255,255,255,.35);
+}
+
+/* A line that WILL be cleared */
+.cell.line-preview {
+    background: #ffe66d;
+    border: 2px solid #fff;
+    box-shadow:
+        0 0 8px #fff,
+        0 0 18px #ffd43b,
+        0 0 30px rgba(255,212,59,.8);
+    animation: lineGlow 500ms ease-in-out infinite alternate;
+    z-index: 2;
+}
+
+@keyframes lineGlow {
+    from {
+        filter: brightness(1.2);
+        transform: scale(.96);
+    }
+
+    to {
+        filter: brightness(2.2);
+        transform: scale(1.04);
+    }
+}
+
+/* The newly placed piece is kept above line glow */
+.cell.preview.line-preview {
+    background: #fff0a0;
+    border-color: white;
 }
 
 /* Clearing animation */
@@ -169,7 +199,6 @@ h1 {
         inset 0 -3px rgba(0,0,0,.2);
 }
 
-/* Piece being dragged */
 #dragPiece {
     position: fixed;
     pointer-events: none;
@@ -395,10 +424,6 @@ function newGame() {
 }
 
 
-/* =========================
-   SCORE
-========================= */
-
 function updateScore() {
 
     document.getElementById("score").textContent =
@@ -442,10 +467,13 @@ function drawBoard() {
 function clearPreview() {
 
     document
-        .querySelectorAll(".cell.preview")
+        .querySelectorAll(".cell.preview, .cell.line-preview")
         .forEach(cell => {
 
-            cell.classList.remove("preview");
+            cell.classList.remove(
+                "preview",
+                "line-preview"
+            );
 
         });
 }
@@ -536,7 +564,7 @@ function drawPieces() {
    CAN PLACE
 ========================= */
 
-function canPlace(shape, row, col) {
+function canPlace(shape,row,col) {
 
     for (const [r,c] of shape) {
 
@@ -562,22 +590,10 @@ function canPlace(shape, row, col) {
 
 
 /* =========================
-   IMPORTANT:
-   SENSITIVE PLACEMENT
+   FIND BEST POSITION
 ========================= */
 
-/*
-    Instead of simply using the cursor
-    as the top-left corner of the piece,
-    we calculate where the CENTER of
-    the piece is hovering.
-
-    Then we test nearby board positions.
-
-    This makes placement MUCH more forgiving.
-*/
-
-function findBestPosition(shape, mouseX, mouseY) {
+function findBestPosition(shape,mouseX,mouseY) {
 
     const boardElement =
         document.getElementById("board");
@@ -592,37 +608,35 @@ function findBestPosition(shape, mouseX, mouseY) {
         rect.height / SIZE;
 
 
-    /*
-        Find the center of the shape.
-    */
-
     let minRow = Infinity;
     let maxRow = -Infinity;
 
     let minCol = Infinity;
     let maxCol = -Infinity;
 
+
     shape.forEach(([r,c]) => {
 
-        minRow = Math.min(minRow, r);
-        maxRow = Math.max(maxRow, r);
+        minRow =
+            Math.min(minRow,r);
 
-        minCol = Math.min(minCol, c);
-        maxCol = Math.max(maxCol, c);
+        maxRow =
+            Math.max(maxRow,r);
+
+        minCol =
+            Math.min(minCol,c);
+
+        maxCol =
+            Math.max(maxCol,c);
     });
 
 
-    const pieceCenterRow =
+    const centerRow =
         (minRow + maxRow) / 2;
 
-    const pieceCenterCol =
+    const centerCol =
         (minCol + maxCol) / 2;
 
-
-    /*
-        Where is the mouse relative
-        to the board?
-    */
 
     const mouseCol =
         (mouseX - rect.left) / cellWidth;
@@ -631,69 +645,59 @@ function findBestPosition(shape, mouseX, mouseY) {
         (mouseY - rect.top) / cellHeight;
 
 
-    /*
-        Convert mouse position into
-        the most likely top-left cell.
-    */
-
     const baseRow =
         Math.round(
-            mouseRow - pieceCenterRow
+            mouseRow - centerRow
         );
 
     const baseCol =
         Math.round(
-            mouseCol - pieceCenterCol
+            mouseCol - centerCol
         );
 
-
-    /*
-        Search nearby positions.
-
-        This is the part that makes
-        placement sensitive.
-
-        We check a 5x5 area around
-        the cursor rather than requiring
-        exact positioning.
-    */
 
     let best = null;
     let bestDistance = Infinity;
 
-    for (let row = baseRow - 2;
-         row <= baseRow + 2;
-         row++) {
 
-        for (let col = baseCol - 2;
-             col <= baseCol + 2;
-             col++) {
+    /*
+        Check nearby positions.
+    */
+
+    for (
+        let row = baseRow - 2;
+        row <= baseRow + 2;
+        row++
+    ) {
+
+        for (
+            let col = baseCol - 2;
+            col <= baseCol + 2;
+            col++
+        ) {
 
             if (!canPlace(shape,row,col)) {
                 continue;
             }
 
-            /*
-                Calculate actual pixel distance
-                from the mouse to the center
-                of this possible placement.
-            */
 
-            const placementCenterX =
+            const centerX =
                 rect.left +
-                (col + pieceCenterCol + .5) *
+                (col + centerCol + .5) *
                 cellWidth;
 
-            const placementCenterY =
+            const centerY =
                 rect.top +
-                (row + pieceCenterRow + .5) *
+                (row + centerRow + .5) *
                 cellHeight;
+
 
             const distance =
                 Math.hypot(
-                    mouseX - placementCenterX,
-                    mouseY - placementCenterY
+                    mouseX - centerX,
+                    mouseY - centerY
                 );
+
 
             if (distance < bestDistance) {
 
@@ -707,19 +711,17 @@ function findBestPosition(shape, mouseX, mouseY) {
         }
     }
 
-    /*
-        Only accept a nearby position.
 
-        This prevents the piece from
-        randomly jumping across the board.
-    */
+    const maxSnap =
+        Math.max(
+            cellWidth,
+            cellHeight
+        ) * 1.35;
 
-    const maximumSnapDistance =
-        Math.max(cellWidth,cellHeight) * 1.25;
 
     if (
         best &&
-        bestDistance <= maximumSnapDistance
+        bestDistance <= maxSnap
     ) {
 
         return best;
@@ -730,7 +732,7 @@ function findBestPosition(shape, mouseX, mouseY) {
 
 
 /* =========================
-   SHOW PREVIEW
+   PREVIEW + LINE DETECTION
 ========================= */
 
 function updatePreview(x,y) {
@@ -749,10 +751,16 @@ function updatePreview(x,y) {
             y
         );
 
+
     if (!best) return;
+
 
     currentDrop = best;
 
+
+    /*
+        First show the piece.
+    */
 
     draggingPiece.forEach(([r,c]) => {
 
@@ -768,15 +776,120 @@ function updatePreview(x,y) {
             );
 
         if (cell) {
-
             cell.classList.add("preview");
+        }
+    });
+
+
+    /*
+        Temporarily pretend the piece
+        has been placed.
+
+        This lets us see whether it
+        would complete any lines.
+    */
+
+    const testBoard =
+        board.map(row => [...row]);
+
+
+    draggingPiece.forEach(([r,c]) => {
+
+        testBoard[
+            best.row + r
+        ][
+            best.col + c
+        ] = true;
+
+    });
+
+
+    /*
+        Check completed rows.
+    */
+
+    const completedRows = [];
+
+    for (let r = 0; r < SIZE; r++) {
+
+        if (
+            testBoard[r].every(
+                cell => cell
+            )
+        ) {
+
+            completedRows.push(r);
+        }
+    }
+
+
+    /*
+        Check completed columns.
+    */
+
+    const completedCols = [];
+
+    for (let c = 0; c < SIZE; c++) {
+
+        let complete = true;
+
+        for (let r = 0; r < SIZE; r++) {
+
+            if (!testBoard[r][c]) {
+
+                complete = false;
+                break;
+            }
+        }
+
+        if (complete) {
+            completedCols.push(c);
+        }
+    }
+
+
+    /*
+        Glow the ENTIRE line.
+
+        This happens while hovering,
+        before the player releases.
+    */
+
+    completedRows.forEach(r => {
+
+        for (let c = 0; c < SIZE; c++) {
+
+            const cell =
+                document.querySelector(
+                    `.cell[data-row="${r}"][data-col="${c}"]`
+                );
+
+            if (cell) {
+                cell.classList.add("line-preview");
+            }
+        }
+    });
+
+
+    completedCols.forEach(c => {
+
+        for (let r = 0; r < SIZE; r++) {
+
+            const cell =
+                document.querySelector(
+                    `.cell[data-row="${r}"][data-col="${c}"]`
+                );
+
+            if (cell) {
+                cell.classList.add("line-preview");
+            }
         }
     });
 }
 
 
 /* =========================
-   START DRAG
+   DRAG
 ========================= */
 
 function startDrag(event) {
@@ -798,20 +911,26 @@ function startDrag(event) {
         index;
 
 
-    /*
-        Make floating copy.
-    */
-
     const drag =
         document.createElement("div");
 
     drag.id = "dragPiece";
 
+
     const maxRow =
-        Math.max(...draggingPiece.map(x => x[0]));
+        Math.max(
+            ...draggingPiece.map(
+                x => x[0]
+            )
+        );
 
     const maxCol =
-        Math.max(...draggingPiece.map(x => x[1]));
+        Math.max(
+            ...draggingPiece.map(
+                x => x[1]
+            )
+        );
+
 
     drag.style.gridTemplateRows =
         `repeat(${maxRow + 1},25px)`;
@@ -827,11 +946,15 @@ function startDrag(event) {
 
         block.className = "piece-block";
 
-        block.style.gridRow = r + 1;
-        block.style.gridColumn = c + 1;
+        block.style.gridRow =
+            r + 1;
+
+        block.style.gridColumn =
+            c + 1;
 
         drag.appendChild(block);
     });
+
 
     document.body.appendChild(drag);
 
@@ -860,7 +983,7 @@ function startDrag(event) {
 
 
 /* =========================
-   DRAGGING
+   MOVE
 ========================= */
 
 function moveDrag(event) {
@@ -869,8 +992,12 @@ function moveDrag(event) {
 
     event.preventDefault();
 
+
     const drag =
-        document.getElementById("dragPiece");
+        document.getElementById(
+            "dragPiece"
+        );
+
 
     if (drag) {
 
@@ -890,7 +1017,7 @@ function moveDrag(event) {
 
 
 /* =========================
-   FINISH DRAG
+   FINISH
 ========================= */
 
 function finishDrag(event) {
@@ -899,16 +1026,12 @@ function finishDrag(event) {
 
     event.preventDefault();
 
+
     document.removeEventListener(
         "pointermove",
         moveDrag
     );
 
-
-    /*
-        Recalculate at the exact
-        release position.
-    */
 
     const drop =
         findBestPosition(
@@ -933,6 +1056,7 @@ function finishDrag(event) {
         score +=
             draggingPiece.length * 2;
 
+
         pieces[draggingIndex] = null;
 
 
@@ -940,31 +1064,6 @@ function finishDrag(event) {
 
         drawBoard();
 
-
-        /*
-            Give the placement a tiny
-            visual pop.
-        */
-
-        const boardElement =
-            document.getElementById("board");
-
-        boardElement.animate(
-            [
-                {transform:"scale(1)"},
-                {transform:"scale(1.015)"},
-                {transform:"scale(1)"}
-            ],
-            {
-                duration:140,
-                easing:"ease-out"
-            }
-        );
-
-
-        /*
-            Check lines.
-        */
 
         const cleared =
             clearLines();
@@ -987,10 +1086,6 @@ function finishDrag(event) {
         }
 
 
-        /*
-            New set of pieces.
-        */
-
         if (
             pieces.every(
                 piece => piece === null
@@ -1005,26 +1100,10 @@ function finishDrag(event) {
 
 
         if (!hasMove()) {
-
             showGameOver();
         }
     }
 
-
-    cleanupDrag();
-}
-
-
-/* =========================
-   CANCEL
-========================= */
-
-function cancelDrag() {
-
-    document.removeEventListener(
-        "pointermove",
-        moveDrag
-    );
 
     cleanupDrag();
 }
@@ -1043,6 +1122,7 @@ function placePiece(
     shape.forEach(([r,c]) => {
 
         board[row+r][col+c] = true;
+
     });
 }
 
@@ -1057,14 +1137,12 @@ function clearLines() {
     const cols = [];
 
 
-    /*
-        Find full rows.
-    */
-
     for (let r = 0; r < SIZE; r++) {
 
         if (
-            board[r].every(cell => cell)
+            board[r].every(
+                cell => cell
+            )
         ) {
 
             rows.push(r);
@@ -1072,24 +1150,20 @@ function clearLines() {
     }
 
 
-    /*
-        Find full columns.
-    */
-
     for (let c = 0; c < SIZE; c++) {
 
-        let full = true;
+        let complete = true;
 
         for (let r = 0; r < SIZE; r++) {
 
             if (!board[r][c]) {
 
-                full = false;
+                complete = false;
                 break;
             }
         }
 
-        if (full) {
+        if (complete) {
             cols.push(c);
         }
     }
@@ -1104,10 +1178,6 @@ function clearLines() {
     }
 
 
-    /*
-        Collect every cell being cleared.
-    */
-
     const cells = new Set();
 
 
@@ -1115,7 +1185,9 @@ function clearLines() {
 
         for (let c = 0; c < SIZE; c++) {
 
-            cells.add(`${r},${c}`);
+            cells.add(
+                `${r},${c}`
+            );
         }
     });
 
@@ -1124,61 +1196,50 @@ function clearLines() {
 
         for (let r = 0; r < SIZE; r++) {
 
-            cells.add(`${r},${c}`);
+            cells.add(
+                `${r},${c}`
+            );
         }
     });
 
-
-    /*
-        Animate them.
-    */
 
     cells.forEach(key => {
 
         const [r,c] =
             key.split(",").map(Number);
 
+
         const cell =
             document.querySelector(
                 `.cell[data-row="${r}"][data-col="${c}"]`
             );
 
+
         if (cell) {
 
-            /*
-                Slight stagger makes
-                the clear feel more alive.
-            */
-
-            const delay =
-                (r + c) * 12;
-
-            cell.style.animationDelay =
-                delay + "ms";
-
-            cell.classList.add("clearing");
+            cell.classList.add(
+                "clearing"
+            );
         }
     });
 
 
-    /*
-        Board shake.
-    */
-
     const boardElement =
-        document.getElementById("board");
+        document.getElementById(
+            "board"
+        );
 
-    boardElement.classList.remove("shake");
+
+    boardElement.classList.remove(
+        "shake"
+    );
 
     void boardElement.offsetWidth;
 
-    boardElement.classList.add("shake");
+    boardElement.classList.add(
+        "shake"
+    );
 
-
-    /*
-        Actually remove the blocks
-        after the animation.
-    */
 
     setTimeout(() => {
 
@@ -1192,7 +1253,7 @@ function clearLines() {
 
         drawBoard();
 
-    }, 440);
+    },440);
 
 
     return rows.length + cols.length;
@@ -1210,11 +1271,15 @@ function showScorePop(
 ) {
 
     const pop =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    pop.className = "score-pop";
+    pop.className =
+        "score-pop";
 
-    pop.textContent = amount;
+    pop.textContent =
+        amount;
 
     pop.style.left =
         x + "px";
@@ -1222,7 +1287,11 @@ function showScorePop(
     pop.style.top =
         y + "px";
 
-    document.body.appendChild(pop);
+
+    document.body.appendChild(
+        pop
+    );
+
 
     setTimeout(() => {
 
@@ -1241,7 +1310,9 @@ function cleanupDrag() {
     clearPreview();
 
     const drag =
-        document.getElementById("dragPiece");
+        document.getElementById(
+            "dragPiece"
+        );
 
     if (drag) {
         drag.remove();
@@ -1254,7 +1325,7 @@ function cleanupDrag() {
 
 
 /* =========================
-   CHECK MOVES
+   MOVES
 ========================= */
 
 function hasMove() {
@@ -1296,9 +1367,11 @@ function showGameOver() {
     ).textContent =
         "Score: " + score;
 
+
     document.getElementById(
         "gameOver"
-    ).style.display = "flex";
+    ).style.display =
+        "flex";
 }
 
 
