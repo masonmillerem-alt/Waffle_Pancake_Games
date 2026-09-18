@@ -7,149 +7,136 @@
 <title>Block Blast</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    body {
-        margin: 0;
-        background: #171717;
-        color: white;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        overflow: hidden;
-    }
+body {
+    margin: 0;
+    background: #171717;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
 
-    #game {
-        text-align: center;
-    }
+#game {
+    text-align: center;
+}
 
-    h1 {
-        margin: 0 0 8px;
-        font-size: 34px;
-    }
+h1 {
+    margin: 0 0 8px;
+    font-size: 34px;
+}
 
-    #score {
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
+#score {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
 
-    #board {
-        width: 440px;
-        height: 440px;
-        display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        grid-template-rows: repeat(8, 1fr);
-        gap: 5px;
-        padding: 5px;
-        background: #333;
-        border-radius: 12px;
-        user-select: none;
-        touch-action: none;
-    }
+#board {
+    width: 440px;
+    height: 440px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 5px;
+    padding: 5px;
+    background: #333;
+    border-radius: 12px;
+    user-select: none;
+    touch-action: none;
+}
 
-    .cell {
-        background: #555;
-        border-radius: 5px;
-    }
+.cell {
+    background: #555;
+    border-radius: 5px;
+}
 
-    .cell.filled {
-        background: #f5a623;
-    }
+.cell.filled {
+    background: #f5a623;
+}
 
-    #pieces {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 35px;
-        min-height: 130px;
-        margin-top: 15px;
-    }
+#pieces {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    min-height: 130px;
+    margin-top: 15px;
+}
 
-    .piece-slot {
-        width: 110px;
-        height: 110px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: grab;
-        touch-action: none;
-        user-select: none;
-    }
+.piece-slot {
+    width: 110px;
+    height: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
 
-    .piece-slot.dragging {
-        cursor: grabbing;
-        opacity: 0.35;
-    }
+.piece-slot:active {
+    cursor: grabbing;
+}
 
-    .piece {
-        display: grid;
-        gap: 3px;
-        pointer-events: none;
-    }
+.piece-slot.dragging {
+    opacity: 0.25;
+}
 
-    .piece-block {
-        width: 25px;
-        height: 25px;
-        background: #ffb52e;
-        border-radius: 5px;
-    }
+.piece {
+    display: grid;
+    gap: 3px;
+    pointer-events: none;
+}
 
-    .drag-piece {
-        position: fixed;
-        z-index: 9999;
-        pointer-events: none;
-        display: grid;
-        gap: 3px;
-        transform: translate(-50%, -50%);
-    }
+.piece-block {
+    width: 25px;
+    height: 25px;
+    background: #ffb52e;
+    border-radius: 5px;
+}
 
-    .drag-piece .piece-block {
-        width: 30px;
-        height: 30px;
-    }
+/* Piece that follows the mouse */
+.drag-piece {
+    position: fixed;
+    z-index: 10000;
+    pointer-events: none;
+    display: grid;
+    gap: 3px;
+    transform: translate(-50%, -50%);
+}
 
-    button {
-        margin-top: 15px;
-        padding: 11px 22px;
-        border: none;
-        border-radius: 8px;
-        background: #f5a623;
-        color: white;
-        font-size: 17px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+.drag-piece .piece-block {
+    width: 30px;
+    height: 30px;
+}
 
-    button:hover {
-        background: #d98d12;
-    }
+button {
+    margin-top: 15px;
+    padding: 11px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #f5a623;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-    #message {
-        margin-top: 12px;
-        min-height: 24px;
-        font-size: 18px;
-    }
+button:hover {
+    background: #d98d12;
+}
 
-    @media (max-width: 520px) {
-        #board {
-            width: 90vw;
-            height: 90vw;
-            max-width: 440px;
-            max-height: 440px;
-        }
-
-        #pieces {
-            gap: 5px;
-        }
-
-        .piece-slot {
-            width: 90px;
-        }
-    }
+#message {
+    margin-top: 12px;
+    min-height: 24px;
+    font-size: 18px;
+}
 </style>
 
 </head>
@@ -190,14 +177,15 @@ let board = [];
 let pieces = [];
 let score = 0;
 
-let dragging = null;
+let drag = null;
 
 
-/* -------------------------
+/* =========================
    PIECE SHAPES
-------------------------- */
+========================= */
 
 const SHAPES = [
+
     [[0,0]],
 
     [[0,0],[0,1]],
@@ -229,12 +217,13 @@ const SHAPES = [
     [[0,0],[1,0],[1,1],[2,1]],
 
     [[0,0],[0,1],[1,1],[1,2]]
+
 ];
 
 
-/* -------------------------
+/* =========================
    CREATE BOARD
-------------------------- */
+========================= */
 
 function createBoard() {
 
@@ -263,32 +252,32 @@ function createBoard() {
 }
 
 
-/* -------------------------
+/* =========================
    DRAW BOARD
-------------------------- */
+========================= */
 
 function drawBoard() {
-
-    const cells = boardElement.children;
 
     for (let row = 0; row < BOARD_SIZE; row++) {
 
         for (let col = 0; col < BOARD_SIZE; col++) {
 
-            const index = row * BOARD_SIZE + col;
+            const index =
+                row * BOARD_SIZE + col;
 
-            cells[index].classList.toggle(
-                "filled",
-                board[row][col]
-            );
+            boardElement.children[index]
+                .classList.toggle(
+                    "filled",
+                    board[row][col]
+                );
         }
     }
 }
 
 
-/* -------------------------
+/* =========================
    CREATE PIECES
-------------------------- */
+========================= */
 
 function createPieces() {
 
@@ -296,19 +285,22 @@ function createPieces() {
 
     for (let i = 0; i < 3; i++) {
 
-        const shape =
-            SHAPES[Math.floor(Math.random() * SHAPES.length)];
-
-        pieces.push(shape);
+        pieces.push(
+            SHAPES[
+                Math.floor(
+                    Math.random() * SHAPES.length
+                )
+            ]
+        );
     }
 
     drawPieces();
 }
 
 
-/* -------------------------
+/* =========================
    DRAW PIECES
-------------------------- */
+========================= */
 
 function drawPieces() {
 
@@ -316,31 +308,34 @@ function drawPieces() {
 
     pieces.forEach((shape, index) => {
 
-        const slot = document.createElement("div");
+        const slot =
+            document.createElement("div");
 
         slot.className = "piece-slot";
 
         slot.dataset.index = index;
 
-        const piece = document.createElement("div");
+        const piece =
+            document.createElement("div");
 
         piece.className = "piece";
 
-        const maxRow =
-            Math.max(...shape.map(block => block[0]));
+        const rows =
+            Math.max(...shape.map(x => x[0])) + 1;
 
-        const maxCol =
-            Math.max(...shape.map(block => block[1]));
+        const cols =
+            Math.max(...shape.map(x => x[1])) + 1;
 
         piece.style.gridTemplateRows =
-            `repeat(${maxRow + 1}, 25px)`;
+            `repeat(${rows}, 25px)`;
 
         piece.style.gridTemplateColumns =
-            `repeat(${maxCol + 1}, 25px)`;
+            `repeat(${cols}, 25px)`;
 
         shape.forEach(([row, col]) => {
 
-            const block = document.createElement("div");
+            const block =
+                document.createElement("div");
 
             block.className = "piece-block";
 
@@ -352,9 +347,13 @@ function drawPieces() {
 
         slot.appendChild(piece);
 
+        /*
+         * IMPORTANT:
+         * This starts a real pointer drag.
+         */
         slot.addEventListener(
             "pointerdown",
-            startDrag
+            pointerDown
         );
 
         piecesElement.appendChild(slot);
@@ -362,75 +361,94 @@ function drawPieces() {
 }
 
 
-/* -------------------------
-   START DRAG
-------------------------- */
+/* =========================
+   START REAL DRAG
+========================= */
 
-function startDrag(event) {
+function pointerDown(event) {
 
-    if (event.button !== undefined && event.button !== 0) {
-        return;
-    }
+    event.preventDefault();
 
     const slot = event.currentTarget;
 
-    const index = Number(slot.dataset.index);
+    const index =
+        Number(slot.dataset.index);
 
-    if (!pieces[index]) {
-        return;
-    }
+    const shape = pieces[index];
 
-    dragging = {
+    if (!shape) return;
+
+    /*
+     * Save the exact piece being dragged.
+     */
+    drag = {
         index: index,
-        shape: pieces[index],
+        shape: shape,
         slot: slot,
-        dragElement: createDragElement(pieces[index])
+        x: event.clientX,
+        y: event.clientY,
+        boardRow: null,
+        boardCol: null,
+        element: createDragPiece(shape)
     };
 
     slot.classList.add("dragging");
 
-    updateDragPosition(event.clientX, event.clientY);
+    /*
+     * Capture the pointer so dragging
+     * continues even if the cursor moves
+     * outside the original piece.
+     */
+    slot.setPointerCapture(event.pointerId);
 
-    document.addEventListener(
+    moveDrag(event);
+
+    slot.addEventListener(
         "pointermove",
-        dragMove
+        moveDrag
     );
 
-    document.addEventListener(
+    slot.addEventListener(
         "pointerup",
-        endDrag,
+        stopDrag,
         { once: true }
     );
 
-    event.preventDefault();
+    slot.addEventListener(
+        "pointercancel",
+        cancelDrag,
+        { once: true }
+    );
 }
 
 
-/* -------------------------
-   CREATE DRAG IMAGE
-------------------------- */
+/* =========================
+   CREATE DRAGGING PIECE
+========================= */
 
-function createDragElement(shape) {
+function createDragPiece(shape) {
 
-    const element = document.createElement("div");
+    const element =
+        document.createElement("div");
 
     element.className = "drag-piece";
 
-    const maxRow =
-        Math.max(...shape.map(block => block[0]));
+    const rows =
+        Math.max(...shape.map(x => x[0])) + 1;
 
-    const maxCol =
-        Math.max(...shape.map(block => block[1]));
+    const cols =
+        Math.max(...shape.map(x => x[1])) + 1;
 
     element.style.gridTemplateRows =
-        `repeat(${maxRow + 1}, 30px)`;
+        `repeat(${rows}, 30px)`;
 
     element.style.gridTemplateColumns =
-        `repeat(${maxCol + 1}, 30px)`;
+        `repeat(${cols}, 30px)`;
 
     shape.forEach(([row, col]) => {
 
-        const block = document.createElement("div");
+        const block =
+            document.createElement("div");
 
         block.className = "piece-block";
 
@@ -446,109 +464,60 @@ function createDragElement(shape) {
 }
 
 
-/* -------------------------
-   DRAG MOVE
-------------------------- */
+/* =========================
+   DRAGGING
+========================= */
 
-function dragMove(event) {
+function moveDrag(event) {
 
-    if (!dragging) {
-        return;
-    }
+    if (!drag) return;
 
-    updateDragPosition(
-        event.clientX,
-        event.clientY
-    );
-}
+    drag.x = event.clientX;
+    drag.y = event.clientY;
 
+    /*
+     * The piece follows the mouse.
+     */
+    drag.element.style.left =
+        event.clientX + "px";
 
-/* -------------------------
-   MOVE DRAG IMAGE
-------------------------- */
+    drag.element.style.top =
+        (event.clientY - 50) + "px";
 
-function updateDragPosition(x, y) {
-
-    if (!dragging) {
-        return;
-    }
-
-    dragging.dragElement.style.left = x + "px";
-    dragging.dragElement.style.top = (y - 45) + "px";
-}
-
-
-/* -------------------------
-   END DRAG
-------------------------- */
-
-function endDrag(event) {
-
-    document.removeEventListener(
-        "pointermove",
-        dragMove
-    );
-
-    if (!dragging) {
-        return;
-    }
-
-    const rowCol =
+    /*
+     * Find which board cell is underneath
+     * the mouse.
+     */
+    const position =
         getBoardPosition(
             event.clientX,
             event.clientY
         );
 
-    if (
-        rowCol &&
-        canPlace(
-            dragging.shape,
-            rowCol.row,
-            rowCol.col
-        )
-    ) {
+    if (position) {
 
-        placePiece(
-            dragging.shape,
-            rowCol.row,
-            rowCol.col
+        drag.boardRow = position.row;
+        drag.boardCol = position.col;
+
+        showPreview(
+            drag.shape,
+            position.row,
+            position.col
         );
-
-        pieces[dragging.index] = null;
-
-        score += dragging.shape.length * 10;
-
-        scoreElement.textContent = score;
-
-        clearLines();
-
-        if (pieces.every(piece => piece === null)) {
-            createPieces();
-        }
-
-        drawBoard();
-
-        if (!hasAnyMove()) {
-            messageElement.textContent = "Game Over!";
-        }
 
     } else {
 
-        messageElement.textContent =
-            "Can't place that piece there!";
+        drag.boardRow = null;
+        drag.boardCol = null;
+
+        clearPreview();
     }
-
-    dragging.slot.classList.remove("dragging");
-
-    dragging.dragElement.remove();
-
-    dragging = null;
 }
 
 
-/* -------------------------
-   GET BOARD POSITION
-------------------------- */
+/* =========================
+   FIND BOARD CELL
+========================= */
 
 function getBoardPosition(x, y) {
 
@@ -570,44 +539,203 @@ function getBoardPosition(x, y) {
     const cellHeight =
         rect.height / BOARD_SIZE;
 
-    const col =
-        Math.floor(
-            (x - rect.left) / cellWidth
-        );
-
-    const row =
-        Math.floor(
-            (y - rect.top) / cellHeight
-        );
-
     return {
-        row,
-        col
+
+        row: Math.floor(
+            (y - rect.top) / cellHeight
+        ),
+
+        col: Math.floor(
+            (x - rect.left) / cellWidth
+        )
+
     };
 }
 
 
-/* -------------------------
-   CAN PLACE
-------------------------- */
+/* =========================
+   PREVIEW
+========================= */
 
-function canPlace(shape, startRow, startCol) {
+function showPreview(shape, startRow, startCol) {
 
-    for (const [row, col] of shape) {
+    clearPreview();
 
-        const r = startRow + row;
-        const c = startCol + col;
+    const valid =
+        canPlace(
+            shape,
+            startRow,
+            startCol
+        );
+
+    shape.forEach(([r, c]) => {
+
+        const row = startRow + r;
+        const col = startCol + c;
 
         if (
-            r < 0 ||
-            r >= BOARD_SIZE ||
-            c < 0 ||
-            c >= BOARD_SIZE
+            row < 0 ||
+            row >= BOARD_SIZE ||
+            col < 0 ||
+            col >= BOARD_SIZE
+        ) {
+            return;
+        }
+
+        const index =
+            row * BOARD_SIZE + col;
+
+        const cell =
+            boardElement.children[index];
+
+        cell.style.background =
+            valid
+                ? "#ffd166"
+                : "#d9534f";
+    });
+}
+
+
+/* =========================
+   CLEAR PREVIEW
+========================= */
+
+function clearPreview() {
+
+    const cells =
+        boardElement.children;
+
+    for (let i = 0; i < cells.length; i++) {
+
+        cells[i].style.background = "";
+    }
+}
+
+
+/* =========================
+   DROP PIECE
+========================= */
+
+function stopDrag(event) {
+
+    if (!drag) return;
+
+    const currentDrag = drag;
+
+    clearPreview();
+
+    currentDrag.slot.classList.remove(
+        "dragging"
+    );
+
+    const row = currentDrag.boardRow;
+    const col = currentDrag.boardCol;
+
+    /*
+     * Only place if the piece was actually
+     * dropped on the board.
+     */
+    if (
+        row !== null &&
+        col !== null &&
+        canPlace(
+            currentDrag.shape,
+            row,
+            col
+        )
+    ) {
+
+        placePiece(
+            currentDrag.shape,
+            row,
+            col
+        );
+
+        score +=
+            currentDrag.shape.length * 10;
+
+        pieces[currentDrag.index] = null;
+
+        clearLines();
+
+        scoreElement.textContent = score;
+
+        drawBoard();
+
+        /*
+         * If all three pieces were used,
+         * give the player three new pieces.
+         */
+        if (
+            pieces.every(
+                piece => piece === null
+            )
+        ) {
+            createPieces();
+        }
+
+        if (!hasAnyMove()) {
+
+            messageElement.textContent =
+                "Game Over!";
+        }
+
+    } else {
+
+        messageElement.textContent = "";
+    }
+
+    currentDrag.element.remove();
+
+    drag = null;
+}
+
+
+/* =========================
+   CANCEL DRAG
+========================= */
+
+function cancelDrag() {
+
+    if (!drag) return;
+
+    clearPreview();
+
+    drag.slot.classList.remove(
+        "dragging"
+    );
+
+    drag.element.remove();
+
+    drag = null;
+}
+
+
+/* =========================
+   CAN PLACE
+========================= */
+
+function canPlace(
+    shape,
+    startRow,
+    startCol
+) {
+
+    for (const [r, c] of shape) {
+
+        const row = startRow + r;
+        const col = startCol + c;
+
+        if (
+            row < 0 ||
+            row >= BOARD_SIZE ||
+            col < 0 ||
+            col >= BOARD_SIZE
         ) {
             return false;
         }
 
-        if (board[r][c]) {
+        if (board[row][col]) {
             return false;
         }
     }
@@ -616,36 +744,40 @@ function canPlace(shape, startRow, startCol) {
 }
 
 
-/* -------------------------
-   PLACE PIECE
-------------------------- */
+/* =========================
+   PLACE
+========================= */
 
-function placePiece(shape, startRow, startCol) {
+function placePiece(
+    shape,
+    startRow,
+    startCol
+) {
 
-    for (const [row, col] of shape) {
+    for (const [r, c] of shape) {
 
-        board[startRow + row][startCol + col] = true;
+        board[startRow + r][startCol + c] = true;
     }
-
-    messageElement.textContent = "";
 }
 
 
-/* -------------------------
-   CLEAR ROWS / COLUMNS
-------------------------- */
+/* =========================
+   CLEAR LINES
+========================= */
 
 function clearLines() {
 
-    const rowsToClear = [];
-    const colsToClear = [];
+    const rows = [];
+    const cols = [];
 
     for (let row = 0; row < BOARD_SIZE; row++) {
 
         if (
-            board[row].every(cell => cell)
+            board[row].every(
+                cell => cell
+            )
         ) {
-            rowsToClear.push(row);
+            rows.push(row);
         }
     }
 
@@ -653,36 +785,48 @@ function clearLines() {
 
         let full = true;
 
-        for (let row = 0; row < BOARD_SIZE; row++) {
+        for (
+            let row = 0;
+            row < BOARD_SIZE;
+            row++
+        ) {
 
             if (!board[row][col]) {
+
                 full = false;
                 break;
             }
         }
 
         if (full) {
-            colsToClear.push(col);
+            cols.push(col);
         }
     }
 
-    rowsToClear.forEach(row => {
+    rows.forEach(row => {
 
-        for (let col = 0; col < BOARD_SIZE; col++) {
+        for (
+            let col = 0;
+            col < BOARD_SIZE;
+            col++
+        ) {
             board[row][col] = false;
         }
     });
 
-    colsToClear.forEach(col => {
+    cols.forEach(col => {
 
-        for (let row = 0; row < BOARD_SIZE; row++) {
+        for (
+            let row = 0;
+            row < BOARD_SIZE;
+            row++
+        ) {
             board[row][col] = false;
         }
     });
 
     const lines =
-        rowsToClear.length +
-        colsToClear.length;
+        rows.length + cols.length;
 
     if (lines > 0) {
 
@@ -693,21 +837,27 @@ function clearLines() {
 }
 
 
-/* -------------------------
-   CHECK POSSIBLE MOVES
-------------------------- */
+/* =========================
+   CHECK MOVES
+========================= */
 
 function hasAnyMove() {
 
     for (const shape of pieces) {
 
-        if (!shape) {
-            continue;
-        }
+        if (!shape) continue;
 
-        for (let row = 0; row < BOARD_SIZE; row++) {
+        for (
+            let row = 0;
+            row < BOARD_SIZE;
+            row++
+        ) {
 
-            for (let col = 0; col < BOARD_SIZE; col++) {
+            for (
+                let col = 0;
+                col < BOARD_SIZE;
+                col++
+            ) {
 
                 if (
                     canPlace(
@@ -726,9 +876,9 @@ function hasAnyMove() {
 }
 
 
-/* -------------------------
+/* =========================
    NEW GAME
-------------------------- */
+========================= */
 
 function newGame() {
 
