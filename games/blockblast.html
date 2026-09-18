@@ -20,7 +20,6 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden;
 }
 
 #game {
@@ -28,8 +27,13 @@ body {
 }
 
 h1 {
-    margin: 0 0 8px;
+    margin: 0 0 5px;
     font-size: 34px;
+}
+
+#instructions {
+    margin-bottom: 12px;
+    font-size: 16px;
 }
 
 #score {
@@ -40,13 +44,17 @@ h1 {
 #board {
     width: 440px;
     height: 440px;
+
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
+
     gap: 5px;
     padding: 5px;
+
     background: #333;
     border-radius: 12px;
+
     user-select: none;
     touch-action: none;
 }
@@ -60,31 +68,39 @@ h1 {
     background: #f5a623;
 }
 
+.cell.preview {
+    background: #ffe08a;
+}
+
+.cell.invalid {
+    background: #d9534f;
+}
+
 #pieces {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 35px;
-    min-height: 130px;
-    margin-top: 15px;
+    gap: 30px;
+
+    height: 140px;
+    margin-top: 10px;
 }
 
-.piece-slot {
-    width: 110px;
-    height: 110px;
+.piece-holder {
+    width: 120px;
+    height: 120px;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     cursor: grab;
+
     user-select: none;
     touch-action: none;
 }
 
-.piece-slot:active {
-    cursor: grabbing;
-}
-
-.piece-slot.dragging {
+.piece-holder.dragging {
     opacity: 0.25;
 }
 
@@ -94,48 +110,56 @@ h1 {
     pointer-events: none;
 }
 
-.piece-block {
+.block {
     width: 25px;
     height: 25px;
+
     background: #ffb52e;
     border-radius: 5px;
 }
 
-/* Piece that follows the mouse */
-.drag-piece {
+/* The piece that follows the mouse */
+#dragPiece {
     position: fixed;
-    z-index: 10000;
+
+    display: none;
+
+    z-index: 999999;
+
     pointer-events: none;
+
+    transform: translate(-50%, -50%);
+
     display: grid;
     gap: 3px;
-    transform: translate(-50%, -50%);
 }
 
-.drag-piece .piece-block {
+#dragPiece .block {
     width: 30px;
     height: 30px;
 }
 
 button {
-    margin-top: 15px;
+    margin-top: 10px;
+
     padding: 11px 22px;
+
     border: none;
     border-radius: 8px;
+
     background: #f5a623;
     color: white;
+
     font-size: 17px;
     font-weight: bold;
+
     cursor: pointer;
 }
 
-button:hover {
-    background: #d98d12;
-}
-
 #message {
-    margin-top: 12px;
     min-height: 24px;
-    font-size: 18px;
+    margin-top: 8px;
+    font-size: 17px;
 }
 </style>
 
@@ -147,6 +171,10 @@ button:hover {
 
 ```
 <h1>💥 Block Blast</h1>
+
+<div id="instructions">
+    CLICK AND HOLD A PIECE, THEN DRAG IT ONTO THE BOARD
+</div>
 
 <div id="score">
     Score: <span id="scoreValue">0</span>
@@ -163,12 +191,18 @@ button:hover {
 
 </div>
 
+<!-- This is the piece that follows the mouse -->
+
+<div id="dragPiece"></div>
+
 <script>
 
-const BOARD_SIZE = 8;
+const SIZE = 8;
 
 const boardElement = document.getElementById("board");
 const piecesElement = document.getElementById("pieces");
+const dragElement = document.getElementById("dragPiece");
+
 const scoreElement = document.getElementById("scoreValue");
 const messageElement = document.getElementById("message");
 const newGameButton = document.getElementById("newGame");
@@ -177,11 +211,12 @@ let board = [];
 let pieces = [];
 let score = 0;
 
-let drag = null;
+let draggingPiece = null;
+let draggingIndex = -1;
 
 
 /* =========================
-   PIECE SHAPES
+   PIECES
 ========================= */
 
 const SHAPES = [
@@ -222,29 +257,26 @@ const SHAPES = [
 
 
 /* =========================
-   CREATE BOARD
+   BOARD
 ========================= */
 
 function createBoard() {
 
-    boardElement.innerHTML = "";
-
     board = [];
 
-    for (let row = 0; row < BOARD_SIZE; row++) {
+    boardElement.innerHTML = "";
 
-        board[row] = [];
+    for (let r = 0; r < SIZE; r++) {
 
-        for (let col = 0; col < BOARD_SIZE; col++) {
+        board[r] = [];
 
-            board[row][col] = false;
+        for (let c = 0; c < SIZE; c++) {
+
+            board[r][c] = false;
 
             const cell = document.createElement("div");
 
             cell.className = "cell";
-
-            cell.dataset.row = row;
-            cell.dataset.col = col;
 
             boardElement.appendChild(cell);
         }
@@ -252,34 +284,32 @@ function createBoard() {
 }
 
 
-/* =========================
-   DRAW BOARD
-========================= */
-
 function drawBoard() {
 
-    for (let row = 0; row < BOARD_SIZE; row++) {
+    for (let r = 0; r < SIZE; r++) {
 
-        for (let col = 0; col < BOARD_SIZE; col++) {
+        for (let c = 0; c < SIZE; c++) {
 
-            const index =
-                row * BOARD_SIZE + col;
+            const cell =
+                boardElement.children[
+                    r * SIZE + c
+                ];
 
-            boardElement.children[index]
-                .classList.toggle(
-                    "filled",
-                    board[row][col]
-                );
+            cell.className = "cell";
+
+            if (board[r][c]) {
+                cell.classList.add("filled");
+            }
         }
     }
 }
 
 
 /* =========================
-   CREATE PIECES
+   PIECES
 ========================= */
 
-function createPieces() {
+function makePieces() {
 
     pieces = [];
 
@@ -298,22 +328,20 @@ function createPieces() {
 }
 
 
-/* =========================
-   DRAW PIECES
-========================= */
-
 function drawPieces() {
 
     piecesElement.innerHTML = "";
 
     pieces.forEach((shape, index) => {
 
-        const slot =
+        if (!shape) return;
+
+        const holder =
             document.createElement("div");
 
-        slot.className = "piece-slot";
+        holder.className = "piece-holder";
 
-        slot.dataset.index = index;
+        holder.dataset.index = index;
 
         const piece =
             document.createElement("div");
@@ -321,10 +349,10 @@ function drawPieces() {
         piece.className = "piece";
 
         const rows =
-            Math.max(...shape.map(x => x[0])) + 1;
+            Math.max(...shape.map(b => b[0])) + 1;
 
         const cols =
-            Math.max(...shape.map(x => x[1])) + 1;
+            Math.max(...shape.map(b => b[1])) + 1;
 
         piece.style.gridTemplateRows =
             `repeat(${rows}, 25px)`;
@@ -332,186 +360,137 @@ function drawPieces() {
         piece.style.gridTemplateColumns =
             `repeat(${cols}, 25px)`;
 
-        shape.forEach(([row, col]) => {
+        shape.forEach(([r, c]) => {
 
             const block =
                 document.createElement("div");
 
-            block.className = "piece-block";
+            block.className = "block";
 
-            block.style.gridRow = row + 1;
-            block.style.gridColumn = col + 1;
+            block.style.gridRow = r + 1;
+            block.style.gridColumn = c + 1;
 
             piece.appendChild(block);
         });
 
-        slot.appendChild(piece);
+        holder.appendChild(piece);
 
         /*
-         * IMPORTANT:
-         * This starts a real pointer drag.
+         * ONLY drag behavior.
          */
-        slot.addEventListener(
-            "pointerdown",
-            pointerDown
+        holder.addEventListener(
+            "mousedown",
+            beginMouseDrag
         );
 
-        piecesElement.appendChild(slot);
+        piecesElement.appendChild(holder);
     });
 }
 
 
 /* =========================
-   START REAL DRAG
+   BEGIN DRAG
 ========================= */
 
-function pointerDown(event) {
+function beginMouseDrag(event) {
 
     event.preventDefault();
 
-    const slot = event.currentTarget;
+    const holder = event.currentTarget;
 
     const index =
-        Number(slot.dataset.index);
+        Number(holder.dataset.index);
 
-    const shape = pieces[index];
+    if (!pieces[index]) return;
 
-    if (!shape) return;
+    draggingPiece = pieces[index];
 
-    /*
-     * Save the exact piece being dragged.
-     */
-    drag = {
-        index: index,
-        shape: shape,
-        slot: slot,
-        x: event.clientX,
-        y: event.clientY,
-        boardRow: null,
-        boardCol: null,
-        element: createDragPiece(shape)
-    };
+    draggingIndex = index;
 
-    slot.classList.add("dragging");
+    holder.classList.add("dragging");
 
-    /*
-     * Capture the pointer so dragging
-     * continues even if the cursor moves
-     * outside the original piece.
-     */
-    slot.setPointerCapture(event.pointerId);
+    createDragVisual(draggingPiece);
 
-    moveDrag(event);
-
-    slot.addEventListener(
-        "pointermove",
-        moveDrag
+    moveDragVisual(
+        event.clientX,
+        event.clientY
     );
 
-    slot.addEventListener(
-        "pointerup",
-        stopDrag,
-        { once: true }
+    document.addEventListener(
+        "mousemove",
+        dragMouseMove
     );
 
-    slot.addEventListener(
-        "pointercancel",
-        cancelDrag,
+    document.addEventListener(
+        "mouseup",
+        finishMouseDrag,
         { once: true }
     );
 }
 
 
 /* =========================
-   CREATE DRAGGING PIECE
+   MOUSE MOVE
 ========================= */
 
-function createDragPiece(shape) {
+function dragMouseMove(event) {
 
-    const element =
-        document.createElement("div");
+    if (!draggingPiece) return;
 
-    element.className = "drag-piece";
+    moveDragVisual(
+        event.clientX,
+        event.clientY
+    );
+
+    showPreview(
+        event.clientX,
+        event.clientY
+    );
+}
+
+
+/* =========================
+   DRAG VISUAL
+========================= */
+
+function createDragVisual(shape) {
+
+    dragElement.innerHTML = "";
+
+    dragElement.style.display = "grid";
 
     const rows =
-        Math.max(...shape.map(x => x[0])) + 1;
+        Math.max(...shape.map(b => b[0])) + 1;
 
     const cols =
-        Math.max(...shape.map(x => x[1])) + 1;
+        Math.max(...shape.map(b => b[1])) + 1;
 
-    element.style.gridTemplateRows =
+    dragElement.style.gridTemplateRows =
         `repeat(${rows}, 30px)`;
 
-    element.style.gridTemplateColumns =
+    dragElement.style.gridTemplateColumns =
         `repeat(${cols}, 30px)`;
 
-    shape.forEach(([row, col]) => {
+    shape.forEach(([r, c]) => {
 
         const block =
             document.createElement("div");
 
-        block.className = "piece-block";
+        block.className = "block";
 
-        block.style.gridRow = row + 1;
-        block.style.gridColumn = col + 1;
+        block.style.gridRow = r + 1;
+        block.style.gridColumn = c + 1;
 
-        element.appendChild(block);
+        dragElement.appendChild(block);
     });
-
-    document.body.appendChild(element);
-
-    return element;
 }
 
 
-/* =========================
-   DRAGGING
-========================= */
+function moveDragVisual(x, y) {
 
-function moveDrag(event) {
+    dragElement.style.left = x + "px";
 
-    if (!drag) return;
-
-    drag.x = event.clientX;
-    drag.y = event.clientY;
-
-    /*
-     * The piece follows the mouse.
-     */
-    drag.element.style.left =
-        event.clientX + "px";
-
-    drag.element.style.top =
-        (event.clientY - 50) + "px";
-
-    /*
-     * Find which board cell is underneath
-     * the mouse.
-     */
-    const position =
-        getBoardPosition(
-            event.clientX,
-            event.clientY
-        );
-
-    if (position) {
-
-        drag.boardRow = position.row;
-        drag.boardCol = position.col;
-
-        showPreview(
-            drag.shape,
-            position.row,
-            position.col
-        );
-
-    } else {
-
-        drag.boardRow = null;
-        drag.boardCol = null;
-
-        clearPreview();
-    }
+    dragElement.style.top = y + "px";
 }
 
 
@@ -519,7 +498,7 @@ function moveDrag(event) {
    FIND BOARD CELL
 ========================= */
 
-function getBoardPosition(x, y) {
+function getCell(x, y) {
 
     const rect =
         boardElement.getBoundingClientRect();
@@ -534,10 +513,10 @@ function getBoardPosition(x, y) {
     }
 
     const cellWidth =
-        rect.width / BOARD_SIZE;
+        rect.width / SIZE;
 
     const cellHeight =
-        rect.height / BOARD_SIZE;
+        rect.height / SIZE;
 
     return {
 
@@ -548,7 +527,6 @@ function getBoardPosition(x, y) {
         col: Math.floor(
             (x - rect.left) / cellWidth
         )
-
     };
 }
 
@@ -557,124 +535,123 @@ function getBoardPosition(x, y) {
    PREVIEW
 ========================= */
 
-function showPreview(shape, startRow, startCol) {
+function showPreview(x, y) {
 
     clearPreview();
 
+    const cell = getCell(x, y);
+
+    if (!cell) return;
+
     const valid =
         canPlace(
-            shape,
-            startRow,
-            startCol
+            draggingPiece,
+            cell.row,
+            cell.col
         );
 
-    shape.forEach(([r, c]) => {
+    draggingPiece.forEach(([r, c]) => {
 
-        const row = startRow + r;
-        const col = startCol + c;
+        const row = cell.row + r;
+        const col = cell.col + c;
 
         if (
             row < 0 ||
-            row >= BOARD_SIZE ||
+            row >= SIZE ||
             col < 0 ||
-            col >= BOARD_SIZE
+            col >= SIZE
         ) {
             return;
         }
 
-        const index =
-            row * BOARD_SIZE + col;
+        const target =
+            boardElement.children[
+                row * SIZE + col
+            ];
 
-        const cell =
-            boardElement.children[index];
-
-        cell.style.background =
-            valid
-                ? "#ffd166"
-                : "#d9534f";
+        target.classList.add(
+            valid ? "preview" : "invalid"
+        );
     });
 }
 
 
-/* =========================
-   CLEAR PREVIEW
-========================= */
-
 function clearPreview() {
 
-    const cells =
-        boardElement.children;
+    for (
+        let i = 0;
+        i < boardElement.children.length;
+        i++
+    ) {
 
-    for (let i = 0; i < cells.length; i++) {
-
-        cells[i].style.background = "";
+        boardElement.children[i]
+            .classList.remove(
+                "preview",
+                "invalid"
+            );
     }
 }
 
 
 /* =========================
-   DROP PIECE
+   DROP
 ========================= */
 
-function stopDrag(event) {
+function finishMouseDrag(event) {
 
-    if (!drag) return;
-
-    const currentDrag = drag;
+    document.removeEventListener(
+        "mousemove",
+        dragMouseMove
+    );
 
     clearPreview();
 
-    currentDrag.slot.classList.remove(
-        "dragging"
-    );
+    if (!draggingPiece) return;
 
-    const row = currentDrag.boardRow;
-    const col = currentDrag.boardCol;
+    const cell =
+        getCell(
+            event.clientX,
+            event.clientY
+        );
 
-    /*
-     * Only place if the piece was actually
-     * dropped on the board.
-     */
     if (
-        row !== null &&
-        col !== null &&
+        cell &&
         canPlace(
-            currentDrag.shape,
-            row,
-            col
+            draggingPiece,
+            cell.row,
+            cell.col
         )
     ) {
 
         placePiece(
-            currentDrag.shape,
-            row,
-            col
+            draggingPiece,
+            cell.row,
+            cell.col
         );
 
         score +=
-            currentDrag.shape.length * 10;
+            draggingPiece.length * 10;
 
-        pieces[currentDrag.index] = null;
+        pieces[draggingIndex] = null;
 
         clearLines();
 
-        scoreElement.textContent = score;
+        scoreElement.textContent =
+            score;
 
         drawBoard();
 
-        /*
-         * If all three pieces were used,
-         * give the player three new pieces.
-         */
         if (
             pieces.every(
-                piece => piece === null
+                p => p === null
             )
         ) {
-            createPieces();
+            makePieces();
         }
 
-        if (!hasAnyMove()) {
+        messageElement.textContent = "";
+
+        if (!hasMoves()) {
 
             messageElement.textContent =
                 "Game Over!";
@@ -682,60 +659,49 @@ function stopDrag(event) {
 
     } else {
 
-        messageElement.textContent = "";
+        messageElement.textContent =
+            "Drop the piece on the board!";
     }
 
-    currentDrag.element.remove();
+    dragElement.style.display = "none";
 
-    drag = null;
+    dragElement.innerHTML = "";
+
+    const holders =
+        document.querySelectorAll(
+            ".piece-holder"
+        );
+
+    holders.forEach(holder => {
+        holder.classList.remove("dragging");
+    });
+
+    draggingPiece = null;
+    draggingIndex = -1;
 }
 
 
 /* =========================
-   CANCEL DRAG
+   PLACE
 ========================= */
 
-function cancelDrag() {
-
-    if (!drag) return;
-
-    clearPreview();
-
-    drag.slot.classList.remove(
-        "dragging"
-    );
-
-    drag.element.remove();
-
-    drag = null;
-}
-
-
-/* =========================
-   CAN PLACE
-========================= */
-
-function canPlace(
-    shape,
-    startRow,
-    startCol
-) {
+function canPlace(shape, row, col) {
 
     for (const [r, c] of shape) {
 
-        const row = startRow + r;
-        const col = startCol + c;
+        const nr = row + r;
+        const nc = col + c;
 
         if (
-            row < 0 ||
-            row >= BOARD_SIZE ||
-            col < 0 ||
-            col >= BOARD_SIZE
+            nr < 0 ||
+            nr >= SIZE ||
+            nc < 0 ||
+            nc >= SIZE
         ) {
             return false;
         }
 
-        if (board[row][col]) {
+        if (board[nr][nc]) {
             return false;
         }
     }
@@ -744,20 +710,12 @@ function canPlace(
 }
 
 
-/* =========================
-   PLACE
-========================= */
+function placePiece(shape, row, col) {
 
-function placePiece(
-    shape,
-    startRow,
-    startCol
-) {
+    shape.forEach(([r, c]) => {
 
-    for (const [r, c] of shape) {
-
-        board[startRow + r][startCol + c] = true;
-    }
+        board[row + r][col + c] = true;
+    });
 }
 
 
@@ -767,31 +725,29 @@ function placePiece(
 
 function clearLines() {
 
-    const rows = [];
-    const cols = [];
+    let cleared = 0;
 
-    for (let row = 0; row < BOARD_SIZE; row++) {
+    for (let r = 0; r < SIZE; r++) {
 
         if (
-            board[row].every(
+            board[r].every(
                 cell => cell
             )
         ) {
-            rows.push(row);
+
+            board[r].fill(false);
+
+            cleared++;
         }
     }
 
-    for (let col = 0; col < BOARD_SIZE; col++) {
+    for (let c = 0; c < SIZE; c++) {
 
         let full = true;
 
-        for (
-            let row = 0;
-            row < BOARD_SIZE;
-            row++
-        ) {
+        for (let r = 0; r < SIZE; r++) {
 
-            if (!board[row][col]) {
+            if (!board[r][c]) {
 
                 full = false;
                 break;
@@ -799,71 +755,44 @@ function clearLines() {
         }
 
         if (full) {
-            cols.push(col);
+
+            for (let r = 0; r < SIZE; r++) {
+                board[r][c] = false;
+            }
+
+            cleared++;
         }
     }
 
-    rows.forEach(row => {
+    if (cleared > 0) {
 
-        for (
-            let col = 0;
-            col < BOARD_SIZE;
-            col++
-        ) {
-            board[row][col] = false;
-        }
-    });
+        score += cleared * 100;
 
-    cols.forEach(col => {
-
-        for (
-            let row = 0;
-            row < BOARD_SIZE;
-            row++
-        ) {
-            board[row][col] = false;
-        }
-    });
-
-    const lines =
-        rows.length + cols.length;
-
-    if (lines > 0) {
-
-        score += lines * 100;
-
-        scoreElement.textContent = score;
+        scoreElement.textContent =
+            score;
     }
 }
 
 
 /* =========================
-   CHECK MOVES
+   GAME OVER CHECK
 ========================= */
 
-function hasAnyMove() {
+function hasMoves() {
 
     for (const shape of pieces) {
 
         if (!shape) continue;
 
-        for (
-            let row = 0;
-            row < BOARD_SIZE;
-            row++
-        ) {
+        for (let r = 0; r < SIZE; r++) {
 
-            for (
-                let col = 0;
-                col < BOARD_SIZE;
-                col++
-            ) {
+            for (let c = 0; c < SIZE; c++) {
 
                 if (
                     canPlace(
                         shape,
-                        row,
-                        col
+                        r,
+                        c
                     )
                 ) {
                     return true;
@@ -890,10 +819,11 @@ function newGame() {
 
     createBoard();
 
-    createPieces();
+    makePieces();
 
     drawBoard();
 }
+
 
 newGameButton.addEventListener(
     "click",
