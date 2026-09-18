@@ -7,294 +7,287 @@
 <title>2048</title>
 
 <style>
-    * {
-        box-sizing: border-box;
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #faf8ef;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #776e65;
+}
+
+.game {
+    width: 500px;
+    max-width: 95vw;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+h1 {
+    font-size: 70px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.score-box {
+    background: #bbada0;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 6px;
+    text-align: center;
+    min-width: 90px;
+}
+
+.score-label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#score {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.instructions {
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.board {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #bbada0;
+    border-radius: 8px;
+    padding: 10px;
+    position: relative;
+}
+
+/* Empty squares */
+.cell {
+    position: absolute;
+    width: calc((100% - 50px) / 4);
+    height: calc((100% - 50px) / 4);
+    background: #cdc1b4;
+    border-radius: 6px;
+}
+
+.cell:nth-child(1) { left: 10px; top: 10px; }
+.cell:nth-child(2) { left: calc(25% + 2px); top: 10px; }
+.cell:nth-child(3) { left: calc(50% - 6px); top: 10px; }
+.cell:nth-child(4) { right: 10px; top: 10px; }
+
+.cell:nth-child(5) { left: 10px; top: calc(25% + 2px); }
+.cell:nth-child(6) { left: calc(25% + 2px); top: calc(25% + 2px); }
+.cell:nth-child(7) { left: calc(50% - 6px); top: calc(25% + 2px); }
+.cell:nth-child(8) { right: 10px; top: calc(25% + 2px); }
+
+.cell:nth-child(9) { left: 10px; top: calc(50% - 6px); }
+.cell:nth-child(10) { left: calc(25% + 2px); top: calc(50% - 6px); }
+.cell:nth-child(11) { left: calc(50% - 6px); top: calc(50% - 6px); }
+.cell:nth-child(12) { right: 10px; top: calc(50% - 6px); }
+
+.cell:nth-child(13) { left: 10px; bottom: 10px; }
+.cell:nth-child(14) { left: calc(25% + 2px); bottom: 10px; }
+.cell:nth-child(15) { left: calc(50% - 6px); bottom: 10px; }
+.cell:nth-child(16) { right: 10px; bottom: 10px; }
+
+/* Tiles */
+.tile {
+    position: absolute;
+
+    width: calc((100% - 50px) / 4);
+    height: calc((100% - 50px) / 4);
+
+    border-radius: 6px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: clamp(28px, 8vw, 48px);
+    font-weight: bold;
+
+    z-index: 5;
+
+    transition:
+        left 140ms ease-in-out,
+        top 140ms ease-in-out;
+}
+
+.tile.spawn {
+    animation: spawn 140ms ease-out;
+}
+
+.tile.merge {
+    animation: merge 160ms ease-out;
+    z-index: 6;
+}
+
+@keyframes spawn {
+    0% {
+        transform: scale(0);
     }
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        background: #faf8ef;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #776e65;
+    70% {
+        transform: scale(1.12);
     }
 
-    .game {
-        width: 500px;
-        max-width: 95vw;
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes merge {
+    0% {
+        transform: scale(1);
     }
 
-    .top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
+    50% {
+        transform: scale(1.15);
     }
 
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Tile colors */
+
+.tile-2 {
+    background: #eee4da;
+    color: #776e65;
+}
+
+.tile-4 {
+    background: #ede0c8;
+    color: #776e65;
+}
+
+.tile-8 {
+    background: #f2b179;
+    color: white;
+}
+
+.tile-16 {
+    background: #f59563;
+    color: white;
+}
+
+.tile-32 {
+    background: #f67c5f;
+    color: white;
+}
+
+.tile-64 {
+    background: #f65e3b;
+    color: white;
+}
+
+.tile-128 {
+    background: #edcf72;
+    color: white;
+    font-size: clamp(25px, 7vw, 40px);
+}
+
+.tile-256 {
+    background: #edcc61;
+    color: white;
+    font-size: clamp(25px, 7vw, 40px);
+}
+
+.tile-512 {
+    background: #edc850;
+    color: white;
+    font-size: clamp(25px, 7vw, 40px);
+}
+
+.tile-1024 {
+    background: #edc53f;
+    color: white;
+    font-size: clamp(20px, 6vw, 34px);
+}
+
+.tile-2048 {
+    background: #edc22e;
+    color: white;
+    font-size: clamp(20px, 6vw, 34px);
+}
+
+/* Game over */
+
+.message {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(238, 228, 218, 0.85);
+
+    border-radius: 8px;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    z-index: 20;
+}
+
+.message h2 {
+    font-size: 42px;
+    margin: 0 0 15px;
+}
+
+.message button,
+.new-game {
+    border: none;
+    background: #8f7a66;
+    color: white;
+
+    padding: 12px 20px;
+
+    border-radius: 6px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.message button:hover,
+.new-game:hover {
+    filter: brightness(1.1);
+}
+
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.controls {
+    font-size: 13px;
+}
+
+@media (max-width: 500px) {
     h1 {
-        font-size: 70px;
-        margin: 0;
-        font-weight: bold;
-    }
-
-    .score-box {
-        background: #bbada0;
-        color: white;
-        padding: 8px 18px;
-        border-radius: 6px;
-        text-align: center;
-        min-width: 90px;
-    }
-
-    .score-label {
-        font-size: 13px;
-        font-weight: bold;
-    }
-
-    #score {
-        font-size: 25px;
-        font-weight: bold;
+        font-size: 55px;
     }
 
     .instructions {
-        font-size: 15px;
-        margin-bottom: 12px;
-    }
-
-    .board {
-        width: 100%;
-        aspect-ratio: 1;
-        background: #bbada0;
-        border-radius: 8px;
-        padding: 10px;
-        position: relative;
-    }
-
-    /* Empty board squares */
-    .cell {
-        position: absolute;
-        width: calc((100% - 50px) / 4);
-        height: calc((100% - 50px) / 4);
-        background: #cdc1b4;
-        border-radius: 6px;
-    }
-
-    .cell:nth-child(1)  { left: 10px;  top: 10px; }
-    .cell:nth-child(2)  { left: calc(25% + 2px); top: 10px; }
-    .cell:nth-child(3)  { left: calc(50% - 6px); top: 10px; }
-    .cell:nth-child(4)  { right: 10px; top: 10px; }
-
-    .cell:nth-child(5)  { left: 10px;  top: calc(25% + 2px); }
-    .cell:nth-child(6)  { left: calc(25% + 2px); top: calc(25% + 2px); }
-    .cell:nth-child(7)  { left: calc(50% - 6px); top: calc(25% + 2px); }
-    .cell:nth-child(8)  { right: 10px; top: calc(25% + 2px); }
-
-    .cell:nth-child(9)  { left: 10px;  top: calc(50% - 6px); }
-    .cell:nth-child(10) { left: calc(25% + 2px); top: calc(50% - 6px); }
-    .cell:nth-child(11) { left: calc(50% - 6px); top: calc(50% - 6px); }
-    .cell:nth-child(12) { right: 10px; top: calc(50% - 6px); }
-
-    .cell:nth-child(13) { left: 10px;  bottom: 10px; }
-    .cell:nth-child(14) { left: calc(25% + 2px); bottom: 10px; }
-    .cell:nth-child(15) { left: calc(50% - 6px); bottom: 10px; }
-    .cell:nth-child(16) { right: 10px; bottom: 10px; }
-
-    /* Animated tiles */
-    .tile {
-        position: absolute;
-        width: calc((100% - 50px) / 4);
-        height: calc((100% - 50px) / 4);
-
-        border-radius: 6px;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        font-size: clamp(28px, 8vw, 48px);
-        font-weight: bold;
-
-        z-index: 5;
-
-        transition:
-            transform 120ms ease-in-out,
-            opacity 120ms ease-in-out;
-    }
-
-    .tile.spawn {
-        animation: spawn 120ms ease-out;
-    }
-
-    .tile.merge {
-        animation: merge 160ms ease-out;
-        z-index: 6;
-    }
-
-    @keyframes spawn {
-        0% {
-            transform: scale(0);
-        }
-
-        70% {
-            transform: scale(1.12);
-        }
-
-        100% {
-            transform: scale(1);
-        }
-    }
-
-    @keyframes merge {
-        0% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.18);
-        }
-
-        100% {
-            transform: scale(1);
-        }
-    }
-
-    .tile-2 {
-        background: #eee4da;
-        color: #776e65;
-    }
-
-    .tile-4 {
-        background: #ede0c8;
-        color: #776e65;
-    }
-
-    .tile-8 {
-        background: #f2b179;
-        color: white;
-    }
-
-    .tile-16 {
-        background: #f59563;
-        color: white;
-    }
-
-    .tile-32 {
-        background: #f67c5f;
-        color: white;
-    }
-
-    .tile-64 {
-        background: #f65e3b;
-        color: white;
-    }
-
-    .tile-128 {
-        background: #edcf72;
-        color: white;
-        font-size: clamp(25px, 7vw, 40px);
-    }
-
-    .tile-256 {
-        background: #edcc61;
-        color: white;
-        font-size: clamp(25px, 7vw, 40px);
-    }
-
-    .tile-512 {
-        background: #edc850;
-        color: white;
-        font-size: clamp(25px, 7vw, 40px);
-    }
-
-    .tile-1024 {
-        background: #edc53f;
-        color: white;
-        font-size: clamp(20px, 6vw, 34px);
-    }
-
-    .tile-2048 {
-        background: #edc22e;
-        color: white;
-        font-size: clamp(20px, 6vw, 34px);
-    }
-
-    .message {
-        position: absolute;
-        inset: 0;
-
-        background: rgba(238, 228, 218, 0.85);
-
-        border-radius: 8px;
-
-        display: none;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-
-        z-index: 20;
-    }
-
-    .message h2 {
-        font-size: 42px;
-        margin: 0 0 15px;
-    }
-
-    .message button,
-    .new-game {
-        border: none;
-        background: #8f7a66;
-        color: white;
-
-        padding: 12px 20px;
-
-        border-radius: 6px;
-
-        font-size: 16px;
-        font-weight: bold;
-
-        cursor: pointer;
-    }
-
-    .message button:hover,
-    .new-game:hover {
-        filter: brightness(1.1);
-    }
-
-    .bottom {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        margin-top: 15px;
-    }
-
-    .controls {
         font-size: 13px;
     }
-
-    @media (max-width: 500px) {
-        h1 {
-            font-size: 55px;
-        }
-
-        .instructions {
-            font-size: 13px;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .tile {
-            transition: none;
-        }
-
-        .tile.spawn,
-        .tile.merge {
-            animation: none;
-        }
-    }
+}
 </style>
 
 </head>
@@ -305,14 +298,12 @@
 
 ```
 <div class="top">
-
     <h1>2048</h1>
 
     <div class="score-box">
         <div class="score-label">SCORE</div>
         <div id="score">0</div>
     </div>
-
 </div>
 
 <div class="instructions">
@@ -321,7 +312,8 @@
 
 <div class="board" id="board">
 
-    <!-- Empty squares -->
+    <!-- Background grid -->
+
     <div class="cell"></div>
     <div class="cell"></div>
     <div class="cell"></div>
@@ -384,9 +376,53 @@ const messageElement = document.getElementById("message");
 const messageText = document.getElementById("messageText");
 
 
-// ------------------------------------
+// ====================================
+// GET TILE PIXEL POSITION
+// ====================================
+
+function getTilePosition(index) {
+
+    const row = Math.floor(index / 4);
+    const col = index % 4;
+
+    const boardWidth = boardElement.clientWidth;
+
+    const gap = 10;
+    const padding = 10;
+
+    const tileSize =
+        (boardWidth - padding * 2 - gap * 3) / 4;
+
+    const left =
+        padding + col * (tileSize + gap);
+
+    const top =
+        padding + row * (tileSize + gap);
+
+    return {
+        left: left,
+        top: top,
+        size: tileSize
+    };
+}
+
+
+// ====================================
+// POSITION TILE
+// ====================================
+
+function positionTile(element, position) {
+
+    const pos = getTilePosition(position);
+
+    element.style.left = pos.left + "px";
+    element.style.top = pos.top + "px";
+}
+
+
+// ====================================
 // NEW GAME
-// ------------------------------------
+// ====================================
 
 function newGame() {
 
@@ -398,6 +434,7 @@ function newGame() {
     moving = false;
 
     messageElement.style.display = "none";
+
     scoreElement.textContent = "0";
 
     addTile();
@@ -407,13 +444,14 @@ function newGame() {
 }
 
 
-// ------------------------------------
-// ADD TILE
-// ------------------------------------
+// ====================================
+// ADD RANDOM TILE
+// ====================================
 
 function addTile() {
 
-    const occupied = tiles.map(tile => tile.position);
+    const occupied =
+        tiles.map(tile => tile.position);
 
     const empty = [];
 
@@ -434,70 +472,29 @@ function addTile() {
         id: nextId++,
         value: Math.random() < 0.9 ? 2 : 4,
         position: position,
-        oldPosition: position,
-        merged: false,
-        spawned: true
+        spawned: true,
+        merged: false
     });
 }
 
 
-// ------------------------------------
-// POSITION
-// ------------------------------------
-
-function getPosition(index) {
-
-    const row = Math.floor(index / 4);
-    const col = index % 4;
-
-    return {
-        row: row,
-        col: col
-    };
-}
-
-
-// ------------------------------------
-// TILE POSITION
-// ------------------------------------
-
-function setTilePosition(element, position) {
-
-    const pos = getPosition(position);
-
-    const x = `calc(${pos.col * 25}% + ${pos.col === 0 ? 0 : pos.col * 2}px)`;
-    const y = `calc(${pos.row * 25}% + ${pos.row === 0 ? 0 : pos.row * 2}px)`;
-
-    element.style.left = "10px";
-    element.style.top = "10px";
-
-    element.style.transform =
-        `translate(
-            calc(${pos.col} * ((100% - 50px) / 4 + 10px)),
-            calc(${pos.row} * ((100% - 50px) / 4 + 10px))
-        )`;
-}
-
-
-// ------------------------------------
+// ====================================
 // CREATE TILE
-// ------------------------------------
+// ====================================
 
 function createTile(tile) {
 
-    const element = document.createElement("div");
+    const element =
+        document.createElement("div");
 
     element.className =
-        `tile tile-${tile.value}`;
+        "tile tile-" + tile.value;
 
     element.dataset.id = tile.id;
 
     element.textContent = tile.value;
 
-    element.style.left = "10px";
-    element.style.top = "10px";
-
-    setTilePosition(element, tile.position);
+    positionTile(element, tile.position);
 
     if (tile.spawned) {
         element.classList.add("spawn");
@@ -511,24 +508,25 @@ function createTile(tile) {
 }
 
 
-// ------------------------------------
-// RENDER
-// ------------------------------------
+// ====================================
+// RENDER TILES
+// ====================================
 
 function renderTiles(initial = false) {
 
-    const oldElements =
+    const existing =
         new Map(
             [...boardElement.querySelectorAll(".tile")]
-                .map(element => [
-                    Number(element.dataset.id),
-                    element
-                ])
+            .map(element => [
+                Number(element.dataset.id),
+                element
+            ])
         );
 
     for (const tile of tiles) {
 
-        let element = oldElements.get(tile.id);
+        let element =
+            existing.get(tile.id);
 
         if (!element) {
 
@@ -538,22 +536,23 @@ function renderTiles(initial = false) {
 
         } else {
 
-            element.textContent = tile.value;
-
             element.className =
-                `tile tile-${tile.value}`;
+                "tile tile-" + tile.value;
 
             if (tile.merged) {
                 element.classList.add("merge");
             }
 
-            setTilePosition(element, tile.position);
+            element.textContent = tile.value;
+
+            // This is what creates the sliding animation
+            positionTile(element, tile.position);
         }
 
     }
 
-    // Remove tiles that no longer exist
-    for (const [id, element] of oldElements) {
+    // Remove old tiles
+    for (const [id, element] of existing) {
 
         if (!tiles.some(tile => tile.id === id)) {
 
@@ -565,7 +564,7 @@ function renderTiles(initial = false) {
                     element.remove();
                 }
 
-            }, 130);
+            }, 150);
 
         }
 
@@ -580,23 +579,24 @@ function renderTiles(initial = false) {
 }
 
 
-// ------------------------------------
-// MOVE HELPERS
-// ------------------------------------
+// ====================================
+// GET ROWS / COLUMNS
+// ====================================
 
-function getRows(direction) {
+function getLines(direction) {
 
-    const result = [];
+    const lines = [];
 
     if (direction === "left") {
 
         for (let row = 0; row < 4; row++) {
 
-            result.push(
-                [0, 1, 2, 3].map(
-                    col => row * 4 + col
-                )
-            );
+            lines.push([
+                row * 4,
+                row * 4 + 1,
+                row * 4 + 2,
+                row * 4 + 3
+            ]);
 
         }
 
@@ -606,11 +606,12 @@ function getRows(direction) {
 
         for (let row = 0; row < 4; row++) {
 
-            result.push(
-                [3, 2, 1, 0].map(
-                    col => row * 4 + col
-                )
-            );
+            lines.push([
+                row * 4 + 3,
+                row * 4 + 2,
+                row * 4 + 1,
+                row * 4
+            ]);
 
         }
 
@@ -620,11 +621,12 @@ function getRows(direction) {
 
         for (let col = 0; col < 4; col++) {
 
-            result.push(
-                [0, 1, 2, 3].map(
-                    row => row * 4 + col
-                )
-            );
+            lines.push([
+                col,
+                col + 4,
+                col + 8,
+                col + 12
+            ]);
 
         }
 
@@ -634,36 +636,32 @@ function getRows(direction) {
 
         for (let col = 0; col < 4; col++) {
 
-            result.push(
-                [3, 2, 1, 0].map(
-                    row => row * 4 + col
-                )
-            );
+            lines.push([
+                col + 12,
+                col + 8,
+                col + 4,
+                col
+            ]);
 
         }
 
     }
 
-    return result;
+    return lines;
 }
 
 
-// ------------------------------------
+// ====================================
 // MOVE
-// ------------------------------------
+// ====================================
 
 function move(direction) {
 
     if (gameOver || moving) return;
 
-    const lines = getRows(direction);
+    const lines = getLines(direction);
 
     let moved = false;
-
-    // Save old positions
-    for (const tile of tiles) {
-        tile.oldPosition = tile.position;
-    }
 
     for (const line of lines) {
 
@@ -689,43 +687,48 @@ function move(direction) {
             const targetPosition =
                 line[targetIndex];
 
-            // Merge with next tile
+            // Merge
             if (
                 i + 1 < lineTiles.length &&
                 current.value === lineTiles[i + 1].value
             ) {
 
-                const next = lineTiles[i + 1];
+                const next =
+                    lineTiles[i + 1];
 
-                current.position = targetPosition;
+                current.position =
+                    targetPosition;
 
-                next.position = targetPosition;
+                next.position =
+                    targetPosition;
 
                 next.value *= 2;
-                next.merged = true;
 
-                current.merged = true;
+                next.merged = true;
 
                 score += next.value;
 
-                // Remove current tile
-                tiles = tiles.filter(
-                    tile => tile.id !== current.id
-                );
+                tiles =
+                    tiles.filter(
+                        tile => tile.id !== current.id
+                    );
 
                 moved = true;
 
                 i++;
-
                 targetIndex++;
 
             } else {
 
-                if (current.position !== targetPosition) {
+                if (
+                    current.position !==
+                    targetPosition
+                ) {
                     moved = true;
                 }
 
-                current.position = targetPosition;
+                current.position =
+                    targetPosition;
 
                 targetIndex++;
             }
@@ -734,14 +737,13 @@ function move(direction) {
 
     }
 
-    if (!moved) {
-        return;
-    }
+    if (!moved) return;
 
     moving = true;
 
     renderTiles();
 
+    // Wait for the sliding animation
     setTimeout(() => {
 
         addTile();
@@ -753,32 +755,36 @@ function move(direction) {
         checkWin();
         checkGameOver();
 
-    }, 130);
+    }, 150);
 }
 
 
-// ------------------------------------
-// CHECK WIN
-// ------------------------------------
+// ====================================
+// WIN
+// ====================================
 
 function checkWin() {
 
-    const winner =
-        tiles.some(tile => tile.value >= 2048);
+    if (
+        tiles.some(
+            tile => tile.value >= 2048
+        )
+    ) {
 
-    if (!winner) return;
+        messageText.textContent =
+            "You Win! 🎉";
 
-    messageText.textContent = "You Win! 🎉";
+        messageElement.style.display =
+            "flex";
 
-    messageElement.style.display = "flex";
-
-    gameOver = true;
+        gameOver = true;
+    }
 }
 
 
-// ------------------------------------
-// CHECK GAME OVER
-// ------------------------------------
+// ====================================
+// GAME OVER
+// ====================================
 
 function checkGameOver() {
 
@@ -786,36 +792,41 @@ function checkGameOver() {
 
     if (tiles.length < 16) return;
 
-    const positions = new Map();
+    const values = new Map();
 
     for (const tile of tiles) {
-        positions.set(tile.position, tile.value);
+        values.set(tile.position, tile.value);
     }
 
     for (let row = 0; row < 4; row++) {
 
         for (let col = 0; col < 4; col++) {
 
-            const current =
-                positions.get(row * 4 + col);
+            const index =
+                row * 4 + col;
 
+            const value =
+                values.get(index);
+
+            // Right neighbor
             if (col < 3) {
 
-                const right =
-                    positions.get(row * 4 + col + 1);
-
-                if (current === right) {
+                if (
+                    value ===
+                    values.get(index + 1)
+                ) {
                     return;
                 }
 
             }
 
+            // Bottom neighbor
             if (row < 3) {
 
-                const down =
-                    positions.get((row + 1) * 4 + col);
-
-                if (current === down) {
+                if (
+                    value ===
+                    values.get(index + 4)
+                ) {
                     return;
                 }
 
@@ -827,49 +838,85 @@ function checkGameOver() {
 
     gameOver = true;
 
-    messageText.textContent = "Game Over!";
+    messageText.textContent =
+        "Game Over!";
 
-    messageElement.style.display = "flex";
+    messageElement.style.display =
+        "flex";
 }
 
 
-// ------------------------------------
+// ====================================
 // KEYBOARD
-// ------------------------------------
+// ====================================
 
-document.addEventListener("keydown", function(event) {
+document.addEventListener(
+    "keydown",
+    function(event) {
 
-    if (
-        event.key === "ArrowLeft" ||
-        event.key === "ArrowRight" ||
-        event.key === "ArrowUp" ||
-        event.key === "ArrowDown"
-    ) {
+        if (
+            event.key === "ArrowLeft" ||
+            event.key === "ArrowRight" ||
+            event.key === "ArrowUp" ||
+            event.key === "ArrowDown"
+        ) {
 
-        event.preventDefault();
+            event.preventDefault();
+
+        }
+
+        if (event.key === "ArrowLeft") {
+            move("left");
+        }
+
+        if (event.key === "ArrowRight") {
+            move("right");
+        }
+
+        if (event.key === "ArrowUp") {
+            move("up");
+        }
+
+        if (event.key === "ArrowDown") {
+            move("down");
+        }
 
     }
+);
 
-    if (event.key === "ArrowLeft") {
-        move("left");
+
+// ====================================
+// KEEP TILES CORRECT AFTER RESIZING
+// ====================================
+
+window.addEventListener(
+    "resize",
+    function() {
+
+        document
+            .querySelectorAll(".tile")
+            .forEach(element => {
+
+                const id =
+                    Number(element.dataset.id);
+
+                const tile =
+                    tiles.find(t => t.id === id);
+
+                if (tile) {
+                    positionTile(
+                        element,
+                        tile.position
+                    );
+                }
+
+            });
+
     }
-
-    if (event.key === "ArrowRight") {
-        move("right");
-    }
-
-    if (event.key === "ArrowUp") {
-        move("up");
-    }
-
-    if (event.key === "ArrowDown") {
-        move("down");
-    }
-
-});
+);
 
 
-// Start
+// Start game
 newGame();
 
 </script>
