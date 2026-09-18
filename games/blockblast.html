@@ -16,14 +16,19 @@ body {
     background: #171717;
     color: white;
     font-family: Arial, sans-serif;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     min-height: 100vh;
+    overflow: hidden;
 }
 
 #game {
     text-align: center;
+    width: 100%;
+    max-width: 500px;
 }
 
 h1 {
@@ -32,8 +37,8 @@ h1 {
 }
 
 #instructions {
-    margin-bottom: 12px;
-    font-size: 16px;
+    margin-bottom: 10px;
+    font-size: 15px;
 }
 
 #score {
@@ -44,8 +49,13 @@ h1 {
 #board {
     width: 440px;
     height: 440px;
+    max-width: 90vw;
+    max-height: 90vw;
+
+    margin: auto;
 
     display: grid;
+
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
 
@@ -72,23 +82,23 @@ h1 {
     background: #ffe08a;
 }
 
-.cell.invalid {
-    background: #d9534f;
-}
-
 #pieces {
+    width: 100%;
+
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    gap: 30px;
 
     height: 140px;
+
     margin-top: 10px;
+
+    user-select: none;
 }
 
 .piece-holder {
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
 
     display: flex;
     justify-content: center;
@@ -98,15 +108,22 @@ h1 {
 
     user-select: none;
     touch-action: none;
+
+    position: relative;
+}
+
+.piece-holder:active {
+    cursor: grabbing;
 }
 
 .piece-holder.dragging {
-    opacity: 0.25;
+    opacity: 0.2;
 }
 
 .piece {
     display: grid;
     gap: 3px;
+
     pointer-events: none;
 }
 
@@ -115,10 +132,14 @@ h1 {
     height: 25px;
 
     background: #ffb52e;
+
     border-radius: 5px;
+
+    pointer-events: none;
 }
 
-/* The piece that follows the mouse */
+/* Dragging copy */
+
 #dragPiece {
     position: fixed;
 
@@ -130,7 +151,6 @@ h1 {
 
     transform: translate(-50%, -50%);
 
-    display: grid;
     gap: 3px;
 }
 
@@ -148,6 +168,7 @@ button {
     border-radius: 8px;
 
     background: #f5a623;
+
     color: white;
 
     font-size: 17px;
@@ -156,10 +177,27 @@ button {
     cursor: pointer;
 }
 
+button:hover {
+    background: #d98d12;
+}
+
 #message {
     min-height: 24px;
     margin-top: 8px;
+
     font-size: 17px;
+}
+
+@media (max-width: 520px) {
+
+    #pieces {
+        gap: 0;
+    }
+
+    .piece-holder {
+        width: 100px;
+        height: 120px;
+    }
 }
 </style>
 
@@ -186,12 +224,12 @@ button {
 
 <div id="message"></div>
 
-<button id="newGame">New Game</button>
+<button id="newGame">
+    New Game
+</button>
 ```
 
 </div>
-
-<!-- This is the piece that follows the mouse -->
 
 <div id="dragPiece"></div>
 
@@ -199,24 +237,42 @@ button {
 
 const SIZE = 8;
 
-const boardElement = document.getElementById("board");
-const piecesElement = document.getElementById("pieces");
-const dragElement = document.getElementById("dragPiece");
+const boardElement =
+    document.getElementById("board");
 
-const scoreElement = document.getElementById("scoreValue");
-const messageElement = document.getElementById("message");
-const newGameButton = document.getElementById("newGame");
+const piecesElement =
+    document.getElementById("pieces");
+
+const dragElement =
+    document.getElementById("dragPiece");
+
+const scoreElement =
+    document.getElementById("scoreValue");
+
+const messageElement =
+    document.getElementById("message");
+
+const newGameButton =
+    document.getElementById("newGame");
+
 
 let board = [];
+
 let pieces = [];
+
 let score = 0;
 
 let draggingPiece = null;
+
 let draggingIndex = -1;
+
+let draggingHolder = null;
+
+let currentDrop = null;
 
 
 /* =========================
-   PIECES
+   PIECE SHAPES
 ========================= */
 
 const SHAPES = [
@@ -257,7 +313,7 @@ const SHAPES = [
 
 
 /* =========================
-   BOARD
+   CREATE BOARD
 ========================= */
 
 function createBoard() {
@@ -266,15 +322,16 @@ function createBoard() {
 
     boardElement.innerHTML = "";
 
-    for (let r = 0; r < SIZE; r++) {
+    for (let row = 0; row < SIZE; row++) {
 
-        board[r] = [];
+        board[row] = [];
 
-        for (let c = 0; c < SIZE; c++) {
+        for (let col = 0; col < SIZE; col++) {
 
-            board[r][c] = false;
+            board[row][col] = false;
 
-            const cell = document.createElement("div");
+            const cell =
+                document.createElement("div");
 
             cell.className = "cell";
 
@@ -284,20 +341,26 @@ function createBoard() {
 }
 
 
+/* =========================
+   DRAW BOARD
+========================= */
+
 function drawBoard() {
 
-    for (let r = 0; r < SIZE; r++) {
+    for (let row = 0; row < SIZE; row++) {
 
-        for (let c = 0; c < SIZE; c++) {
+        for (let col = 0; col < SIZE; col++) {
+
+            const index =
+                row * SIZE + col;
 
             const cell =
-                boardElement.children[
-                    r * SIZE + c
-                ];
+                boardElement.children[index];
 
             cell.className = "cell";
 
-            if (board[r][c]) {
+            if (board[row][col]) {
+
                 cell.classList.add("filled");
             }
         }
@@ -306,7 +369,7 @@ function drawBoard() {
 
 
 /* =========================
-   PIECES
+   CREATE PIECES
 ========================= */
 
 function makePieces() {
@@ -315,18 +378,29 @@ function makePieces() {
 
     for (let i = 0; i < 3; i++) {
 
-        pieces.push(
+        const randomShape =
             SHAPES[
                 Math.floor(
                     Math.random() * SHAPES.length
                 )
-            ]
+            ];
+
+        /*
+         * Copy the array so each piece
+         * is independent.
+         */
+        pieces.push(
+            randomShape.map(block => [...block])
         );
     }
 
     drawPieces();
 }
 
+
+/* =========================
+   DRAW PIECES
+========================= */
 
 function drawPieces() {
 
@@ -339,20 +413,27 @@ function drawPieces() {
         const holder =
             document.createElement("div");
 
-        holder.className = "piece-holder";
+        holder.className =
+            "piece-holder";
 
-        holder.dataset.index = index;
+        holder.dataset.index =
+            index;
 
         const piece =
             document.createElement("div");
 
-        piece.className = "piece";
+        piece.className =
+            "piece";
 
         const rows =
-            Math.max(...shape.map(b => b[0])) + 1;
+            Math.max(
+                ...shape.map(block => block[0])
+            ) + 1;
 
         const cols =
-            Math.max(...shape.map(b => b[1])) + 1;
+            Math.max(
+                ...shape.map(block => block[1])
+            ) + 1;
 
         piece.style.gridTemplateRows =
             `repeat(${rows}, 25px)`;
@@ -360,15 +441,19 @@ function drawPieces() {
         piece.style.gridTemplateColumns =
             `repeat(${cols}, 25px)`;
 
-        shape.forEach(([r, c]) => {
+        shape.forEach(([row, col]) => {
 
             const block =
                 document.createElement("div");
 
-            block.className = "block";
+            block.className =
+                "block";
 
-            block.style.gridRow = r + 1;
-            block.style.gridColumn = c + 1;
+            block.style.gridRow =
+                row + 1;
+
+            block.style.gridColumn =
+                col + 1;
 
             piece.appendChild(block);
         });
@@ -376,11 +461,15 @@ function drawPieces() {
         holder.appendChild(piece);
 
         /*
-         * ONLY drag behavior.
+         * Put the pointer listener on the
+         * WHOLE holder, not the visual piece.
+         *
+         * This makes the entire bottom slot
+         * grab-able.
          */
         holder.addEventListener(
-            "mousedown",
-            beginMouseDrag
+            "pointerdown",
+            beginDrag
         );
 
         piecesElement.appendChild(holder);
@@ -392,57 +481,79 @@ function drawPieces() {
    BEGIN DRAG
 ========================= */
 
-function beginMouseDrag(event) {
+function beginDrag(event) {
 
     event.preventDefault();
 
-    const holder = event.currentTarget;
+    const holder =
+        event.currentTarget;
 
     const index =
         Number(holder.dataset.index);
 
     if (!pieces[index]) return;
 
-    draggingPiece = pieces[index];
+    draggingPiece =
+        pieces[index];
 
-    draggingIndex = index;
+    draggingIndex =
+        index;
 
-    holder.classList.add("dragging");
+    draggingHolder =
+        holder;
 
-    createDragVisual(draggingPiece);
+    currentDrop = null;
 
-    moveDragVisual(
+    holder.classList.add(
+        "dragging"
+    );
+
+    createDragVisual(
+        draggingPiece
+    );
+
+    moveDrag(
         event.clientX,
         event.clientY
     );
 
+    /*
+     * Use pointer events so this works
+     * with mouse and touchscreen.
+     */
     document.addEventListener(
-        "mousemove",
-        dragMouseMove
+        "pointermove",
+        dragMove
     );
 
     document.addEventListener(
-        "mouseup",
-        finishMouseDrag,
+        "pointerup",
+        endDrag,
+        { once: true }
+    );
+
+    document.addEventListener(
+        "pointercancel",
+        cancelDrag,
         { once: true }
     );
 }
 
 
 /* =========================
-   MOUSE MOVE
+   DRAG MOVE
 ========================= */
 
-function dragMouseMove(event) {
+function dragMove(event) {
 
     if (!draggingPiece) return;
 
-    moveDragVisual(
+    moveDrag(
         event.clientX,
         event.clientY
     );
 
-    showPreview(
+    updatePreview(
         event.clientX,
         event.clientY
     );
@@ -450,20 +561,39 @@ function dragMouseMove(event) {
 
 
 /* =========================
-   DRAG VISUAL
+   MOVE DRAG VISUAL
+========================= */
+
+function moveDrag(x, y) {
+
+    dragElement.style.left =
+        x + "px";
+
+    dragElement.style.top =
+        (y - 45) + "px";
+}
+
+
+/* =========================
+   CREATE DRAG VISUAL
 ========================= */
 
 function createDragVisual(shape) {
 
     dragElement.innerHTML = "";
 
-    dragElement.style.display = "grid";
+    dragElement.style.display =
+        "grid";
 
     const rows =
-        Math.max(...shape.map(b => b[0])) + 1;
+        Math.max(
+            ...shape.map(block => block[0])
+        ) + 1;
 
     const cols =
-        Math.max(...shape.map(b => b[1])) + 1;
+        Math.max(
+            ...shape.map(block => block[1])
+        ) + 1;
 
     dragElement.style.gridTemplateRows =
         `repeat(${rows}, 30px)`;
@@ -471,26 +601,22 @@ function createDragVisual(shape) {
     dragElement.style.gridTemplateColumns =
         `repeat(${cols}, 30px)`;
 
-    shape.forEach(([r, c]) => {
+    shape.forEach(([row, col]) => {
 
         const block =
             document.createElement("div");
 
-        block.className = "block";
+        block.className =
+            "block";
 
-        block.style.gridRow = r + 1;
-        block.style.gridColumn = c + 1;
+        block.style.gridRow =
+            row + 1;
+
+        block.style.gridColumn =
+            col + 1;
 
         dragElement.appendChild(block);
     });
-}
-
-
-function moveDragVisual(x, y) {
-
-    dragElement.style.left = x + "px";
-
-    dragElement.style.top = y + "px";
 }
 
 
@@ -498,7 +624,7 @@ function moveDragVisual(x, y) {
    FIND BOARD CELL
 ========================= */
 
-function getCell(x, y) {
+function getBoardCell(x, y) {
 
     const rect =
         boardElement.getBoundingClientRect();
@@ -521,13 +647,116 @@ function getCell(x, y) {
     return {
 
         row: Math.floor(
-            (y - rect.top) / cellHeight
+            (y - rect.top) /
+            cellHeight
         ),
 
         col: Math.floor(
-            (x - rect.left) / cellWidth
+            (x - rect.left) /
+            cellWidth
         )
     };
+}
+
+
+/* =========================
+   FIND CLOSEST VALID SPOT
+========================= */
+
+function findClosestValidPosition(
+    shape,
+    wantedRow,
+    wantedCol
+) {
+
+    /*
+     * First try the exact position.
+     */
+    if (
+        canPlace(
+            shape,
+            wantedRow,
+            wantedCol
+        )
+    ) {
+
+        return {
+            row: wantedRow,
+            col: wantedCol
+        };
+    }
+
+    /*
+     * Search outward in a circle.
+     *
+     * This creates the auto-correction.
+     */
+    for (
+        let distance = 1;
+        distance <= 4;
+        distance++
+    ) {
+
+        let best = null;
+
+        let bestDistance =
+            Infinity;
+
+        for (
+            let row = wantedRow - distance;
+            row <= wantedRow + distance;
+            row++
+        ) {
+
+            for (
+                let col = wantedCol - distance;
+                col <= wantedCol + distance;
+                col++
+            ) {
+
+                if (
+                    !canPlace(
+                        shape,
+                        row,
+                        col
+                    )
+                ) {
+                    continue;
+                }
+
+                const dRow =
+                    row - wantedRow;
+
+                const dCol =
+                    col - wantedCol;
+
+                const actualDistance =
+                    Math.sqrt(
+                        dRow * dRow +
+                        dCol * dCol
+                    );
+
+                if (
+                    actualDistance < bestDistance
+                ) {
+
+                    bestDistance =
+                        actualDistance;
+
+                    best = {
+                        row: row,
+                        col: col
+                    };
+                }
+            }
+        }
+
+        if (best) {
+            return best;
+        }
+    }
+
+    return null;
 }
 
 
@@ -535,46 +764,78 @@ function getCell(x, y) {
    PREVIEW
 ========================= */
 
-function showPreview(x, y) {
+function updatePreview(x, y) {
 
     clearPreview();
 
-    const cell = getCell(x, y);
+    const cell =
+        getBoardCell(x, y);
 
-    if (!cell) return;
+    if (!cell) {
 
-    const valid =
-        canPlace(
+        currentDrop = null;
+
+        return;
+    }
+
+    /*
+     * Find the closest legal location.
+     */
+    const corrected =
+        findClosestValidPosition(
             draggingPiece,
             cell.row,
             cell.col
         );
 
-    draggingPiece.forEach(([r, c]) => {
+    if (!corrected) {
 
-        const row = cell.row + r;
-        const col = cell.col + c;
+        currentDrop = null;
 
-        if (
-            row < 0 ||
-            row >= SIZE ||
-            col < 0 ||
-            col >= SIZE
-        ) {
-            return;
+        return;
+    }
+
+    currentDrop = corrected;
+
+    /*
+     * Show exactly where the piece
+     * will be placed.
+     */
+    draggingPiece.forEach(
+        ([row, col]) => {
+
+            const targetRow =
+                corrected.row + row;
+
+            const targetCol =
+                corrected.col + col;
+
+            if (
+                targetRow < 0 ||
+                targetRow >= SIZE ||
+                targetCol < 0 ||
+                targetCol >= SIZE
+            ) {
+                return;
+            }
+
+            const index =
+                targetRow * SIZE +
+                targetCol;
+
+            boardElement
+                .children[index]
+                .classList.add(
+                    "preview"
+                );
         }
-
-        const target =
-            boardElement.children[
-                row * SIZE + col
-            ];
-
-        target.classList.add(
-            valid ? "preview" : "invalid"
-        );
-    });
+    );
 }
 
+
+/* =========================
+   CLEAR PREVIEW
+========================= */
 
 function clearPreview() {
 
@@ -584,55 +845,65 @@ function clearPreview() {
         i++
     ) {
 
-        boardElement.children[i]
+        boardElement
+            .children[i]
             .classList.remove(
-                "preview",
-                "invalid"
+                "preview"
             );
     }
 }
 
 
 /* =========================
-   DROP
+   END DRAG
 ========================= */
 
-function finishMouseDrag(event) {
+function endDrag(event) {
 
     document.removeEventListener(
-        "mousemove",
-        dragMouseMove
+        "pointermove",
+        dragMove
     );
 
     clearPreview();
 
     if (!draggingPiece) return;
 
+    /*
+     * Calculate one final position
+     * using where the mouse was released.
+     */
     const cell =
-        getCell(
+        getBoardCell(
             event.clientX,
             event.clientY
         );
 
-    if (
-        cell &&
-        canPlace(
-            draggingPiece,
-            cell.row,
-            cell.col
-        )
-    ) {
+    let finalPosition = null;
+
+    if (cell) {
+
+        finalPosition =
+            findClosestValidPosition(
+                draggingPiece,
+                cell.row,
+                cell.col
+            );
+    }
+
+    if (finalPosition) {
 
         placePiece(
             draggingPiece,
-            cell.row,
-            cell.col
+            finalPosition.row,
+            finalPosition.col
         );
 
         score +=
             draggingPiece.length * 10;
 
-        pieces[draggingIndex] = null;
+        pieces[draggingIndex] =
+            null;
 
         clearLines();
 
@@ -641,15 +912,20 @@ function finishMouseDrag(event) {
 
         drawBoard();
 
+        messageElement.textContent = "";
+
+        /*
+         * Give three new pieces after
+         * all three have been used.
+         */
         if (
             pieces.every(
-                p => p === null
+                piece => piece === null
             )
         ) {
+
             makePieces();
         }
-
-        messageElement.textContent = "";
 
         if (!hasMoves()) {
 
@@ -660,48 +936,88 @@ function finishMouseDrag(event) {
     } else {
 
         messageElement.textContent =
-            "Drop the piece on the board!";
+            "No room for that piece!";
     }
 
-    dragElement.style.display = "none";
-
-    dragElement.innerHTML = "";
-
-    const holders =
-        document.querySelectorAll(
-            ".piece-holder"
-        );
-
-    holders.forEach(holder => {
-        holder.classList.remove("dragging");
-    });
-
-    draggingPiece = null;
-    draggingIndex = -1;
+    cleanupDrag();
 }
 
 
 /* =========================
-   PLACE
+   CANCEL DRAG
 ========================= */
 
-function canPlace(shape, row, col) {
+function cancelDrag() {
 
-    for (const [r, c] of shape) {
+    document.removeEventListener(
+        "pointermove",
+        dragMove
+    );
 
-        const nr = row + r;
-        const nc = col + c;
+    clearPreview();
+
+    cleanupDrag();
+}
+
+
+/* =========================
+   CLEAN UP
+========================= */
+
+function cleanupDrag() {
+
+    if (draggingHolder) {
+
+        draggingHolder.classList.remove(
+            "dragging"
+        );
+    }
+
+    dragElement.style.display =
+        "none";
+
+    dragElement.innerHTML = "";
+
+    draggingPiece = null;
+
+    draggingIndex = -1;
+
+    draggingHolder = null;
+
+    currentDrop = null;
+}
+
+
+/* =========================
+   CAN PLACE
+========================= */
+
+function canPlace(
+    shape,
+    startRow,
+    startCol
+) {
+
+    for (const [row, col] of shape) {
+
+        const r =
+            startRow + row;
+
+        const c =
+            startCol + col;
 
         if (
-            nr < 0 ||
-            nr >= SIZE ||
-            nc < 0 ||
-            nc >= SIZE
+            r < 0 ||
+            r >= SIZE ||
+            c < 0 ||
+            c >= SIZE
         ) {
+
             return false;
         }
 
-        if (board[nr][nc]) {
+        if (board[r][c]) {
+
             return false;
         }
     }
@@ -710,12 +1026,26 @@ function canPlace(shape, row, col) {
 }
 
 
-function placePiece(shape, row, col) {
+/* =========================
+   PLACE PIECE
+========================= */
 
-    shape.forEach(([r, c]) => {
+function placePiece(
+    shape,
+    startRow,
+    startCol
+) {
 
-        board[row + r][col + c] = true;
-    });
+    shape.forEach(
+        ([row, col]) => {
+
+            board[
+                startRow + row
+            ][
+                startCol + col
+            ] = true;
+        }
+    );
 }
 
 
@@ -727,37 +1057,54 @@ function clearLines() {
 
     let cleared = 0;
 
-    for (let r = 0; r < SIZE; r++) {
+    /*
+     * Rows
+     */
+    for (let row = 0; row < SIZE; row++) {
 
         if (
-            board[r].every(
+            board[row].every(
                 cell => cell
             )
         ) {
 
-            board[r].fill(false);
+            board[row].fill(false);
 
             cleared++;
         }
     }
 
-    for (let c = 0; c < SIZE; c++) {
+    /*
+     * Columns
+     */
+    for (let col = 0; col < SIZE; col++) {
 
         let full = true;
 
-        for (let r = 0; r < SIZE; r++) {
+        for (
+            let row = 0;
+            row < SIZE;
+            row++
+        ) {
 
-            if (!board[r][c]) {
+            if (!board[row][col]) {
 
                 full = false;
+
                 break;
             }
         }
 
         if (full) {
 
-            for (let r = 0; r < SIZE; r++) {
-                board[r][c] = false;
+            for (
+                let row = 0;
+                row < SIZE;
+                row++
+            ) {
+
+                board[row][col] =
+                    false;
             }
 
             cleared++;
@@ -766,7 +1113,8 @@ function clearLines() {
 
     if (cleared > 0) {
 
-        score += cleared * 100;
+        score +=
+            cleared * 100;
 
         scoreElement.textContent =
             score;
@@ -775,7 +1123,7 @@ function clearLines() {
 
 
 /* =========================
-   GAME OVER CHECK
+   CHECK FOR MOVES
 ========================= */
 
 function hasMoves() {
@@ -784,17 +1132,26 @@ function hasMoves() {
 
         if (!shape) continue;
 
-        for (let r = 0; r < SIZE; r++) {
+        for (
+            let row = 0;
+            row < SIZE;
+            row++
+        ) {
 
-            for (let c = 0; c < SIZE; c++) {
+            for (
+                let col = 0;
+                col < SIZE;
+                col++
+            ) {
 
                 if (
                     canPlace(
                         shape,
-                        r,
-                        c
+                        row,
+                        col
                     )
                 ) {
+
                     return true;
                 }
             }
@@ -813,9 +1170,11 @@ function newGame() {
 
     score = 0;
 
-    scoreElement.textContent = "0";
+    scoreElement.textContent =
+        "0";
 
-    messageElement.textContent = "";
+    messageElement.textContent =
+        "";
 
     createBoard();
 
