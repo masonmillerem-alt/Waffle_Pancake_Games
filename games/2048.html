@@ -114,15 +114,18 @@ h1 {
     z-index: 5;
 
     /*
-       Movement animation.
-       New tiles temporarily have this
-       disabled through JavaScript.
+       We animate LEFT and TOP directly.
+       No transform is used for positioning.
     */
-    transition: transform 150ms ease-in-out;
+    transition:
+        left 150ms ease-in-out,
+        top 150ms ease-in-out;
 }
 
 
-/* Merge pop */
+/* =========================
+   MERGE
+========================= */
 
 .tile.merge {
     animation: merge 160ms ease-out;
@@ -130,17 +133,19 @@ h1 {
 }
 
 @keyframes merge {
+
     0% {
-        transform: var(--tile-position) scale(1);
+        transform: scale(1);
     }
 
     50% {
-        transform: var(--tile-position) scale(1.15);
+        transform: scale(1.15);
     }
 
     100% {
-        transform: var(--tile-position) scale(1);
+        transform: scale(1);
     }
+
 }
 
 
@@ -384,7 +389,7 @@ h1 {
 <script>
 
 // ==========================================
-// VARIABLES
+// GAME VARIABLES
 // ==========================================
 
 let tiles = [];
@@ -416,7 +421,7 @@ const messageText =
 
 
 // ==========================================
-// BOARD MEASUREMENTS
+// GET BOARD MEASUREMENTS
 // ==========================================
 
 function getMeasurements() {
@@ -446,7 +451,7 @@ function getMeasurements() {
 
 
 // ==========================================
-// COORDINATES
+// GET POSITION
 // ==========================================
 
 function getCoordinates(position) {
@@ -460,6 +465,7 @@ function getCoordinates(position) {
     const column =
         position % 4;
 
+
     const left =
         measurements.padding +
         column *
@@ -467,6 +473,7 @@ function getCoordinates(position) {
             measurements.tileSize +
             measurements.gap
         );
+
 
     const top =
         measurements.padding +
@@ -476,26 +483,30 @@ function getCoordinates(position) {
             measurements.gap
         );
 
+
     return {
         left,
         top,
-        size: measurements.tileSize
+        size:
+            measurements.tileSize
     };
 
 }
 
 
 // ==========================================
-// POSITION TILE
+// PLACE TILE
 // ==========================================
 
-function positionTile(
+function placeTile(
     element,
-    position
+    position,
+    animate
 ) {
 
     const coordinates =
         getCoordinates(position);
+
 
     element.style.width =
         coordinates.size + "px";
@@ -503,25 +514,50 @@ function positionTile(
     element.style.height =
         coordinates.size + "px";
 
+
     /*
-       left/top are always zero.
-       The actual position is controlled
-       entirely by transform.
+       IMPORTANT:
+
+       New tiles are placed with transitions
+       disabled BEFORE their position changes.
     */
 
-    element.style.left = "0px";
-    element.style.top = "0px";
+    if (!animate) {
 
-    const transform =
-        `translate(${coordinates.left}px, ${coordinates.top}px)`;
+        element.style.transition =
+            "none";
 
-    element.style.setProperty(
-        "--tile-position",
-        transform
-    );
+    }
 
-    element.style.transform =
-        transform;
+
+    element.style.left =
+        coordinates.left + "px";
+
+    element.style.top =
+        coordinates.top + "px";
+
+
+    /*
+       Re-enable animation only after
+       the tile is already positioned.
+    */
+
+    if (!animate) {
+
+        requestAnimationFrame(() => {
+
+            if (
+                element.parentNode
+            ) {
+
+                element.style.transition =
+                    "left 150ms ease-in-out, top 150ms ease-in-out";
+
+            }
+
+        });
+
+    }
 
 }
 
@@ -535,31 +571,49 @@ function createTile(tile) {
     const element =
         document.createElement("div");
 
+
     element.className =
-        "tile tile-" + tile.value;
+        "tile tile-" +
+        tile.value;
+
 
     element.dataset.id =
         tile.id;
 
+
     element.textContent =
         tile.value;
 
+
     /*
-       CRITICAL:
-
-       Disable the CSS transition BEFORE
-       the element is inserted.
-
-       This prevents the browser from
-       animating the tile from the top-left.
+       The element starts with NO transition.
     */
 
-    element.style.transition = "none";
+    element.style.transition =
+        "none";
 
-    positionTile(
-        element,
-        tile.position
-    );
+
+    /*
+       Put it directly into its correct
+       position BEFORE adding it to the DOM.
+    */
+
+    const coordinates =
+        getCoordinates(tile.position);
+
+
+    element.style.width =
+        coordinates.size + "px";
+
+    element.style.height =
+        coordinates.size + "px";
+
+    element.style.left =
+        coordinates.left + "px";
+
+    element.style.top =
+        coordinates.top + "px";
+
 
     return element;
 
@@ -567,17 +621,67 @@ function createTile(tile) {
 
 
 // ==========================================
-// ADD TILE
+// NEW GAME
+// ==========================================
+
+function newGame() {
+
+    /*
+       Remove every old tile immediately.
+    */
+
+    board
+        .querySelectorAll(".tile")
+        .forEach(
+            element =>
+                element.remove()
+        );
+
+
+    tiles = [];
+
+    nextId = 1;
+
+    score = 0;
+
+    gameOver = false;
+
+    moving = false;
+
+
+    message.style.display =
+        "none";
+
+
+    scoreDisplay.textContent =
+        "0";
+
+
+    addTile();
+
+    addTile();
+
+
+    render();
+
+}
+
+
+// ==========================================
+// ADD RANDOM TILE
 // ==========================================
 
 function addTile() {
 
     const occupied =
         tiles.map(
-            tile => tile.position
+            tile =>
+                tile.position
         );
 
+
     const empty = [];
+
 
     for (
         let i = 0;
@@ -595,6 +699,7 @@ function addTile() {
 
     }
 
+
     if (
         empty.length === 0
     ) {
@@ -603,6 +708,7 @@ function addTile() {
 
     }
 
+
     const position =
         empty[
             Math.floor(
@@ -610,6 +716,7 @@ function addTile() {
                 empty.length
             )
         ];
+
 
     tiles.push({
 
@@ -638,6 +745,7 @@ function render() {
     const existing =
         new Map();
 
+
     board
         .querySelectorAll(".tile")
         .forEach(element => {
@@ -652,10 +760,6 @@ function render() {
         });
 
 
-    // ======================================
-    // CREATE / UPDATE
-    // ======================================
-
     for (
         const tile of tiles
     ) {
@@ -664,27 +768,30 @@ function render() {
             existing.get(tile.id);
 
 
-        // NEW TILE
+        /*
+           NEW TILE
+        */
 
         if (!element) {
 
             element =
                 createTile(tile);
 
+
+            /*
+               Because createTile already
+               positioned the tile, it is
+               inserted directly into the
+               correct square.
+            */
+
             board.appendChild(
                 element
             );
 
+
             /*
-               The tile is already in its
-               correct location.
-
-               Now wait one browser frame,
-               then turn movement animation
-               back on.
-
-               This is what prevents the
-               top-left spawning glitch.
+               Only NOW enable sliding.
             */
 
             requestAnimationFrame(() => {
@@ -694,7 +801,7 @@ function render() {
                 ) {
 
                     element.style.transition =
-                        "transform 150ms ease-in-out";
+                        "left 150ms ease-in-out, top 150ms ease-in-out";
 
                 }
 
@@ -703,13 +810,16 @@ function render() {
         }
 
 
-        // EXISTING TILE
+        /*
+           EXISTING TILE
+        */
 
         else {
 
             element.className =
                 "tile tile-" +
                 tile.value;
+
 
             element.textContent =
                 tile.value;
@@ -725,13 +835,14 @@ function render() {
 
 
             /*
-               Existing tiles are allowed
-               to smoothly slide.
+               Existing tiles animate
+               to their new location.
             */
 
-            positionTile(
+            placeTile(
                 element,
-                tile.position
+                tile.position,
+                true
             );
 
         }
@@ -739,9 +850,9 @@ function render() {
     }
 
 
-    // ======================================
-    // REMOVE OLD TILES
-    // ======================================
+    /*
+       REMOVE TILES THAT NO LONGER EXIST
+    */
 
     for (
         const [id, element]
@@ -759,10 +870,7 @@ function render() {
 
             /*
                Remove immediately.
-
-               We do NOT fade it out because
-               a removed tile should never have
-               a chance to appear at 0,0.
+               No fade and no animation.
             */
 
             element.remove();
@@ -776,9 +884,9 @@ function render() {
         score;
 
 
-    // ======================================
-    // RESET MERGE FLAGS
-    // ======================================
+    /*
+       Reset merge flags.
+    */
 
     for (
         const tile of tiles
@@ -792,7 +900,7 @@ function render() {
 
 
 // ==========================================
-// MOVEMENT LINES
+// GET LINES
 // ==========================================
 
 function getLines(direction) {
@@ -920,6 +1028,7 @@ function move(direction) {
     const lines =
         getLines(direction);
 
+
     let moved = false;
 
 
@@ -963,13 +1072,14 @@ function move(direction) {
             const current =
                 lineTiles[i];
 
+
             const targetPosition =
                 line[targetIndex];
 
 
-            // =================================
-            // MERGE
-            // =================================
+            /*
+               MERGE
+            */
 
             if (
 
@@ -987,6 +1097,7 @@ function move(direction) {
 
                 current.position =
                     targetPosition;
+
 
                 next.position =
                     targetPosition;
@@ -1020,9 +1131,9 @@ function move(direction) {
             }
 
 
-            // =================================
-            // NORMAL MOVE
-            // =================================
+            /*
+               NORMAL MOVE
+            */
 
             else {
 
@@ -1062,6 +1173,10 @@ function move(direction) {
     render();
 
 
+    /*
+       Wait for the sliding animation.
+    */
+
     setTimeout(() => {
 
         addTile();
@@ -1082,7 +1197,7 @@ function move(direction) {
 
 
 // ==========================================
-// WIN
+// CHECK WIN
 // ==========================================
 
 function checkWin() {
@@ -1115,7 +1230,7 @@ function checkWin() {
 
 
 // ==========================================
-// GAME OVER
+// CHECK GAME OVER
 // ==========================================
 
 function checkGameOver() {
@@ -1173,42 +1288,28 @@ function checkGameOver() {
                 values.get(index);
 
 
-            // RIGHT
-
             if (
-                column < 3
+                column < 3 &&
+                value ===
+                values.get(
+                    index + 1
+                )
             ) {
 
-                if (
-                    value ===
-                    values.get(
-                        index + 1
-                    )
-                ) {
-
-                    return;
-
-                }
+                return;
 
             }
 
 
-            // DOWN
-
             if (
-                row < 3
+                row < 3 &&
+                value ===
+                values.get(
+                    index + 4
+                )
             ) {
 
-                if (
-                    value ===
-                    values.get(
-                        index + 4
-                    )
-                ) {
-
-                    return;
-
-                }
+                return;
 
             }
 
@@ -1299,14 +1400,13 @@ window.addEventListener(
     "resize",
     function() {
 
-        const elements =
-            document.querySelectorAll(
-                ".tile"
-            );
+        /*
+           Disable animation while resizing.
+        */
 
-
-        elements.forEach(
-            element => {
+        document
+            .querySelectorAll(".tile")
+            .forEach(element => {
 
                 const id =
                     Number(
@@ -1326,30 +1426,39 @@ window.addEventListener(
                 }
 
 
-                /*
-                   Disable animation during
-                   resizing so tiles don't move
-                   weirdly.
-                */
-
                 element.style.transition =
                     "none";
 
 
-                positionTile(
-                    element,
-                    tile.position
-                );
+                const coordinates =
+                    getCoordinates(
+                        tile.position
+                    );
 
-            }
-        );
+
+                element.style.width =
+                    coordinates.size + "px";
+
+
+                element.style.height =
+                    coordinates.size + "px";
+
+
+                element.style.left =
+                    coordinates.left + "px";
+
+
+                element.style.top =
+                    coordinates.top + "px";
+
+            });
 
     }
 );
 
 
 // ==========================================
-// START GAME
+// START
 // ==========================================
 
 newGame();
