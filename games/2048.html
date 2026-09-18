@@ -64,74 +64,66 @@ h1 {
     margin-bottom: 12px;
 }
 
+/* =========================
+   BOARD
+========================= */
+
 .board {
     width: 100%;
-    aspect-ratio: 1;
+    aspect-ratio: 1 / 1;
     background: #bbada0;
     border-radius: 8px;
     padding: 10px;
     position: relative;
 }
 
-/* Empty squares */
-.cell {
+/* Background squares */
+
+.grid {
     position: absolute;
-    width: calc((100% - 50px) / 4);
-    height: calc((100% - 50px) / 4);
+    inset: 10px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+
+    gap: 10px;
+}
+
+.cell {
     background: #cdc1b4;
     border-radius: 6px;
 }
 
-.cell:nth-child(1) { left: 10px; top: 10px; }
-.cell:nth-child(2) { left: calc(25% + 2px); top: 10px; }
-.cell:nth-child(3) { left: calc(50% - 6px); top: 10px; }
-.cell:nth-child(4) { right: 10px; top: 10px; }
+/* =========================
+   TILES
+========================= */
 
-.cell:nth-child(5) { left: 10px; top: calc(25% + 2px); }
-.cell:nth-child(6) { left: calc(25% + 2px); top: calc(25% + 2px); }
-.cell:nth-child(7) { left: calc(50% - 6px); top: calc(25% + 2px); }
-.cell:nth-child(8) { right: 10px; top: calc(25% + 2px); }
-
-.cell:nth-child(9) { left: 10px; top: calc(50% - 6px); }
-.cell:nth-child(10) { left: calc(25% + 2px); top: calc(50% - 6px); }
-.cell:nth-child(11) { left: calc(50% - 6px); top: calc(50% - 6px); }
-.cell:nth-child(12) { right: 10px; top: calc(50% - 6px); }
-
-.cell:nth-child(13) { left: 10px; bottom: 10px; }
-.cell:nth-child(14) { left: calc(25% + 2px); bottom: 10px; }
-.cell:nth-child(15) { left: calc(50% - 6px); bottom: 10px; }
-.cell:nth-child(16) { right: 10px; bottom: 10px; }
-
-/* Tiles */
 .tile {
     position: absolute;
-
-    width: calc((100% - 50px) / 4);
-    height: calc((100% - 50px) / 4);
-
-    border-radius: 6px;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    border-radius: 6px;
 
     font-size: clamp(28px, 8vw, 48px);
     font-weight: bold;
 
     z-index: 5;
 
-    transition:
-        left 140ms ease-in-out,
-        top 140ms ease-in-out;
+    /* ONLY transform is animated */
+    transition: transform 150ms ease-in-out;
 }
 
 .tile.spawn {
-    animation: spawn 140ms ease-out;
+    animation: spawn 150ms ease-out;
 }
 
 .tile.merge {
     animation: merge 160ms ease-out;
-    z-index: 6;
+    z-index: 10;
 }
 
 @keyframes spawn {
@@ -224,7 +216,9 @@ h1 {
     font-size: clamp(20px, 6vw, 34px);
 }
 
-/* Game over */
+/* =========================
+   MESSAGE
+========================= */
 
 .message {
     position: absolute;
@@ -235,6 +229,7 @@ h1 {
     border-radius: 8px;
 
     display: none;
+
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -280,6 +275,7 @@ h1 {
 }
 
 @media (max-width: 500px) {
+
     h1 {
         font-size: 55px;
     }
@@ -298,12 +294,21 @@ h1 {
 
 ```
 <div class="top">
+
     <h1>2048</h1>
 
     <div class="score-box">
-        <div class="score-label">SCORE</div>
-        <div id="score">0</div>
+
+        <div class="score-label">
+            SCORE
+        </div>
+
+        <div id="score">
+            0
+        </div>
+
     </div>
+
 </div>
 
 <div class="instructions">
@@ -314,29 +319,35 @@ h1 {
 
     <!-- Background grid -->
 
-    <div class="cell"></div>
-    <div class="cell"></div>
-    <div class="cell"></div>
-    <div class="cell"></div>
+    <div class="grid">
 
-    <div class="cell"></div>
-    <div class="cell"></div>
-    <div class="cell"></div>
-    <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
 
-    <div class="cell"></div>
-    <div class="cell"></div>
-    <div class="cell"></div>
-    <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
 
-    <div class="cell"></div>
-    <div class="cell"></div>
-    <div class="cell"></div>
-    <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell"></div>
+
+    </div>
 
     <div class="message" id="message">
 
-        <h2 id="messageText">Game Over!</h2>
+        <h2 id="messageText">
+            Game Over!
+        </h2>
 
         <button onclick="newGame()">
             Play Again
@@ -370,117 +381,104 @@ let score = 0;
 let gameOver = false;
 let moving = false;
 
-const boardElement = document.getElementById("board");
-const scoreElement = document.getElementById("score");
-const messageElement = document.getElementById("message");
+const board = document.getElementById("board");
+const scoreDisplay = document.getElementById("score");
+
+const message = document.getElementById("message");
 const messageText = document.getElementById("messageText");
 
 
-// ====================================
-// GET TILE PIXEL POSITION
-// ====================================
+// ==========================================
+// GET EXACT BOARD MEASUREMENTS
+// ==========================================
 
-function getTilePosition(index) {
+function getMeasurements() {
 
-    const row = Math.floor(index / 4);
-    const col = index % 4;
+    const boardWidth = board.clientWidth;
 
-    const boardWidth = boardElement.clientWidth;
-
-    const gap = 10;
     const padding = 10;
+    const gap = 10;
+
+    const usableWidth =
+        boardWidth - padding * 2;
 
     const tileSize =
-        (boardWidth - padding * 2 - gap * 3) / 4;
-
-    const left =
-        padding + col * (tileSize + gap);
-
-    const top =
-        padding + row * (tileSize + gap);
+        (usableWidth - gap * 3) / 4;
 
     return {
-        left: left,
-        top: top,
-        size: tileSize
+        tileSize: tileSize,
+        gap: gap,
+        padding: padding
     };
 }
 
 
-// ====================================
+// ==========================================
+// GET TILE POSITION
+// ==========================================
+
+function getCoordinates(position) {
+
+    const measurements =
+        getMeasurements();
+
+    const row =
+        Math.floor(position / 4);
+
+    const column =
+        position % 4;
+
+    const left =
+        measurements.padding +
+        column *
+        (measurements.tileSize + measurements.gap);
+
+    const top =
+        measurements.padding +
+        row *
+        (measurements.tileSize + measurements.gap);
+
+    return {
+        left: left,
+        top: top,
+        size: measurements.tileSize
+    };
+}
+
+
+// ==========================================
 // POSITION TILE
-// ====================================
+// ==========================================
 
 function positionTile(element, position) {
 
-    const pos = getTilePosition(position);
+    const coordinates =
+        getCoordinates(position);
 
-    element.style.left = pos.left + "px";
-    element.style.top = pos.top + "px";
+    element.style.width =
+        coordinates.size + "px";
+
+    element.style.height =
+        coordinates.size + "px";
+
+    /*
+       IMPORTANT:
+       We animate transform instead of
+       left/top. This guarantees the
+       sliding animation works.
+    */
+
+    element.style.left = "0px";
+    element.style.top = "0px";
+
+    element.style.transform =
+        `translate(${coordinates.left}px, ${coordinates.top}px)`;
 }
 
 
-// ====================================
-// NEW GAME
-// ====================================
-
-function newGame() {
-
-    tiles = [];
-    nextId = 1;
-
-    score = 0;
-    gameOver = false;
-    moving = false;
-
-    messageElement.style.display = "none";
-
-    scoreElement.textContent = "0";
-
-    addTile();
-    addTile();
-
-    renderTiles(true);
-}
-
-
-// ====================================
-// ADD RANDOM TILE
-// ====================================
-
-function addTile() {
-
-    const occupied =
-        tiles.map(tile => tile.position);
-
-    const empty = [];
-
-    for (let i = 0; i < 16; i++) {
-
-        if (!occupied.includes(i)) {
-            empty.push(i);
-        }
-
-    }
-
-    if (empty.length === 0) return;
-
-    const position =
-        empty[Math.floor(Math.random() * empty.length)];
-
-    tiles.push({
-        id: nextId++,
-        value: Math.random() < 0.9 ? 2 : 4,
-        position: position,
-        spawned: true,
-        merged: false
-    });
-}
-
-
-// ====================================
+// ==========================================
 // CREATE TILE
-// ====================================
+// ==========================================
 
 function createTile(tile) {
 
@@ -490,78 +488,196 @@ function createTile(tile) {
     element.className =
         "tile tile-" + tile.value;
 
-    element.dataset.id = tile.id;
+    element.dataset.id =
+        tile.id;
 
-    element.textContent = tile.value;
+    element.textContent =
+        tile.value;
 
-    positionTile(element, tile.position);
+    positionTile(
+        element,
+        tile.position
+    );
 
     if (tile.spawned) {
-        element.classList.add("spawn");
-    }
 
-    if (tile.merged) {
-        element.classList.add("merge");
+        element.classList.add("spawn");
+
     }
 
     return element;
 }
 
 
-// ====================================
-// RENDER TILES
-// ====================================
+// ==========================================
+// NEW GAME
+// ==========================================
 
-function renderTiles(initial = false) {
+function newGame() {
+
+    tiles = [];
+
+    nextId = 1;
+
+    score = 0;
+
+    gameOver = false;
+
+    moving = false;
+
+    message.style.display = "none";
+
+    scoreDisplay.textContent = "0";
+
+    addTile();
+    addTile();
+
+    render(true);
+}
+
+
+// ==========================================
+// ADD RANDOM TILE
+// ==========================================
+
+function addTile() {
+
+    const occupied =
+        tiles.map(
+            tile => tile.position
+        );
+
+    const empty = [];
+
+    for (let i = 0; i < 16; i++) {
+
+        if (!occupied.includes(i)) {
+
+            empty.push(i);
+
+        }
+
+    }
+
+    if (empty.length === 0) {
+        return;
+    }
+
+    const position =
+        empty[
+            Math.floor(
+                Math.random() *
+                empty.length
+            )
+        ];
+
+    tiles.push({
+
+        id: nextId++,
+
+        value:
+            Math.random() < 0.9
+                ? 2
+                : 4,
+
+        position: position,
+
+        spawned: true,
+
+        merged: false
+
+    });
+}
+
+
+// ==========================================
+// RENDER
+// ==========================================
+
+function render(initial = false) {
 
     const existing =
-        new Map(
-            [...boardElement.querySelectorAll(".tile")]
-            .map(element => [
+        new Map();
+
+    board
+        .querySelectorAll(".tile")
+        .forEach(element => {
+
+            existing.set(
                 Number(element.dataset.id),
                 element
-            ])
-        );
+            );
+
+        });
+
+
+    // Update / create tiles
 
     for (const tile of tiles) {
 
         let element =
             existing.get(tile.id);
 
+
         if (!element) {
 
-            element = createTile(tile);
+            element =
+                createTile(tile);
 
-            boardElement.appendChild(element);
+            board.appendChild(element);
 
-        } else {
+        }
+        else {
 
             element.className =
-                "tile tile-" + tile.value;
+                "tile tile-" +
+                tile.value;
+
+            element.textContent =
+                tile.value;
 
             if (tile.merged) {
-                element.classList.add("merge");
+
+                element.classList.add(
+                    "merge"
+                );
+
             }
 
-            element.textContent = tile.value;
+            positionTile(
+                element,
+                tile.position
+            );
 
-            // This is what creates the sliding animation
-            positionTile(element, tile.position);
         }
 
     }
 
-    // Remove old tiles
-    for (const [id, element] of existing) {
 
-        if (!tiles.some(tile => tile.id === id)) {
+    // Remove deleted tiles
 
-            element.style.opacity = "0";
+    for (
+        const [id, element]
+        of existing
+    ) {
+
+        const stillExists =
+            tiles.some(
+                tile =>
+                    tile.id === id
+            );
+
+        if (!stillExists) {
+
+            element.style.opacity =
+                "0";
 
             setTimeout(() => {
 
                 if (element.parentNode) {
+
                     element.remove();
+
                 }
 
             }, 150);
@@ -570,131 +686,179 @@ function renderTiles(initial = false) {
 
     }
 
-    scoreElement.textContent = score;
+
+    scoreDisplay.textContent =
+        score;
+
+
+    // Reset animation flags
 
     for (const tile of tiles) {
+
         tile.spawned = false;
         tile.merged = false;
+
     }
+
 }
 
 
-// ====================================
+// ==========================================
 // GET ROWS / COLUMNS
-// ====================================
+// ==========================================
 
 function getLines(direction) {
 
     const lines = [];
+
 
     if (direction === "left") {
 
         for (let row = 0; row < 4; row++) {
 
             lines.push([
+
                 row * 4,
                 row * 4 + 1,
                 row * 4 + 2,
                 row * 4 + 3
+
             ]);
 
         }
 
     }
+
 
     if (direction === "right") {
 
         for (let row = 0; row < 4; row++) {
 
             lines.push([
+
                 row * 4 + 3,
                 row * 4 + 2,
                 row * 4 + 1,
                 row * 4
+
             ]);
 
         }
 
     }
+
 
     if (direction === "up") {
 
-        for (let col = 0; col < 4; col++) {
+        for (let column = 0; column < 4; column++) {
 
             lines.push([
-                col,
-                col + 4,
-                col + 8,
-                col + 12
+
+                column,
+                column + 4,
+                column + 8,
+                column + 12
+
             ]);
 
         }
 
     }
+
 
     if (direction === "down") {
 
-        for (let col = 0; col < 4; col++) {
+        for (let column = 0; column < 4; column++) {
 
             lines.push([
-                col + 12,
-                col + 8,
-                col + 4,
-                col
+
+                column + 12,
+                column + 8,
+                column + 4,
+                column
+
             ]);
 
         }
 
     }
+
 
     return lines;
 }
 
 
-// ====================================
+// ==========================================
 // MOVE
-// ====================================
+// ==========================================
 
 function move(direction) {
 
-    if (gameOver || moving) return;
+    if (gameOver || moving) {
+        return;
+    }
 
-    const lines = getLines(direction);
+    const lines =
+        getLines(direction);
 
     let moved = false;
+
 
     for (const line of lines) {
 
         const lineTiles = [];
 
+
+        // Get tiles in this line
+
         for (const position of line) {
 
             const tile =
-                tiles.find(t => t.position === position);
+                tiles.find(
+                    t =>
+                        t.position === position
+                );
 
             if (tile) {
+
                 lineTiles.push(tile);
+
             }
 
         }
 
+
         let targetIndex = 0;
 
-        for (let i = 0; i < lineTiles.length; i++) {
 
-            const current = lineTiles[i];
+        for (
+            let i = 0;
+            i < lineTiles.length;
+            i++
+        ) {
+
+            const current =
+                lineTiles[i];
 
             const targetPosition =
                 line[targetIndex];
 
-            // Merge
+
+            // ==============================
+            // MERGE
+            // ==============================
+
             if (
-                i + 1 < lineTiles.length &&
-                current.value === lineTiles[i + 1].value
+                i + 1 <
+                lineTiles.length &&
+
+                current.value ===
+                lineTiles[i + 1].value
             ) {
 
                 const next =
                     lineTiles[i + 1];
+
 
                 current.position =
                     targetPosition;
@@ -702,132 +866,186 @@ function move(direction) {
                 next.position =
                     targetPosition;
 
+
                 next.value *= 2;
+
 
                 next.merged = true;
 
-                score += next.value;
+
+                score +=
+                    next.value;
+
 
                 tiles =
                     tiles.filter(
-                        tile => tile.id !== current.id
+                        tile =>
+                            tile.id !==
+                            current.id
                     );
+
 
                 moved = true;
 
                 i++;
+
                 targetIndex++;
 
-            } else {
+            }
+
+            // ==============================
+            // NORMAL MOVE
+            // ==============================
+
+            else {
 
                 if (
                     current.position !==
                     targetPosition
                 ) {
+
                     moved = true;
+
                 }
 
                 current.position =
                     targetPosition;
 
                 targetIndex++;
+
             }
 
         }
 
     }
 
-    if (!moved) return;
+
+    if (!moved) {
+        return;
+    }
+
 
     moving = true;
 
-    renderTiles();
 
-    // Wait for the sliding animation
+    // Move tiles
+
+    render();
+
+
+    // Wait for sliding animation
+
     setTimeout(() => {
 
         addTile();
 
-        renderTiles();
+        render();
 
         moving = false;
 
         checkWin();
+
         checkGameOver();
 
-    }, 150);
+    }, 160);
+
 }
 
 
-// ====================================
+// ==========================================
 // WIN
-// ====================================
+// ==========================================
 
 function checkWin() {
 
-    if (
+    const won =
         tiles.some(
-            tile => tile.value >= 2048
-        )
-    ) {
+            tile =>
+                tile.value >= 2048
+        );
 
-        messageText.textContent =
-            "You Win! 🎉";
-
-        messageElement.style.display =
-            "flex";
-
-        gameOver = true;
+    if (!won) {
+        return;
     }
+
+    messageText.textContent =
+        "You Win! 🎉";
+
+    message.style.display =
+        "flex";
+
+    gameOver = true;
 }
 
 
-// ====================================
+// ==========================================
 // GAME OVER
-// ====================================
+// ==========================================
 
 function checkGameOver() {
 
-    if (gameOver) return;
+    if (gameOver) {
+        return;
+    }
 
-    if (tiles.length < 16) return;
 
-    const values = new Map();
+    if (tiles.length < 16) {
+        return;
+    }
+
+
+    const values =
+        new Map();
+
 
     for (const tile of tiles) {
-        values.set(tile.position, tile.value);
+
+        values.set(
+            tile.position,
+            tile.value
+        );
+
     }
+
 
     for (let row = 0; row < 4; row++) {
 
-        for (let col = 0; col < 4; col++) {
+        for (let column = 0; column < 4; column++) {
 
             const index =
-                row * 4 + col;
+                row * 4 + column;
 
             const value =
                 values.get(index);
 
-            // Right neighbor
-            if (col < 3) {
+
+            // Right
+
+            if (column < 3) {
 
                 if (
                     value ===
                     values.get(index + 1)
                 ) {
+
                     return;
+
                 }
 
             }
 
-            // Bottom neighbor
+
+            // Down
+
             if (row < 3) {
 
                 if (
                     value ===
                     values.get(index + 4)
                 ) {
+
                     return;
+
                 }
 
             }
@@ -836,19 +1054,21 @@ function checkGameOver() {
 
     }
 
+
     gameOver = true;
 
     messageText.textContent =
         "Game Over!";
 
-    messageElement.style.display =
+    message.style.display =
         "flex";
+
 }
 
 
-// ====================================
+// ==========================================
 // KEYBOARD
-// ====================================
+// ==========================================
 
 document.addEventListener(
     "keydown",
@@ -865,58 +1085,87 @@ document.addEventListener(
 
         }
 
+
         if (event.key === "ArrowLeft") {
+
             move("left");
+
         }
 
-        if (event.key === "ArrowRight") {
+        else if (
+            event.key === "ArrowRight"
+        ) {
+
             move("right");
+
         }
 
-        if (event.key === "ArrowUp") {
+        else if (
+            event.key === "ArrowUp"
+        ) {
+
             move("up");
+
         }
 
-        if (event.key === "ArrowDown") {
+        else if (
+            event.key === "ArrowDown"
+        ) {
+
             move("down");
+
         }
 
     }
 );
 
 
-// ====================================
-// KEEP TILES CORRECT AFTER RESIZING
-// ====================================
+// ==========================================
+// RESIZE
+// ==========================================
 
 window.addEventListener(
     "resize",
     function() {
 
-        document
-            .querySelectorAll(".tile")
-            .forEach(element => {
+        tiles.forEach(tile => {
 
-                const id =
-                    Number(element.dataset.id);
+            const element =
+                document.querySelector(
+                    `[data-id="${tile.id}"]`
+                );
 
-                const tile =
-                    tiles.find(t => t.id === id);
+            if (element) {
 
-                if (tile) {
-                    positionTile(
-                        element,
-                        tile.position
-                    );
-                }
+                // Disable transition during resize
 
-            });
+                element.style.transition =
+                    "none";
+
+                positionTile(
+                    element,
+                    tile.position
+                );
+
+                requestAnimationFrame(() => {
+
+                    element.style.transition =
+                        "transform 150ms ease-in-out";
+
+                });
+
+            }
+
+        });
 
     }
 );
 
 
-// Start game
+// ==========================================
+// START
+// ==========================================
+
 newGame();
 
 </script>
