@@ -78,15 +78,11 @@ h1 {
     position: relative;
 }
 
-
-/* Background grid */
-
 .grid {
     position: absolute;
     inset: 10px;
 
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
 
@@ -118,14 +114,15 @@ h1 {
     z-index: 5;
 
     /*
-       Only transform is animated.
-       This creates the smooth sliding.
+       Movement animation.
+       New tiles temporarily have this
+       disabled through JavaScript.
     */
     transition: transform 150ms ease-in-out;
 }
 
 
-/* Merge animation only */
+/* Merge pop */
 
 .tile.merge {
     animation: merge 160ms ease-out;
@@ -133,19 +130,17 @@ h1 {
 }
 
 @keyframes merge {
-
     0% {
-        transform: scale(1);
+        transform: var(--tile-position) scale(1);
     }
 
     50% {
-        transform: scale(1.15);
+        transform: var(--tile-position) scale(1.15);
     }
 
     100% {
-        transform: scale(1);
+        transform: var(--tile-position) scale(1);
     }
-
 }
 
 
@@ -280,10 +275,6 @@ h1 {
 }
 
 
-/* =========================
-   MOBILE
-========================= */
-
 @media (max-width: 500px) {
 
     h1 {
@@ -304,8 +295,6 @@ h1 {
 <div class="game">
 
 ```
-<!-- TOP -->
-
 <div class="top">
 
     <h1>2048</h1>
@@ -325,19 +314,13 @@ h1 {
 </div>
 
 
-<!-- INSTRUCTIONS -->
-
 <div class="instructions">
     Use the <b>arrow keys</b> to move the tiles.
     Combine matching numbers!
 </div>
 
 
-<!-- BOARD -->
-
 <div class="board" id="board">
-
-    <!-- Background grid -->
 
     <div class="grid">
 
@@ -364,8 +347,6 @@ h1 {
     </div>
 
 
-    <!-- GAME OVER / WIN -->
-
     <div class="message" id="message">
 
         <h2 id="messageText">
@@ -380,8 +361,6 @@ h1 {
 
 </div>
 
-
-<!-- BOTTOM -->
 
 <div class="bottom">
 
@@ -404,9 +383,8 @@ h1 {
 
 <script>
 
-
 // ==========================================
-// GAME VARIABLES
+// VARIABLES
 // ==========================================
 
 let tiles = [];
@@ -438,7 +416,7 @@ const messageText =
 
 
 // ==========================================
-// GET BOARD MEASUREMENTS
+// BOARD MEASUREMENTS
 // ==========================================
 
 function getMeasurements() {
@@ -459,20 +437,16 @@ function getMeasurements() {
             gap * 3) / 4;
 
     return {
-
-        tileSize: tileSize,
-
-        gap: gap,
-
-        padding: padding
-
+        tileSize,
+        gap,
+        padding
     };
 
 }
 
 
 // ==========================================
-// GET TILE COORDINATES
+// COORDINATES
 // ==========================================
 
 function getCoordinates(position) {
@@ -480,13 +454,11 @@ function getCoordinates(position) {
     const measurements =
         getMeasurements();
 
-
     const row =
         Math.floor(position / 4);
 
     const column =
         position % 4;
-
 
     const left =
         measurements.padding +
@@ -496,7 +468,6 @@ function getCoordinates(position) {
             measurements.gap
         );
 
-
     const top =
         measurements.padding +
         row *
@@ -505,16 +476,10 @@ function getCoordinates(position) {
             measurements.gap
         );
 
-
     return {
-
-        left: left,
-
-        top: top,
-
-        size:
-            measurements.tileSize
-
+        left,
+        top,
+        size: measurements.tileSize
     };
 
 }
@@ -532,33 +497,31 @@ function positionTile(
     const coordinates =
         getCoordinates(position);
 
-
     element.style.width =
         coordinates.size + "px";
-
 
     element.style.height =
         coordinates.size + "px";
 
-
     /*
-       All tiles start at 0,0.
-       Transform moves them to the
-       correct square.
+       left/top are always zero.
+       The actual position is controlled
+       entirely by transform.
     */
 
-    element.style.left =
-        "0px";
+    element.style.left = "0px";
+    element.style.top = "0px";
 
-    element.style.top =
-        "0px";
+    const transform =
+        `translate(${coordinates.left}px, ${coordinates.top}px)`;
 
+    element.style.setProperty(
+        "--tile-position",
+        transform
+    );
 
     element.style.transform =
-        `translate(
-            ${coordinates.left}px,
-            ${coordinates.top}px
-        )`;
+        transform;
 
 }
 
@@ -572,34 +535,31 @@ function createTile(tile) {
     const element =
         document.createElement("div");
 
-
     element.className =
-        "tile tile-" +
-        tile.value;
-
+        "tile tile-" + tile.value;
 
     element.dataset.id =
         tile.id;
 
-
     element.textContent =
         tile.value;
 
-
     /*
-       IMPORTANT:
-       The tile is positioned BEFORE
-       being added to the board.
+       CRITICAL:
 
-       Therefore it appears instantly
-       in its correct square.
+       Disable the CSS transition BEFORE
+       the element is inserted.
+
+       This prevents the browser from
+       animating the tile from the top-left.
     */
+
+    element.style.transition = "none";
 
     positionTile(
         element,
         tile.position
     );
-
 
     return element;
 
@@ -607,55 +567,17 @@ function createTile(tile) {
 
 
 // ==========================================
-// NEW GAME
-// ==========================================
-
-function newGame() {
-
-    tiles = [];
-
-    nextId = 1;
-
-    score = 0;
-
-    gameOver = false;
-
-    moving = false;
-
-
-    message.style.display =
-        "none";
-
-
-    scoreDisplay.textContent =
-        "0";
-
-
-    addTile();
-
-    addTile();
-
-
-    render();
-
-}
-
-
-// ==========================================
-// ADD RANDOM TILE
+// ADD TILE
 // ==========================================
 
 function addTile() {
 
     const occupied =
         tiles.map(
-            tile =>
-                tile.position
+            tile => tile.position
         );
 
-
     const empty = [];
-
 
     for (
         let i = 0;
@@ -673,11 +595,13 @@ function addTile() {
 
     }
 
+    if (
+        empty.length === 0
+    ) {
 
-    if (empty.length === 0) {
         return;
-    }
 
+    }
 
     const position =
         empty[
@@ -686,7 +610,6 @@ function addTile() {
                 empty.length
             )
         ];
-
 
     tiles.push({
 
@@ -697,7 +620,7 @@ function addTile() {
                 ? 2
                 : 4,
 
-        position: position,
+        position,
 
         merged: false
 
@@ -707,14 +630,13 @@ function addTile() {
 
 
 // ==========================================
-// RENDER TILES
+// RENDER
 // ==========================================
 
 function render() {
 
     const existing =
         new Map();
-
 
     board
         .querySelectorAll(".tile")
@@ -730,43 +652,64 @@ function render() {
         });
 
 
-    // Update or create tiles
+    // ======================================
+    // CREATE / UPDATE
+    // ======================================
 
-    for (const tile of tiles) {
+    for (
+        const tile of tiles
+    ) {
 
         let element =
             existing.get(tile.id);
 
 
-        // New tile
+        // NEW TILE
 
         if (!element) {
 
             element =
                 createTile(tile);
 
-
-            /*
-               It is already positioned
-               before being added.
-               No sliding from top-left.
-            */
-
             board.appendChild(
                 element
             );
 
+            /*
+               The tile is already in its
+               correct location.
+
+               Now wait one browser frame,
+               then turn movement animation
+               back on.
+
+               This is what prevents the
+               top-left spawning glitch.
+            */
+
+            requestAnimationFrame(() => {
+
+                if (
+                    element.parentNode
+                ) {
+
+                    element.style.transition =
+                        "transform 150ms ease-in-out";
+
+                }
+
+            });
+
         }
 
 
-        // Existing tile
+        // EXISTING TILE
 
         else {
 
             element.className =
                 "tile tile-" +
                 tile.value;
-
 
             element.textContent =
                 tile.value;
@@ -782,9 +725,8 @@ function render() {
 
 
             /*
-               Existing tiles use
-               transform transition,
-               producing the slide.
+               Existing tiles are allowed
+               to smoothly slide.
             */
 
             positionTile(
@@ -797,7 +739,9 @@ function render() {
     }
 
 
-    // Remove old tiles
+    // ======================================
+    // REMOVE OLD TILES
+    // ======================================
 
     for (
         const [id, element]
@@ -813,21 +757,15 @@ function render() {
 
         if (!stillExists) {
 
-            element.style.opacity =
-                "0";
+            /*
+               Remove immediately.
 
+               We do NOT fade it out because
+               a removed tile should never have
+               a chance to appear at 0,0.
+            */
 
-            setTimeout(() => {
-
-                if (
-                    element.parentNode
-                ) {
-
-                    element.remove();
-
-                }
-
-            }, 150);
+            element.remove();
 
         }
 
@@ -838,9 +776,13 @@ function render() {
         score;
 
 
-    // Reset merge flags
+    // ======================================
+    // RESET MERGE FLAGS
+    // ======================================
 
-    for (const tile of tiles) {
+    for (
+        const tile of tiles
+    ) {
 
         tile.merged = false;
 
@@ -850,7 +792,7 @@ function render() {
 
 
 // ==========================================
-// GET MOVEMENT LINES
+// MOVEMENT LINES
 // ==========================================
 
 function getLines(direction) {
@@ -858,7 +800,9 @@ function getLines(direction) {
     const lines = [];
 
 
-    if (direction === "left") {
+    if (
+        direction === "left"
+    ) {
 
         for (
             let row = 0;
@@ -869,11 +813,8 @@ function getLines(direction) {
             lines.push([
 
                 row * 4,
-
                 row * 4 + 1,
-
                 row * 4 + 2,
-
                 row * 4 + 3
 
             ]);
@@ -883,7 +824,9 @@ function getLines(direction) {
     }
 
 
-    if (direction === "right") {
+    if (
+        direction === "right"
+    ) {
 
         for (
             let row = 0;
@@ -894,11 +837,8 @@ function getLines(direction) {
             lines.push([
 
                 row * 4 + 3,
-
                 row * 4 + 2,
-
                 row * 4 + 1,
-
                 row * 4
 
             ]);
@@ -908,7 +848,9 @@ function getLines(direction) {
     }
 
 
-    if (direction === "up") {
+    if (
+        direction === "up"
+    ) {
 
         for (
             let column = 0;
@@ -919,11 +861,8 @@ function getLines(direction) {
             lines.push([
 
                 column,
-
                 column + 4,
-
                 column + 8,
-
                 column + 12
 
             ]);
@@ -933,7 +872,9 @@ function getLines(direction) {
     }
 
 
-    if (direction === "down") {
+    if (
+        direction === "down"
+    ) {
 
         for (
             let column = 0;
@@ -944,11 +885,8 @@ function getLines(direction) {
             lines.push([
 
                 column + 12,
-
                 column + 8,
-
                 column + 4,
-
                 column
 
             ]);
@@ -982,20 +920,18 @@ function move(direction) {
     const lines =
         getLines(direction);
 
-
     let moved = false;
 
 
-    for (const line of lines) {
+    for (
+        const line of lines
+    ) {
 
         const lineTiles = [];
 
 
-        // Find tiles in this line
-
         for (
-            const position
-            of line
+            const position of line
         ) {
 
             const tile =
@@ -1027,14 +963,13 @@ function move(direction) {
             const current =
                 lineTiles[i];
 
-
             const targetPosition =
                 line[targetIndex];
 
 
-            // ==================================
+            // =================================
             // MERGE
-            // ==================================
+            // =================================
 
             if (
 
@@ -1052,7 +987,6 @@ function move(direction) {
 
                 current.position =
                     targetPosition;
-
 
                 next.position =
                     targetPosition;
@@ -1086,9 +1020,9 @@ function move(direction) {
             }
 
 
-            // ==================================
+            // =================================
             // NORMAL MOVE
-            // ==================================
+            // =================================
 
             else {
 
@@ -1125,12 +1059,8 @@ function move(direction) {
     moving = true;
 
 
-    // Animate movement
-
     render();
 
-
-    // Wait for slide
 
     setTimeout(() => {
 
@@ -1152,7 +1082,7 @@ function move(direction) {
 
 
 // ==========================================
-// CHECK WIN
+// WIN
 // ==========================================
 
 function checkWin() {
@@ -1160,8 +1090,7 @@ function checkWin() {
     const won =
         tiles.some(
             tile =>
-                tile.value >=
-                2048
+                tile.value >= 2048
         );
 
 
@@ -1186,7 +1115,7 @@ function checkWin() {
 
 
 // ==========================================
-// CHECK GAME OVER
+// GAME OVER
 // ==========================================
 
 function checkGameOver() {
@@ -1198,7 +1127,9 @@ function checkGameOver() {
     }
 
 
-    if (tiles.length < 16) {
+    if (
+        tiles.length < 16
+    ) {
 
         return;
 
@@ -1209,7 +1140,9 @@ function checkGameOver() {
         new Map();
 
 
-    for (const tile of tiles) {
+    for (
+        const tile of tiles
+    ) {
 
         values.set(
             tile.position,
@@ -1240,9 +1173,11 @@ function checkGameOver() {
                 values.get(index);
 
 
-            // Right
+            // RIGHT
 
-            if (column < 3) {
+            if (
+                column < 3
+            ) {
 
                 if (
                     value ===
@@ -1258,9 +1193,11 @@ function checkGameOver() {
             }
 
 
-            // Down
+            // DOWN
 
-            if (row < 3) {
+            if (
+                row < 3
+            ) {
 
                 if (
                     value ===
@@ -1294,7 +1231,7 @@ function checkGameOver() {
 
 
 // ==========================================
-// KEYBOARD CONTROLS
+// KEYBOARD
 // ==========================================
 
 document.addEventListener(
@@ -1303,17 +1240,13 @@ document.addEventListener(
 
         if (
 
-            event.key ===
-                "ArrowLeft" ||
+            event.key === "ArrowLeft" ||
 
-            event.key ===
-                "ArrowRight" ||
+            event.key === "ArrowRight" ||
 
-            event.key ===
-                "ArrowUp" ||
+            event.key === "ArrowUp" ||
 
-            event.key ===
-                "ArrowDown"
+            event.key === "ArrowDown"
 
         ) {
 
@@ -1323,8 +1256,7 @@ document.addEventListener(
 
 
         if (
-            event.key ===
-            "ArrowLeft"
+            event.key === "ArrowLeft"
         ) {
 
             move("left");
@@ -1332,8 +1264,7 @@ document.addEventListener(
         }
 
         else if (
-            event.key ===
-            "ArrowRight"
+            event.key === "ArrowRight"
         ) {
 
             move("right");
@@ -1341,8 +1272,7 @@ document.addEventListener(
         }
 
         else if (
-            event.key ===
-            "ArrowUp"
+            event.key === "ArrowUp"
         ) {
 
             move("up");
@@ -1350,8 +1280,7 @@ document.addEventListener(
         }
 
         else if (
-            event.key ===
-            "ArrowDown"
+            event.key === "ArrowDown"
         ) {
 
             move("down");
@@ -1370,14 +1299,14 @@ window.addEventListener(
     "resize",
     function() {
 
-        /*
-           Disable animation while
-           the board is resizing.
-        */
+        const elements =
+            document.querySelectorAll(
+                ".tile"
+            );
 
-        document
-            .querySelectorAll(".tile")
-            .forEach(element => {
+
+        elements.forEach(
+            element => {
 
                 const id =
                     Number(
@@ -1392,35 +1321,35 @@ window.addEventListener(
                     );
 
 
-                if (tile) {
-
-                    element.style.transition =
-                        "none";
-
-
-                    positionTile(
-                        element,
-                        tile.position
-                    );
-
-
-                    requestAnimationFrame(() => {
-
-                        element.style.transition =
-                            "transform 150ms ease-in-out";
-
-                    });
-
+                if (!tile) {
+                    return;
                 }
 
-            });
+
+                /*
+                   Disable animation during
+                   resizing so tiles don't move
+                   weirdly.
+                */
+
+                element.style.transition =
+                    "none";
+
+
+                positionTile(
+                    element,
+                    tile.position
+                );
+
+            }
+        );
 
     }
 );
 
 
 // ==========================================
-// START
+// START GAME
 // ==========================================
 
 newGame();
